@@ -1,0 +1,4880 @@
+[defname rockdung]
+rockdung.track.1 5329,1912,5329,1911,5326,1893,5326,1894,5323,1920,5323,1921,5308,1941,5308,1942,5300,1922,5301,1922,5311,1920,5311,1921,5314,1926,5314,1927,5293,1902,5293,1903,5294,1919,5295,1919
+rockdung.track.2 5308,1941,5308,1942,5323,1920,5323,1921,5319,1916,5318,1916,5330,1913,5331,1913,5332,1900,5332,1899,5299,1908,5299,1909,5294,1919,5295,1919,5300,1925,5301,1925,5311,1920,5311,1921
+rockdung.track.3 5320,1936,5320,1935,5323,1920,5323,1921,5315,1922,5316,1922,5329,1912,5329,1911,5326,1893,5326,1894,5300,1925,5301,1925,5300,1922,5301,1922,5296,1911,5296,1912,5293,1902,5293,1903
+rockdung.track.4 5324,1928,5325,1928,5329,1912,5329,1911,5326,1893,5326,1894,5314,1926,5314,1927,5315,1922,5316,1922,5300,1922,5301,1922,5294,1919,5295,1919,5296,1911,5296,1912,5299,1908,5299,1909
+//pvp serv dung
+//priest druid ranger paladin bear
+
+[TEMPLATE RANDOM_ARROW_ROCK]
+ITEM={ i_arrow_plus1 1 i_arrow_plus2 2 i_arrow_plus3 5 }
+[TEMPLATE RANDOM_bolt_ROCK]
+ITEM={ i_BOLT_plus1 1 i_BOLT_plus2 2 i_BOLT_plus3 5 }
+[TEMPLATE RANDOM_MONDAIN_ROCK]
+container=i_bag
+color=0b2
+item={ i_mondainova_koruna 1 i_mondainuv_amulet 1 i_mondainuv_naramek 1 i_mondainuv_prsten 1 }
+[TEMPLATE RANDOM_DUPRE_ROCK]
+container=i_bag
+color=015c
+item={ i_dupreho_opasek 1 i_dupreho_prsten 1 i_dupreho_talisman 1 }
+[TEMPLATE RANDOM_SHAMINO_ROCK]
+container=i_bag
+color=022
+item={ i_shaminovy_boty 1 i_shaminuv_toulec 1 i_shaminuv_amulet 1 }
+
+[chardef c_rockdung_priest]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b15
+tag.resist_magic=70
+tag.resist_necro=100
+tag.resist_phys=10
+tag.resist_pierce=-20
+tag.resist_blunt=-30
+whitemagic=1000
+magery=2000
+karma=-10000
+fame={4000 6000}
+modar=55
+title=Elven Priest
+brain=brain_human
+str=50
+maxhits=900
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{1500 2000}
+item=random_reagents,{15 25}
+item=random_reagents,{15 25}
+item=random_reagents,{15 25}
+item=i_scroll_greater_heal,{2 5}
+item=i_rockdung_scroll_summontree,1 
+item=random_mondain_rock,R30
+item=i_ring_serpent,R40
+item=i_amulet_alchemy,R20
+item=i_bracelet_mages,R15
+item=i_ability_healing_mid,R10
+item=i_ability_healing_high,R15
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0b18
+item=i_sandals
+item=i_rockdung_priest_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+on @npcrestock
+itemnewbie=i_staff_arcanum
+color=0610
+name=Staff of Healing
+
+[function f_rockdung_priest_check]
+local.hits=100
+obj=<uid>
+local.target=0
+forchars 13
+if ((<baseid>==c_rockdung_ranger) || (<baseid>==c_rockdung_jailor) || (<baseid>==c_rockdung_executor) || (<baseid>==c_rockdung_franger) || (<baseid>==c_rockdung_priest) || (<baseid>==c_rockdung_rogue) || (<baseid>==c_rockdung_berserker) || (<baseid>==c_rockdung_druid) || (<baseid>==c_rockdung_mage) || (<baseid>==c_rockdung_paladin))
+
+if ((<obj.CanSeeLOS <uid>>) || (<obj.uid>==<uid>))
+if (<findid.i_memory_poison> && (rand(3)==1))
+tag.kouzlo=11
+return <uid>
+endif
+local.x=<eval (<hits>*100)/<maxhits>>
+if <local.x><<local.hits>
+local.hits=<local.x>
+local.target=<uid>
+endif
+endif
+endif
+endfor
+if <local.hits>==100
+foritems 2
+    if (((<baseid>==i_fx_field_paralyze) || (<baseid>==i_fx_energy_field) || (<baseid>==i_wall_stone_7)) && (<type>==t_spell))
+    if <obj.CanSeeLOS <uid>>
+        if <local.target>>
+            if rand(2)==1
+        local.target=<uid>
+            endif
+        else
+        local.target=<uid>
+        endif
+    endif
+    endif
+endfor
+endif
+return <local.target>
+
+[function f_rockdung_FindNearestSummon]
+local.dist=<argn1>
+local.id=0
+obj=<uid>
+forchars <argn1>
+if ((<obj.CanSeeLOS <uid>>) && (<flags>&statf_conjured) && (<baseid>!=c_wisp_s))
+ if <obj.distance <uid>> < <local.dist>
+ local.dist=<obj.distance <uid>>
+ local.id=<uid>
+ endif
+endif
+endfor
+return <local.id>
+
+
+
+
+[itemdef i_rockdung_priest_brain]
+ID=i_memory
+type=t_eq_script
+name=BRAIN
+on=@timer
+cont.mana=100
+if <cont.f_rockdung_wallcount 4> > 3
+  if (<hits>==<maxhits>)||(rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 35
+    return 1
+  endif
+endif
+if ((<cont.f_rockdung_FindNearestSummon 3>>0) && (rand(3)==1))
+cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 3>
+timerd=35
+return 1
+endif
+//dispel summon
+
+if (<cont.isevent.e_frozen>)
+    //serv.b frozen
+    cont.forcecast 5,<cont.uid>
+    timerd = 12
+return 1
+endif
+//dispel
+
+//
+if (<cont.hits> > <eval <cont.maxhits>/3>)
+local.target=<cont.f_rockdung_priest_check>
+if <cont.tag0.kouzlo>==11
+cont.forcecast 11,<local.target>
+cont.tag.kouzlo=
+timerd=15
+return 1
+endif
+    if <local.target>>0
+    obj=<local.target>
+    if <obj.ischar>
+         //cont.home=<obj.p>
+         cont.forcecast 29,<obj.uid>
+         timerd=25
+         return 1
+    else
+        IF <obj.uid>
+         cont.forcecast 34,<obj.uid>
+         timerd=43
+         return 1
+         else
+         timerd=1
+         return 1
+         endif
+    endif
+    endif
+else
+cont.forcecast 29,<cont.uid>
+timerd=25
+return 1
+endif
+timer=1
+return 1
+
+
+[chardef c_rockdung_druid]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_rockdung_ignorewisp
+on @create
+events +e_rockdung_customdmg
+regenvalhits=50
+tag.name.hue=0b15
+tag.resist_magic=50
+tag.resist_fire=20
+tag.resist_phys=20
+tag.resist_pierce=-20
+tag.resist_flus=70
+whitemagic=1000
+magery=1000
+karma=-10000
+fame={4000 6000}
+modar=70
+title=Elven Druid
+brain=brain_human
+str=55
+maxhits=900
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+///loot
+item=i_gold,{4500 5000}
+item=ttm_lvl5,R20
+item=random_reagents,{15 25}
+item=i_scroll_greater_heal,{2 5}
+item=random_special_food,R8
+item=i_rockdung_scroll_summontree,{1 2}
+item=random_mondain_rock,R30
+item=i_ring_serpent,R40
+item=i_amulet_alchemy,R20
+item=i_bracelet_taming,R20
+item=i_ability_armorcurse_high,R50
+item=i_ability_armorcurse_mid,R20
+item=i_ability_weakness_high,R50
+item=i_ability_weakness_mid,R20
+item=i_ability_magicweakness_high,R50
+item=i_ability_magicweakness_mid,R20
+item=i_ability_feeblemind_high,R50
+item=i_ability_feeblemind_mid,R20
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0794
+item=i_sandals
+item=i_rockdung_druid_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+on @npcrestock
+itemnewbie=i_staff_gnarled_iron
+color=color_o_silver
+name=Druid's Staff
+
+on=@itemstep
+if <act.baseid>==i_fx_field_paralyze
+    if <act.type>==t_spell
+        act.remove
+        return 1
+    endif
+endif
+
+[function f_rockdung_druid_check]
+local.hits=100
+obj=<uid>
+local.target=0
+tag.kouzlo=0
+if <tag0.meda>
+        if <uid.<tag0.meda>.hits> < 350 
+            if <obj.CanSeeLos <uid.<tag.meda>.uid>>
+                    if rand(2)==1
+                     tag.kouzlo=10 //summon heal
+                      return <tag.meda>//////////////////////////////////////////
+                  endif
+             endif
+        endif
+endif
+forchars 13    
+
+    if ((<baseid>==c_rockdung_ranger) || (<baseid>==c_rockdung_jailor) || (<baseid>==c_rockdung_executor) || (<baseid>==c_rockdung_franger) || (<baseid>==c_rockdung_priest) || (<baseid>==c_rockdung_rogue) || (<baseid>==c_rockdung_berserker) || (<baseid>==c_rockdung_druid) || (<baseid>==c_rockdung_mage) || (<baseid>==c_rockdung_paladin))
+    if (((<obj.CanSeeLOS <uid>>) || (<obj.uid>==<uid>)) && (!<isevent.e_light_aura>))
+    local.x=<eval (<hits>*100)/<maxhits>>
+        if <local.x><<local.hits>
+        local.hits=<local.x>
+        local.target=<uid>
+        endif
+    endif
+endif
+endfor
+if ((<local.hits> < 40) && (rand(100)<70))
+tag.kouzlo=1 //aura
+return <local.target>
+endif
+
+local.target=0
+obj=<uid>
+forchars 12
+    if ((<baseid>==c_rockdung_ranger) || (<baseid>==c_rockdung_jailor) || (<baseid>==c_rockdung_executor) || (<baseid>==c_rockdung_franger) || (<baseid>==c_rockdung_priest) || (<baseid>==c_rockdung_rogue) || (<baseid>==c_rockdung_meda) || (<baseid>==c_rockdung_berserker) || (<baseid>==c_rockdung_druid) || (<baseid>==c_rockdung_mage) || (<baseid>==c_rockdung_paladin))
+    if ((<obj.CanSeeLOS <uid>>) || (<obj.uid>==<uid>))
+    if ((!<findid.i_rune_magic_reflection.uid>) && (rand(5)==1))
+    obj.tag.kouzlo=2 //zrcadlo
+    return <uid>
+    endif
+    if ((<findid.i_memory_poison.uid>) && (rand(2)==1))
+    obj.tag.kouzlo=6 //cure
+    return <uid>
+    endif
+    if !<findid.i_rune_protection.uid>
+    obj.tag.kouzlo=3 // protekce
+    return <uid>
+    endif
+    if !<findid.i_rune_reactive_armor.uid>
+    obj.tag.kouzlo=4 // reactiv
+    return <uid>
+    endif
+    endif
+    endif
+endfor
+if <f_rockdung_wallcount 4>>3
+tag.kouzlo=8 /// VAG
+return <uid>
+endif
+forchars 8
+if ((<obj.CanSeeLOS <uid>>) 
+if <flags>&04000000
+obj.tag.kouzlo=7 //summon dispel
+return <uid>
+endif
+endif
+endfor
+
+if <hits><<maxhits>
+if (rand(6)==1)
+tag.kouzlo=5 //heal
+return <uid>
+endif
+endif
+
+if <memoryfindtype.02000.link.uid>
+	obj=<memoryfindtype.02000.link.uid>
+	if ((<obj.CanSeeLOS <uid>>) && (!<obj.findid.i_rune_rockdung_silence>) && (rand(10)==1))
+	tag.kouzlo=9 //silence
+	return <obj.uid>
+	endif
+	if ((<obj.CanSeeLOS <uid>>) && (!<obj.findid.i_rune_rockdung_manaleech>) && (rand(10)==1))
+	tag.kouzlo=12 //manaleech
+	return <obj.uid>
+	endif
+	if ((<obj.CanSeeLOS <uid>>) && (!<obj.findid.i_rune_rockdung_staminaleech>) && (rand(10)==1))
+	tag.kouzlo=11 //staminaleech
+	return <obj.uid>
+	endif
+endif
+
+return <local.target>
+
+[chardef c_rockdung_meda]
+id=c_bear_grizzly
+name=Grizzly
+dam=50
+moverate=150
+tevents=e_rockdung_ignorewisp
+on @create
+events +e_rockdung_customdmg
+wrestling 1000
+tactics 1000
+parrying 1000
+karma=-10000
+tag.armod=50
+tag.resist_phys=10
+tag.resist_magic=20
+tag.dmg_bonus_summons=100
+tag.dmg_bonus_pets=150
+color=color_o_agapite
+str=300
+maxhits=500
+dex=170
+int=2000
+on @hit
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><6
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,1,15
+on=@itemstep
+if <act.baseid>==i_fx_field_paralyze
+if <act.type>==t_spell
+act.remove
+return 1
+endif
+endif
+on @spelleffect
+if <argn1>==38
+return 1
+endif
+
+[events e_rockdung_meda]
+on @death
+uid.<tag.master>.tag.meda=
+newitem i_fx_smoke
+new.p=<p>
+new.attr=attr_move_never|attr_decay
+new.timerd=3
+remove
+return 1
+
+[function f_rockdung_druid_summon]
+trysrc <uid> src.newnpc c_rockdung_meda
+tag.meda=<new.uid>
+new.tag.master=<uid>
+new.events +e_rockdung_meda
+new.home=<p>
+new.homedist=3
+new.timerf 300,hits=0
+forcecast 7,<new.uid>
+
+[itemdef i_rockdung_druid_brain]
+ID=i_memory
+type=t_eq_script
+on=@timer
+cont.magery 1400
+if <cont.tag0.meda>
+uid.<cont.tag0.meda>.home=<cont.p>
+endif
+if <morex>==1 // tak summonuj medu
+cont.f_rockdung_druid_summon
+morex=0
+timerd=15
+return 1
+endif
+
+if ((!<cont.tag0.meda>) && (rand(10)==2))
+cont.say Kal Xen
+cont.anim 17
+timerd=20
+morex=1 //meda
+return 1
+endif
+
+
+
+cont.mana=100
+local.target=<cont.f_rockdung_druid_check>
+if <local.target>>0
+obj=<local.target>
+    if <cont.tag.kouzlo>==10
+    cont.forcecast 501,<obj.uid>
+    timerd 25
+    return 1
+    elseif <cont.tag.kouzlo>==1
+    cont.forcecast 500,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==2
+    cont.forcecast 36,<obj.uid>
+    timerd=35
+    return 1
+    elseif <cont.tag.kouzlo>==3
+    cont.forcecast 15,<obj.uid>
+    timerd=15
+    return 1
+    elseif <cont.tag.kouzlo>==4
+    cont.forcecast 7,<obj.uid>
+    timerd=15
+    return 1
+    elseif <cont.tag.kouzlo>==6
+    cont.magery 2000
+    cont.forcecast 11,<obj.uid>
+    timerd=15
+    return 1
+    elseif <cont.tag.kouzlo>==5
+    cont.magery 3000
+    cont.forcecast 4,<obj.uid>
+    timerd=15
+    return 1
+    elseif <cont.tag.kouzlo>==7
+    cont.forcecast 41,<obj.uid>
+    timerd=35
+    return 1
+    elseif <cont.tag.kouzlo>==8
+    cont.forcecast 502,<obj.uid>
+    timerd=30
+    return 1
+    elseif <cont.tag.kouzlo>==9
+    cont.forcecast 508,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==12
+    cont.forcecast 509,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==11
+    cont.forcecast 510,<obj.uid>
+    timerd=20
+    return 1
+    endif
+endif
+
+timer=1
+return 1
+
+
+
+[chardef c_rockdung_mage]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tevents=e_rockdung_ignorewisp
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+regenvalhits=40
+tag.name.hue=0b15
+tag.resist_poison=75
+tag.resist_magic=40
+tag.resist_phys=20
+tag.resist_blunt=-30
+tag.resist_slash=-10
+tag.resist_pierce=-20
+tag.dmg_bonus_magic=20
+tag.resist_flus=90
+whitemagic=1000
+magery=1500
+karma=-10000
+fame={4000 6000}
+modar=40
+title=Elven Mage
+brain=brain_human
+str=100
+maxhits=750
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{2500 3500}
+item=random_reagents,{15 25}
+item=random_reagents,{15 25}
+item=random_reagents,{15 25}
+item=random_special_reagents,{25 40}
+item=i_scroll_magic_reflection,{2 5}
+item=i_scroll_greater_heal,{3 5}
+item=i_rockdung_scroll_summontree,1
+item=random_mondain_rock,R30
+item=i_amulet_alchemy,R25
+item=i_bracelet_mages,R20
+item=i_ability_magiccritical_mid,R10
+item=i_ability_magiccritical_high,R20
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_robe_sorcerer
+color=0b15
+item=i_sandals
+item=i_rockdung_mage_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+on @npcrestock
+itemnewbie=i_staff_gnarled_iron
+color=color_o_verite
+name=Staff of Elements
+on @gethit
+if <argn2>&dam_magic
+hits += <argn1>
+if <hits> > <maxhits>
+hits=<maxhits>
+endif
+return 1
+endif
+
+
+[function f_rockdung_wallcount]
+local.i=0
+foritems <args>
+    if (((<baseid>==i_fx_field_paralyze) || (<baseid>==i_fx_energy_field) || (<baseid>==i_wall_stone_7)) && (<type>==t_spell))
+        local.i += 1
+    endif
+    endfor
+return <local.i>
+
+[itemdef i_rockdung_mage_brain]
+ID=i_memory
+type=t_eq_script
+on=@timer
+cont.mana=1000
+if <cont.f_rockdung_wallcount 3> > 3
+ if (rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 30
+    return 1
+ endif
+endif
+if (<cont.hits> < <cont.maxhits>) && (rand(<eval 2+ ((<cont.hits>*10)/<cont.maxhits>)>)==1)
+cont.magery=3000
+cont.forcecast 4,<cont.uid>
+timerd=13
+return 1
+endif
+if ((<cont.f_rockdung_FindNearestSummon 5>>0) && (rand(3)==1))
+	cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 5>
+	timerd = 35
+	return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,11)>
+if <local.x><3
+cont.magery=1400
+cont.forcecast 51,<cont.memoryfindtype.02000.link>
+timerd=33
+return 1
+endif
+if <local.x><5
+cont.magery 2000
+cont.forcecast 30,<cont.memoryfindtype.02000.link>
+timerd=25
+return 1
+endif
+if <local.x><7
+cont.magery 1400
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timerd=15
+return 1
+endif
+if <local.x><9
+cont.magery 1400
+cont.forcecast 27,<cont.memoryfindtype.02000.link>
+timerd=25
+return 1
+endif
+if <local.x><10
+cont.magery 2000
+cont.forcecast 20,<cont.memoryfindtype.02000.link>
+timerd=25
+return 1
+endif
+if <local.x><11
+cont.magery 1200
+cont.forcecast 41,<cont.memoryfindtype.02000.link>
+timerd=35
+return 1
+endif
+if <local.x><12
+cont.magery 1200
+cont.forcecast 520,<cont.memoryfindtype.02000.link>
+timerd=20
+return 1
+endif
+endif
+TIMER=1
+return 1
+
+[chardef c_rockdung_ranger]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+moverate=150
+on @create
+events +e_rockdung_customdmg
+regenvalhits=50
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_magic=20
+tag.resist_pierce=20
+tag.resist_blunt=-10
+tag.resist_flus=70
+tag.dmg_bonus_summons=80
+tag.dmg_bonus_pets=90
+karma=-10000
+fame={4000 6000}
+modar=70
+title=Elven Ranger
+brain=brain_human
+str=340
+maxhits=600
+dex=200
+int=2000
+maxmana=1
+archery=1500
+tactics=1500
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{2000 3500}
+item=random_arrow_rock,{30 50}
+item=ttm_lvl4,R12
+item=i_bracelet_archery,R8
+item=random_shamino_rock,R25
+item=i_ring_potection,R20
+item=i_ability_slow_mid,R50
+item=i_ability_hunter_high,R20
+item=i_ability_hunter_mid,R10
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_helm_open
+color=0b18
+itemnewbie=i_ringmail_gloves
+color=0b15
+itemnewbie=i_chainmail_tunic
+color=0b15
+itemnewbie=i_ringmail_sleeves
+color=0b18
+itemnewbie=i_ringmail_leggings
+color=0b18
+itemnewbie=i_boots_calf
+color=0b15
+on @npcrestock
+itemnewbie=i_toulec
+itemnewbie=i_rockdung_bow
+
+
+on @hit
+if (rand(3)==1)
+    if <findid.i_rockdung_bow.color>==0b13
+        src.damage <eval rand(10,15)>,dam_fire,<uid>
+    src.effect 3,i_fx_explode,3,16,1
+    elseif <findid.i_rockdung_bow.color>==0ba8
+        src.damage <eval rand(10,15)>,dam_cold,<uid>
+    src.effect 3,i_fx_glow_spike,5,16,0804,0,3
+    elseif <findid.i_rockdung_bow.color>==07a1
+        src.damage <eval rand(10,15)>,020,<uid>
+    src.effect 1,0
+    endif
+endif
+
+[itemdef i_rockdung_bow]
+id=i_bow_composite
+type=t_weapon_bow
+skill=archery
+name=Elven Bow
+speed=62
+range=0,15
+dam=85
+on @create
+tag.special=1
+tag.armod=64
+tag.rangeboost=3,3
+hitpoints=1000
+dorand 3
+color=0b13
+color=0ba8
+color=07a1
+enddo
+[itemdef i_rockdung_CROSSBOW]
+id=i_crossbow_repeating
+type=t_weapon_Xbow
+skill=archery
+name=Elven Crossbow
+speed=62
+range=0,15
+dam=85
+on @create
+tag.special=1
+tag.armod=64
+tag.rangeboost=3,3
+hitpoints=1000
+dorand 3
+color=0b13
+color=0ba8
+color=07a1
+enddo
+
+
+[chardef c_rockdung_paladin]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+moverate=180
+tevents=e_rockdung_noparalyze,e_rockdung_ignorewisp,e_resisty
+on @create
+events +e_rockdung_customdmg
+regenvalhits=80
+tag.name.hue=0b15
+tag.resist_poison=50
+tag.resist_magic=15
+tag.resist_phys=0
+tag.resist_pierce=30
+tag.dmg_bonus_slash=30
+tag.resist_flush=70
+karma=-10000
+fame={4000 6000}
+modar=50
+title=Elven Knight
+brain=brain_human
+str=400
+maxhits=1000
+dex=180
+int=2000
+maxmana=1
+swordsmanship=1200
+fencing=1000
+tactics=1200
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{2000 4000}
+item=ttm_lvl4,R10
+item=random_special_food,R8
+item=i_amulet_protection,R10
+item=i_ring_potection,R10
+item=i_prsten_valecnika,R20
+item=random_dupre_rock,R30
+item=i_ability_stun_mid,R15
+item=i_ability_stun_high,R30
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_helm_open
+color=0b18
+itemnewbie=i_platemail_gloves
+color=0b15
+itemnewbie=i_chainmail_tunic
+color=0b18
+itemnewbie=i_platemail_arms
+color=0b18
+itemnewbie=i_platemail_gorget
+color=0b18
+itemnewbie=i_platemail_leggings
+color=0b18
+
+on @npcrestock
+itemnewbie=i_shield_elven
+name=Elven shield
+color=0b18
+
+itemnewbie=i_rockdung_sword_long
+
+itemnewbie=i_mt_horse_brown_lt
+color=0b24
+
+
+on @hit
+if <src.flags>&statf_conjured
+argn1 *=4
+endif
+if (rand(3)==1)
+    if <src.tag0.nomovetill> < <serv.time>
+        src.say *stunned*
+        src.tag.nomovetill=<eval <serv.time>+20>
+    endif
+endif
+//if <src.findid.i_rune_reactive_armor.uid>
+//    src.findid.i_rune_reactive_armor.remove
+//endif
+on=@itemstep
+if <act.baseid>==i_fx_field_paralyze
+    if <act.type>==t_spell
+        act.remove
+        return 1
+    endif
+endif
+on @spelleffect
+if ((<argn>==38) || (<argn>==47))
+    say *resisted*
+    return 1
+endif
+
+[itemdef i_rockdung_sword_long]
+id=i_sword_long
+dam=33
+name=Elven Sword
+on @create
+tag.special=1
+hitpoints=1000
+
+
+[chardef c_rockdung_berserker]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+tevents=e_rockdung_ignorewisp
+moverate=140
+on @create
+events +e_rockdung_customdmg
+regenvalhits=40
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_magic=10
+tag.resist_cold=100
+tag.resist_flus=80
+tag.dmg_bonus_slash=30
+karma=-10000
+fame={4000 6000}
+modar=50
+title=Elven Berserker
+brain=brain_human
+str=300
+maxhits=550
+dex=200
+int=300
+maxmana=1
+swordsmanship=1200
+fencing=1000
+tactics=1200
+parrying=1000
+magery = 1000
+color=colors_skin
+//loot
+item=i_gold,{2000 3000}
+item=ttm_lvl4,R30
+item=ttm_lvl3,R15
+item=i_amulet_warrior,R10
+item=i_ring_opal,R30
+item=i_prsten_valecnika,R30
+item=random_dupre_rock,R40
+//
+itemnewbie i_rockdung_berserker_brain
+timer=2
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_boots_calf
+color=0b15
+itemnewbie=i_studded_gloves
+color=0b15
+itemnewbie=i_studded_tunic
+color=0b15
+itemnewbie=i_shirt_fancy
+color=color_o_verite
+itemnewbie=i_studded_leggings
+color=0b18
+item=i_ability_rage_high,R15
+item=i_ability_rage_mid,R5
+
+
+on @npcrestock
+itemnewbie=i_spellbook
+more1=0
+more2=08000
+itemnewbie=i_rockdung_blades
+
+on @hit
+if <src.findid.i_rune_reactive_armor.uid>
+    src.findid.i_rune_reactive_armor.remove
+endif
+if <src.flags>&statf_conjured
+argn1 *=3
+endif
+
+on @spellselect
+if <argn>!=48
+    return 1
+endif
+
+[itemdef i_rockdung_berserker_brain]
+ID=i_memory
+type=t_eq_script
+on @timer
+
+if <morex>==2
+    if <cont.memoryfindtype.02000.link>
+        obj=<cont.memoryfindtype.02000.link.uid>
+        obj.damage {20 30} 0c0 <cont.uid>
+        obj.spelleffect s_cure 1000
+        obj.spelleffect s_poison 2000 <cont.uid>
+        //obj.f_bleeding <cont.uid>,2,10
+    endif
+    morex=0
+    timer = 3
+    return 1
+endif
+if ((<cont.f_rockdung_reveal>==1) && (rand(2)==1))
+    cont.mana=25
+    cont.forcecast 48,<cont.uid>
+    timerd 35
+    return 1
+endif
+if <cont.memoryfindtype.02000.link>
+    if <cont.memoryfindtype.02000.link.CanSeeLos <cont.uid>>
+        if ((<cont.memoryfindtype.02000.link.distance <cont.uid>> > 3) && (9 > <cont.memoryfindtype.02000.link.distance <cont.uid>>))
+            if ((!(<cont.memoryfindtype.02000.link.flags>&statf_hidden))&&(!(<cont.memoryfindtype.02000.link.flags>&statf_invisible))&&(<cont.memoryfindtype.02000.link.hits> > 0)) 
+            cont.anim 9
+            if !<cont.isevent.e_frozen>
+             cont.tag.nomovetill <eval <serv.time> +5>
+                endif
+             trysrc <cont.uid> src.f_rockdung_shuriken
+             morex = 2
+             timerd = 4
+             return 1
+         endif
+        endif
+    endif
+endif
+ timer 1
+ return 1
+ 
+[function f_rockdung_shuriken]
+src.memoryfindtype.02000.link.effect 0,0f51,8,16,0,0//bb6 027f7
+[function f_rockdung_reveal]
+obj=<uid>
+forchars 7
+    if <obj>!=<uid>
+    if ( ((<flags>&08) || (<flags>&0800000)) && (<CanSeeLos <obj.uid>>))
+    if <npc>==0
+    return 1
+    endif
+    endif
+    endif
+endfor
+return 2
+
+
+[itemdef i_rockdung_blades]
+id=i_sai
+type=t_weapon_sword
+name=Elven Blades
+speed=75
+skill=swordsmanship
+dam=45
+on @create
+tag.special=1
+hitpoints=1000
+
+
+[chardef c_rockdung_rogue]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_rockdung_ignorewisp
+moverate=130
+on @create
+events +e_rockdung_customdmg
+regenvalhits=50
+tag.name.hue=0b15
+tag.dmg_bonus_pets=250
+tag.dmg_bonus_summons=300
+tag.resist_poison=20
+tag.resist_magic=20
+tag.resist_cold=100
+tag.resist_flus=80
+tag.resist_slash=-15
+tag.dmg_bonus_pierce=20
+tag.backstab=1
+karma=-10000
+fame={4000 6000}
+modar=65
+title=Elven Rogue
+brain=brain_human
+str=100
+maxhits=550
+dex=200
+int=300
+maxmana=1
+swordsmanship=1200
+fencing=1500
+tactics=1200
+parrying=1000
+magery = 1000
+hiding=1000
+stealth=1000
+color=colors_skin
+//loot
+item=i_gold,{3000 4000}
+item=ttm_lvl5,R25
+item=i_amulet_fencing,R10
+item=i_ring_opal,R20
+item=random_dupre_rock,R50
+item=i_ability_backstab_mid,R10
+item=i_ability_backstab_high,R20
+item=i_ability_bleeding_mid,R10
+item=i_ability_bleeding_high,R20
+//
+itemnewbie i_rockdung_rogue_brain
+timer=2
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_boots_calf
+color=0810
+
+itemnewbie=i_studded_gloves
+color=0810
+itemnewbie=i_leather_tunic
+color=0810
+itemnewbie=i_leather_sleeves
+color=0810
+itemnewbie=i_studded_leggings
+color=0810
+itemnewbie=i_cape
+color=0b15
+
+itemnewbie=i_rockdung_rogue_dagger
+itemnewbie = i_rockdung_rogue_brain
+timer = 1
+on @npcrestock
+itemnewbie = i_spellbook
+more1=0
+more2=08000
+itemnewbie=i_shield_buckler
+color=0b24
+itemnewbie=i_rockdung_rogue_dagger
+on @hit
+src.findid.i_rune_reactive_armor.remove
+on @spelleffect
+if <argn1>==5
+events -e_frozen
+tag.nomovetill=
+walk <dir>
+endif
+
+[itemdef i_rockdung_rogue_brain]
+id=i_memory
+type = t_eq_script
+name=rogue brain
+on @timer
+if <cont.isevent.e_frozen>
+cont.findid.i_rune_magic_reflection.remove
+cont.mana=6
+cont.forcecast 5,<cont.uid>
+timerd=16
+return 1
+endif
+if ((<cont.f_rockdung_reveal>==1) && (rand(2)==1))
+    cont.mana=25
+    cont.forcecast 48,<cont.uid>
+    timerd 35
+    return 1
+endif
+ref1=<cont.memoryfindtype.02000.link>
+if (<ref1.distance <cont.uid>> > 3) && (<ref1.CanSeeLos <cont.uid>>) && (!(<ref1.flags>&statf_hidden)) && (!(<ref1.flags>&statf_invisible)))
+    if <ref1.rockdung_backstab>
+        cont.go <ref1.rockdung_backstab>
+    endif
+endif
+timer=2
+return 1
+
+[itemdef i_rockdung_rogue_dagger]
+id=i_sword_assassin_spike
+skill=fencing
+name=Elven Dagger
+dam=42
+speed=75
+on @create
+tag.special=1
+hitpoints=1000
+
+
+[function rockdung_getDir]
+obj=<args>
+if <obj.dir>==<dir>
+    return 2
+endif
+local.dira=<eval <dir>+1>
+if <local.dira>==8
+    local.dira=0
+endif
+local.dirb=<eval <dir>-1>
+if <local.dirb>=-1
+    local.dirb=7
+endif
+if ((<obj.dir>==<local.dira>) || (<obj.dir>==<local.dirb>))
+    return 2
+endif
+return 1
+
+[function rockdung_stabbed]
+findid.i_bleeding.remove
+events -e_bleeding
+f_bleeding <args>,1,12
+
+[function rockdung_backstab] 
+//cont.goback <args>
+//<args> //komu, I=npc
+if <dir>==0
+    return <rockdung_check_backstab 0,1,1,1,-1,1>
+elseif <dir>==1
+    return <rockdung_check_backstab -1,1,-1,0,0,1>
+elseif <dir>==2
+    return <rockdung_check_backstab -1,0,-1,-1,-1,1>
+elseif <dir>==3
+    return <rockdung_check_backstab -1,-1,-1,0,0,-1>
+elseif <dir>==4
+    return <rockdung_check_backstab 0,-1,-1,-1,1,-1>
+elseif <dir>==5
+    return <rockdung_check_backstab 1,-1,0,-1,1,0>
+elseif <dir>==6
+    return <rockdung_check_backstab 1,0,1,-1,1,1>
+elseif <dir>==7
+    return <rockdung_check_backstab 1,1,1,0,0,1>
+endif
+
+[function rockdung_check_backstab]
+serv.newitem i_paver_stone
+new.color=0799
+new.p=<eval <p.x>+(<argv[0]>*2)>,<eval <p.y>+(<argv[1]>*2)>,<p.z>
+local.x=<CanSeeLos <new.uid>>
+new.remove
+if <local.x>==1
+    return <eval <p.x>+<argv[0]>>,<eval <p.y>+<argv[1]>>,<p.z>
+endif
+serv.newitem i_paver_stone
+new.color=07a1
+new.p=<eval <p.x>+(<argv[2]>*2)>,<eval <p.y>+(<argv[3]>*2)>,<p.z>
+local.x=<CanSeeLos <new.uid>>
+new.remove
+if <local.x>==1
+    return <eval <p.x>+<argv[2]>>,<eval <p.y>+<argv[3]>>,<p.z>
+endif
+serv.newitem i_paver_stone
+new.color=07a1
+new.p=<eval <p.x>+(<argv[4]>*2)>,<eval <p.y>+(<argv[5]>*2)>,<p.z>
+local.x=<CanSeeLos <new.uid>>
+new.remove
+if <local.x>==1
+    return <eval <p.x>+<argv[4]>>,<eval <p.y>+<argv[5]>>,<p.z>
+endif
+
+[chardef c_rockdung_woman]
+id=c_woman
+name=#names_elf_female
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+title=Elf
+tag.name.hue=0b15
+str=100
+dex=100
+int=100
+karma=-100
+itemnewbie=i_elven_robe
+itemnewbie=i_boots_thigh
+color=0b15
+itemnewbie=i_leather_gloves
+color=0b15
+on @death
+newnpc c_rockdung_franger
+new.name=<name>
+new.p=<p>
+new.effect 3,i_fire_column,3,16,1,037
+new.events=e_rockdung_womanmorf
+new.home=<p>
+new.homedist=5
+new.tag.spawn=<memoryfindtype.0200.link>
+memoryfindtype.0200.link.more2 +=1
+on @deathcorpse
+argo.remove
+
+[events e_rockdung_womanmorf]
+on @death
+uid.<tag.spawn>.more2 -=1
+uid.<tag.spawn>.timer=<eval rand(<eval <uid.<tag.spawn>.morex>*60>,<eval <uid.<tag.spawn>.morey>*60>)>
+
+[chardef c_rockdung_fRanger]
+id=c_woman
+name=#NAMES_ELF_FEMALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+moverate=150
+on @create
+events +e_rockdung_customdmg
+regenvalhits=40
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_magic=20
+tag.resist_phys=0
+tag.resist_pierce=20
+tag.resist_flus=70
+tag.dmg_bonus_summons=100
+tag.dmg_bonus_pets=90
+karma=-10000
+fame={4000 6000}
+modar=70
+title=Elven Ranger
+brain=brain_human
+str=320
+maxhits=650
+dex=180
+int=2000
+maxmana=1
+archery=1500
+tactics=1500
+parrying=1000
+magery=1000
+color=colors_skin
+//loot
+item=i_gold,{2500 3200}
+item=random_BOLT_rock,{30 50}
+item=ttm_lvl4,R15
+item=i_bracelet_archery,R8
+item=i_bracelet_taming,R20
+item=i_ring_opal,R25
+item=random_shamino_rock,R20
+item=i_ability_hunter_high,R20
+item=i_ability_hunter_mid,R10
+//
+itemnewbie=i_hair_long
+itemnewbie=i_armor_female_studded
+color=0b15
+itemnewbie=i_leather_sleeves
+color=0b15
+itemnewbie=i_boots_thigh
+color=0b15
+itemnewbie=i_ringmail_gloves
+color=0b15
+itemnewbie=i_spellbook
+itemnewbie=i_cape
+color=0b15
+itemnewbie=i_toulec
+itemnewbie=i_armor_female_skirt
+color=0b15
+ITEMNEWBie=i_rockdung_CROSSBOW
+
+on @regionenter
+timerf 1,rockdung_franger_checkwolfhp
+on @hit
+if (rand(3)==1)
+    if <findid.i_rockdung_CROSSBOW.color>==0b13
+        src.damage <eval rand(10,15)>,dam_fire,<uid>
+    src.effect 3,i_fx_explode,3,16,1
+    elseif <findid.i_rockdung_CROSSBOW.color>==0ba8
+        src.damage <eval rand(10,15)>,dam_cold,<uid>
+    src.effect 3,i_fx_glow_spike,5,16,0804,0,3
+    elseif <findid.i_rockdung_CROSSBOW.color>==07a1
+        src.damage <eval rand(10,15)>,020,<uid>
+    src.effect 1,0
+    endif
+endif
+on @attack
+uid.<tag0.wolf>.attack <src.uid>
+
+[function rockdung_franger_checkwolfhp]
+ref1=<tag0.wolf>
+if (!<ref1.uid>)&&(!<tag0.summoning>)
+say Kal Xen
+anim 17
+tag.summoning=1
+tag.nomovetill=<eval <serv.time>+10>
+timerf 1,rockdung_franger_summonwolf
+return 1
+elseif ((<REF1.hits> < <ref1.maxhits>) && (<R10>==1)) || ((<ref1.hits> < <eval (<ref1.maxhits>*3)/4>) && (<R6>==1)) || ((<ref1.hits> < <eval <ref1.maxhits>/2>) && (<R4>==1)) || ((<ref1.hits> < <eval <ref1.maxhits>/4>) && (<R2>==1)) )
+mana=50
+forcecast 501,<ref1.uid>
+endif
+if <tag0.wolf>
+if !<ref1.attacker>
+ref1.action=06c
+ref1.act=<uid>
+endif
+endif
+timerf 4,rockdung_franger_checkwolfhp
+return 1
+
+[function rockdung_franger_summonwolf]
+serv.newnpc c_rockdung_frangwolf
+new.p=<p>
+new.action=06c
+new.act=<uid>
+new.tag.owner=<uid>
+tag.wolf=<new.uid>
+tag.summoning=
+timerf 10,rockdung_franger_checkwolfhp
+return 1
+[chardef c_rockdung_frangwolf]
+id=c_wolf
+name=tame wolf
+armor=50
+can=MT_RUN|MT_WALK
+dam=40
+tevents=e_rockdung_noareaspells
+on @create 
+events +e_rockdung_customdmg
+tag.dmg_bonus_phys=20
+color=0794
+str=200
+MAXHITS=500
+dex=150
+int=180
+parrying=1000
+tactics=120.0
+wrestling=120.0
+fame={740 820}
+karma=-2000
+on @attack
+if <uid.<tag.owner>.uid>
+if <uid.<tag.owner>.attacker.target>	
+if <src.uid>!=<uid.<tag.owner>.attacker.target>
+if <attacker>
+attacker.clear
+endif
+attack <uid.<tag.owner>.attacker.target>
+return 1
+endif
+endif
+endif
+on @hit
+src.findid.i_rune_reactive_armor.remove
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><5
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,2,12
+/////////////////////////////////////////
+///////////////////// ARCHERS//////////
+////////////////////////////////////////////
+[itemdef i_rockdung_archers_entrance]
+id=i_paver_stone
+on @step
+if <src.ctag0.rockdung_archers_bug>
+	if <src.dir>==6
+	src.move 1
+	elseif <src.dir>==2
+	src.move -1
+	endif
+	return 1
+else
+	if <src.dir>==6
+	src.move -1
+	elseif <src.dir>==2
+	src.move 1
+	endif
+endif
+src.ctag0.rockdung_archers_bug 1
+src.timerf 10,ctag0.rockdung_archers_bug=
+
+[chardef c_rockdung_key1master]
+id=c_man
+name=Aranwe
+can=MT_EQUIP|MT_USEHANDS|MT_WALK|MT_RUN
+tspeech=0564
+tevents=e_rockdung_noparalyze
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=200
+tag.name.hue=0b14
+tag.resist_poison=20
+tag.resist_magic=20
+tag.resist_pierce=10
+tag.resist_flus=70
+karma=-10000
+fame={4000 6000}
+modar=90
+title=Gate Keeper
+brain=brain_human
+str=1000
+maxhits=1500
+dex=150
+int=2000
+archery=1500
+tactics=1500
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{8000 13000}
+item=random_arrow_rock,{40 60}
+item=ttm_lvl4,R2
+item=ttm_lvl5,R10
+item=i_fishing_mapka_flaska,R25
+item=i_bracelet_archery
+item=random_shamino_rock,R8
+item=i_ability_hunter_high,R10
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_helm_open
+color=0b15
+itemnewbie=i_ringmail_gloves
+color=0b15
+itemnewbie=i_chainmail_tunic
+color=0b15
+itemnewbie=i_ringmail_sleeves
+color=0b15
+itemnewbie=i_ringmail_leggings
+color=0b15
+itemnewbie=i_boots_calf
+color=0b15
+itemnewbie=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_toulec
+itemnewbie=i_rockdung_bow
+itemnewbie = i_cape
+color=07a1
+item=i_rockdung_key_1
+on @hit
+src.findid.i_rune_reactive_armor.remove
+if (rand(4)==1)
+    if <src.tag0.nomovetill> < <serv.time>
+        src.say *stunned*
+        src.tag.nomovetill=<eval <serv.time>+20>
+    endif
+endif
+if (rand(4)==1)
+	src.findid.i_rune_reactive_armor.remove
+	if <src.findid.i_bleeding.uid>
+	    if <src.findid.i_bleeding.morey><5
+	    src.findid.i_bleeding.remove
+	    src.events -e_bleeding
+	    endif
+	endif
+	src.f_bleeding <uid>,2,10
+endif
+[itemdef i_rockdung_key_1]
+id=i_key_copper
+name=Klic 1
+type=t_normal
+on @create
+color=07a1
+
+[itemdef i_rockdung_recruitbow]
+id=i_bow_composite
+type=t_weapon_bow
+skill=archery
+name=Elven Bow
+speed=75
+range=0,22
+dam=30
+on @create
+tag.special=1
+tag.armod=30
+hitpoints=1000
+color=0b19
+
+
+[itemdef i_rockdung_commanderbow]
+id=i_bow_composite
+type=t_weapon_bow
+skill=archery
+name=Enchanted Elven Bow
+speed=75
+range=0,22
+dam=35
+on @create
+tag.special=1
+tag.rangeboost=4,2
+tag.armod=30
+hitpoints=1000
+color=07a1
+
+
+[chardef c_rockdung_archer]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_USEHANDS|MT_EQUIP
+tspeech=0564
+tevents=e_rockdung_noparalyze
+on @create
+events +e_rockdung_customdmg
+tag.noprovocation=1
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_phys=-10
+tag.resist_pierce=-10
+tag.resist_flus=90
+karma=-10000
+fame={4000 6000}
+modar=25
+title=Elven Archer Recruit
+brain=brain_human
+str=250
+maxhits=500
+dex=77
+int=2000
+maxmana=1
+archery=1500
+tactics=1500
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{2000 3000}
+item=random_arrow_rock,{30 50}
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_helm_open
+color=0b18
+itemnewbie=i_ringmail_gloves
+color=0b15
+itemnewbie=i_chainmail_tunic
+color=0b15
+itemnewbie=i_ringmail_sleeves
+color=0b18
+itemnewbie=i_ringmail_leggings
+color=0b18
+itemnewbie=i_boots_calf
+color=0b15
+itemnewbie=i_toulec
+itemnewbie=i_rockdung_recruitbow
+itemnewbie = i_cape
+color=0b15
+on @regionenter
+tag.nomovetill=07fffffff 
+on @hit
+if <src.mana>>0
+    src.mana -=1
+else
+    src.mana=0
+endif
+on @attack
+if !<tag0.attack>
+    return 0
+endif
+obj=<tag.attack>
+//say <src.name> <obj.name>
+//say <memoryfindtype.02000.link.name>
+if <src.uid>!=<tag.attack>
+    if <CanSeeLos <obj.uid>>
+    attack <obj.uid>
+    return 1
+    endif
+    //else
+    //attacker.clear
+    //return 1
+    //endif
+endif
+return 0
+on @spelleffect
+if (<argn1>==55) || (<argn1>==49)
+return 1
+//if (<eval rand(2)>>==1)
+//argn2 *=3
+//spelleffect s_magic_reflection,1000
+//endif
+endif
+ON @gethit
+if <src.p.x> < 5205
+return 1
+endif
+[chardef c_rockdung_archercommander]
+id=c_man
+name=Cuthalion
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_rockdung_noparalyze
+on @create
+events +e_rockdung_customdmg
+tag.noprovocation=1
+tag.name.hue=0b14
+tag.resist_poison=20
+tag.resist_magic=15
+tag.resist_flus=70
+karma=-10000
+fame={4000 6000}
+modar=80
+title=Elven Archer Commander
+brain=brain_human
+str=280
+maxhits=2500
+dex=77
+int=2000
+magery=200
+maxmana=10
+archery=1500
+tactics=1500
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{10000 20000}
+item=random_arrow_rock,{30 50}
+item=ttm_lvl4,R10
+item=ttm_lvl5,R2
+item=i_fishing_mapka_flaska,R10
+item=i_bracelet_archery
+item=random_shamino_rock,R2
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_helm_open
+color=0794
+itemnewbie=i_ringmail_gloves
+color=0b19
+itemnewbie=i_chainmail_tunic
+color=0b19
+itemnewbie=i_ringmail_sleeves
+color=0b19
+itemnewbie=i_ringmail_leggings
+color=0b19
+itemnewbie=i_boots_calf
+color=0b19
+itemnewbie=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_toulec
+itemnewbie=i_rockdung_commanderbow
+itemnewbie = i_cape
+color=07a1
+on @hit
+src.findid.i_rune_reactive_armor.remove
+if (rand(4)==1)
+    if <src.tag0.nomovetill> < <serv.time>
+        src.say *stunned*
+        src.tag.nomovetill=<eval <serv.time>+15>
+    endif
+endif
+on @death
+try uid.<tag.brain>.remove
+on @attack
+if !<tag0.attack>
+    return 0
+endif
+obj=<tag.attack>
+//say <src.name> <obj.name>
+//say <memoryfindtype.02000.link.name>
+if <src.uid>!=<tag.attack>
+    if <CanSeeLos <obj.uid>>
+    attack <obj.uid>
+    return 1
+    endif
+endif
+return 0
+
+on @regionenter
+if !<tag0.brain>
+tag.nomovetill=07fffffff 
+serv.newitem i_rockdung_archercommander_brain
+new.p=5214,1818,5 //archers room
+new.more1=<uid>
+new.timer=1
+tag.brain=<new.uid>
+endif
+on @gethit
+if <uid.<tag.brain>.morez>>0
+str=300
+    return 1
+endif
+str=600
+[itemdef i_rockdung_archercommander_brain]
+ID=i_crystal_ball
+type=t_normal
+on @create
+attr = 090
+color=0b15
+on @timer
+morez=<f_rockdung_CountArcher>
+obj=<more1>
+if ((<f_rockdung_wallcount 9> > 4) && (!(<tag0.vag>)))
+    obj.mana=1
+    tag.vag=1
+    obj.forcecast 503,<uid>
+    cont.timerd=15
+    timerf 2,tag.vag=
+    timerd=1
+    return 1
+endif
+local.newtarget=<f_rockdung_findArchersTarget>
+if <local.newtarget> > 0
+if (<local.newtarget>!=<tag0.target>) //nowy
+    tag.target=<local.newtarget>
+    try uid.<more1>.say Zamirit <uid.<tag0.target>.name>!
+    local.newtarget=1
+endif
+ref3=<uid>
+forchars 10
+    if ((<baseid>==c_rockdung_archer) || (<baseid>==c_rockdung_archercommander))
+        hits +=3
+        if <hits> > <maxhits>
+            hits=<maxhits>
+        endif
+        if <local.newtarget>==1
+            timerd=8
+        endif
+        if <f_rockdung_CheckArcherTarget>==2
+        tag.target=
+        	if <attacker>
+        	attacker.clear
+        	endif
+        else
+        f_rockdung_archerAttack <ref3.tag0.target>
+        endif
+    endif
+endfor
+endif
+timerd=15
+return 1
+[function f_rockdung_CountArcher]
+local.i=0
+forchars 10
+    if <baseid>==c_rockdung_archer
+        local.i +=1
+    endif
+endfor
+forchars 10
+	if (<baseid>==c_rockdung_archer)
+	modstr = <eval 8*(12 - <local.i>)>
+	moddex = <eval 3*(12 - <local.i>)>
+	endif
+endfor
+if <local.i>==0
+uid.<more1>.modstr=300
+uid.<more1>.moddex=150
+else
+uid.<MORE1>.modstr=<eval 8*(12 - <local.i>)>
+uid.<more1>.moddex=<eval 3*(12 - <local.i>)>
+endif
+return <local.i>
+
+[function f_rockdung_archerAttack]
+if <args><1
+    return 1
+endif
+ref2=<args>
+
+if <ref2.CanSeeLos <uid>>
+tag.target=<args>
+attack <uid.<args>.uid>
+endif
+
+[function f_rockdung_findArchersTarget]
+ref1=<uid>
+local.target=
+local.minAr=1000
+forplayers 14
+    if (<CanSeeLos <ref1.uid>>)&&(<p.x> > 5204)
+        if ((!<isgm>) && (<hits>>0) && (!(<flags>&08)) && (!(<flags>&02000)) && (!(<flags>&01)) && (!(<flags>&0800000)))
+            if <eval <ar> + <tag0.resist_phys> + <tag0.resist_pierce>> < <local.minAr>
+                local.minAr=<eval <ar> + <tag.resist_phys> + <tag.resist_pierce>>
+                local.target=<uid>
+            endif
+        endif
+    endif
+endfor
+    if <local.target>
+    return <local.target> 
+    endif
+forchars 10
+   if (<CanSeeLos <ref1.uid>>)&&(<p.x> > 5204)
+       if (((<flags>&08000000) && (!(<flags>&04000000))) || (<brain>==13) || (<baseid>==c_mechanical_golem)) //pet+NOT conjured (dragon+golem)
+                return <uid>
+            endif
+   endif
+endfor
+                
+forchars 10
+   if (<CanSeeLos <ref1.uid>>)&&(<p.x> > 5204)
+       if ((<flags>&04000000) && (<baseid>!=c_wisp_s)) //conjured + NOT wisp
+           return <uid>
+       endif
+   endif
+endfor
+
+return 0
+
+[function f_rockdung_CheckArcherTarget]
+//if !(<tag0.target>)
+   //say zadny target
+  //  return 2
+//endif
+//say <tag0.target>
+if <tag0.target>
+obj=<tag.target>
+if (!<obj.uid>)
+    //say nulowy obj
+    return 2 //findArchersTarget
+elseif <obj.hits>==0
+    //say hits 0
+    return 2
+elseif !<obj.CanSeeLos <uid>>
+    //say cantsee
+    return 2
+elseif <obj.flags>&statf_invul
+	return 2 //invul
+	
+endif
+endif
+return 1
+
+
+////////////////////////////////////////////////
+///////////////// LABYRINT ////////////////////
+///////////////////////////////////////////////
+
+[typedef t_rockdung_mHidden]
+on @dclick 
+return 1
+on @step
+if ((<src.isplayer>) && (<src.hits>>0)&& (!<src.isgm>))
+color=07a1
+            if (<morez> < 11)
+                        type=t_rockdung_dlazdice
+                        //    name=Dlazdice [<eval <morez>>]
+                        trigger=@step
+            else
+                        type=t_rockdung_mTrap
+                        dorand 3
+                        tag.mob=c_rockdung_mtrap_spider///
+                        tag.mob=c_rockdung_mtrap_viper/// DOPISAC MOBY
+                        tag.mob=c_rockdung_mtrap_wolf///
+                        enddo
+                    //name=Past [<tag.mob>]
+                        trigger=@step
+            endif
+endif
+on @timer
+return 1
+[typedef t_rockdung_mTrap]
+on @step
+if ((<src.isplayer>) && (<src.hits>>0) && (!<src.isgm>))
+if <timer>==-1
+    if <more1>==0
+    serv.newnpc <tag.mob>
+    new.p=<p>
+    new.home=<p>
+    new.homedist=4
+    new.update
+    new.tag.past=<uid>
+    new.events +e_rockdung_mTrapNpc
+    more1=<new.uid> //npc ON
+    timer=300 ///timer na past
+    endif
+endif
+endif
+on @timer
+return 1
+on @destroy
+if <uid.<more1>.uid>
+    uid.<more1>.remove
+endif
+[events e_rockdung_mTrapNpc]
+on @death
+uid.<tag.past>.more1=0 //npc OFF
+
+[typedef t_rockdung_mExit]
+//10 dlazdic
+//morez = ktora teraz
+//link - mEnter
+//morex - timer miedzy dlazkami
+//morey - timer open-closed
+on @create
+morez=1
+on @dclick 
+return 1
+on @close
+link.trigger=@timer
+link.timer=-1
+morez=1
+move 0 0 -20
+on @open
+morez=0
+move 0 0 20
+timer=<morey>
+on @timer
+if <morez>=0
+    trigger=@close
+else
+    morez=1
+endif
+return 1
+[typedef t_rockdung_dlazdice]
+//morez=ktora
+//link= mExit
+on @step
+if (<src.isplayer> && (<src.hits>>0))
+    //color=0799
+if <link.morez>==0
+    return 0
+endif
+if <timer>>0
+    return 0
+endif
+if <morez>==<link.morez>
+    if <morez>==10
+    src.message Hotovo!
+    link.trigger=@open
+    else
+    link.morez +=1
+    link.timer=<link.morex>
+    src.message Stoupl jsi na misto ... kde jsi blize cili
+    endif
+else
+    src.message Stoupl jsi na misto ... kde jsi vse pokazil
+    link.morez=1
+    link.timer=-1
+endif
+timer = 10
+endif
+on @timer
+return 1
+[typedef t_rockdung_mEnter]
+//link mExit
+//morex timer
+on @dclick
+if <p.z>==5
+    move 0 0 20
+endif
+if <timer>=-1
+    timer=<morex>
+endif
+return 1
+
+on @timer
+if <p.z>==25
+    move 0 0 -20
+endif
+//restart dlazdic
+serv.newitem i_gold
+new.p=5312,1920,5
+new.attr=090
+new.link=<uid>
+new.f_rockdung_mClear
+timer=-1 //<morex>
+return 1
+[function f_rockdung_mClear]
+foritems 40
+ if ((<type>==t_rockdung_dlazdice) || (<type>==t_rockdung_mTrap) ||(<type>==t_rockdung_mHidden))
+     remove
+ endif
+ if ((<baseid>==i_plant_hedge_1) || (<baseid>==i_plant_hedge_3) || (<baseid>==i_plant_hedge_4))
+ remove
+ endif
+endfor
+link.f_rockdung_mNew
+remove
+
+[function f_rockdung_mNew]
+/// trasa
+local.track=<eval rand(1,4)>
+//serv.b wylosowano: <local.track>
+for <eval <GetArgCount <def.rockdung.track.<eval <local.track>>>>/2>
+dorand 3
+serv.newitem i_plant_hedge_1
+serv.newitem i_plant_hedge_3
+serv.newitem i_plant_hedge_4
+enddo
+NEW.ATTR=010
+new.p=<GetArg <eval (<local._for>*2)-1>,<def.rockdung.track.<eval <local.track>>>>,<GetArg <eval (<local._for>*2)>,<def.rockdung.track.<eval <local.track>>>>,5
+new.update
+endfor
+///
+local.fullX=1
+local.fullY=1
+for 60
+    local.i=1
+    while <local.i>==1
+    local.x=<eval rand(5291,5337)>
+    local.y=<eval rand(1893,1942)>
+        if <serv.map(<eval <local.x>>,<eval <local.y>>,0).statics>==0
+            local.a=0
+            for <getargcount <local.fullX>>
+            if ((<eval <getarg <local._for>,<local.fullX>>>==<eval <local.x>>) && (<eval <getarg <local._for>,<local.fullY>>>==<eval <local.y>>))
+                local.a=1
+            endif
+            endfor
+            if <local.a>==0
+                        serv.newitem 03891
+                        new.type=t_rockdung_mHidden
+                        new.attr=010
+                        new.p=<eval <local.x>>,<eval <local.y>>,5
+                        new.color=0b15
+                        new.morez=<local._for>
+                        new.link=<link>
+                        new.timer=-1
+                        new.name=?
+                        local.fullX .=,<eval <local.x>>
+                        local.fullY .=,<eval <local.y>>
+                 local.i=2
+            endif
+        endif
+    endwhile
+endfor
+
+[chardef c_rockdung_mtrap_spider]
+id=c_spider_giant
+name=dark forest spider
+can=MT_RUN|MT_WALK
+armor=50
+dam=35
+tevents=e_rockdung_noareaspells,e_resisty
+on=@create
+events +e_rockdung_customdmg
+tag.dmg_bonus_phys=20
+color=0b15
+str=150
+MAXHITS=500
+dex=130
+int=180
+parrying=1000
+tactics=120.0
+wrestling=120.0
+fame={740 820}
+karma=-2000
+tag.summons=0
+item=i_gold,{1000 2000}
+on @hit
+if (rand(2)==1)
+    if <tag.summons><3
+        serv.newnpc c_rockdung_mtrap_cloneSpider
+        new.p=<p>
+        new.update
+        new.home=<home>
+        new.homedist=5
+        new.tag.master=<uid>
+        tag.summons +=1
+    endif
+endif
+if <src.stam>>2
+    src.stam -=2
+else
+    src.stam=0
+endif
+src.findid.i_rune_reactive_armor.remove
+[chardef c_rockdung_mtrap_cloneSpider]
+id=c_spider_giant
+name=dark forest spider
+can=MT_RUN|MT_WALK
+armor=30
+dam=30
+tevents=e_rockdung_noareaspells
+on @create 
+events +e_rockdung_customdmg
+tag.dmg_bonus_phys=20
+color=0b15
+str=120
+MAXHITS=250
+dex=150
+int=180
+parrying=1000
+tactics=120.0
+wrestling=120.0
+fame={740 820}
+karma=-2000
+itemnewbie=i_rockdung_mtrap_spidermem
+timer = 120
+item=i_gold,{100 250}
+on @destroy
+if <uid.<tag.master>.uid>
+try uid.<tag.master>.tag.summons = <eval <uid.<tag.master>.tag.summons>-1>
+endif
+
+[itemdef i_rockdung_mtrap_spidermem]
+id = i_memory
+type=t_eq_script
+name=summony
+on @timer
+cont.remove
+return 1
+
+[chardef c_rockdung_mtrap_wolf]
+id=c_wolf
+name=dire wolf
+armor=30
+can=MT_RUN|MT_WALK
+dam=40
+tevents=e_rockdung_noareaspells,e_resisty
+on @create 
+events +e_rockdung_customdmg
+tag.dmg_bonus_phys=20
+color=0b19
+str=200
+MAXHITS=500
+dex=150
+int=180
+parrying=1000
+tactics=120.0
+wrestling=120.0
+fame={740 820}
+karma=-2000
+item=i_gold,{900 1500}
+item=i_ability_bleeding_mid,R80
+on @Hit
+src.findid.i_rune_reactive_armor.remove
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><4
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,2,9
+
+[chardef c_rockdung_mtrap_viper]
+id=c_snake
+name=viper
+moverate=180
+armor=30
+tag.dmg_bonus_phys=20
+tevents=e_poison_imune,e_rockdung_noareaspells,e_resisty
+can=MT_RUN|MT_WALK
+dam=33
+on @create 
+events +e_rockdung_customdmg
+color=0b15
+str=200
+MAXHITS=300
+dex=150
+int=180
+parrying=1000
+tactics=120.0
+wrestling=120.0
+fame={740 820}
+karma=-2000
+item=i_gold,{500 1000}
+on @Hit
+    src.spelleffect s_poison,2500
+
+
+[itemdef i_rockdung_mDetect]
+id = i_crystal_ball
+name=REVEAL
+on @create
+color=0b15
+attr=090
+on @timer
+forclients 38
+    if ((<p.x> < 5338) && (<p.y> < 1943) && (5290 < <p.x>) && (1892 < <p.y>))
+        if ((<flags>&statf_hidden) || (<flags>&statf_invisible))
+        spelleffect s_reveal,1000
+        endif
+    endif
+endfor
+timerd=15
+return 1
+
+////////////////////////////////////////////////
+//////////////////////JAIL//////////////////////
+////////////////////////////////////////////////
+
+[function f_rockdung_goJail]
+dorand 6
+    go 5338,1823,0
+    go 5338,1828,0
+    go 5337,1812,0
+    go 5332,1812,0
+    go 5327,1812,0
+    go 5322,1812,0
+enddo
+stone 1
+timerf 15, stone 0
+[function f_rockdung_goSpiderJail]
+go 5315,1814,0
+
+
+
+[chardef c_rockdung_jailor]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tevents=e_rockdung_ignorewisp
+moverate=150
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b15
+tag.dmg_bonus_pets=80
+tag.dmg_bonus_summons=80
+tag.resist_poison=20
+tag.resist_magic=10
+tag.resist_cold=100
+tag.resist_flus=80
+tag.dmg_bonus_blunt=20
+karma=-10000
+fame={4000 6000}
+modar=45
+title=Elven Jailor
+brain=brain_human
+str=200
+maxhits=800
+dex=200
+int=300
+maxmana=1
+swordsmanship=1200
+macefighting=1000
+tactics=1200
+parrying=1000
+magery = 1000
+color=colors_skin
+//loot
+item=i_gold,{1000 2000}
+item=ttm_lvl4,R35
+item=random_special_food,R15
+item=i_amulet_fighter,R15
+item=i_prsten_bojovnika,R20
+//
+itemnewbie i_rockdung_jailor_brain
+timer=2
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_boots_calf
+color=0b19
+itemnewbie=i_studded_gloves
+color=0b19
+itemnewbie=i_leather_tunic
+color=0b19
+itemnewbie=i_studded_leggings
+color=0b19
+itemnewbie=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_rockdung_jailorweapon
+color=0b19
+
+on @hit
+    src.findid.i_rune_reactive_armor.remove
+if (<src.distance><2)&&(<src.isplayer>)
+   dorand 3
+       src.f_rockdung_goJail
+       src.f_rockdung_goJail
+       src.f_rockdung_goSpiderJail
+   enddo
+endif
+
+
+on @spellselect
+if ((<argn1>!=48) && (<argn1>!=502))
+    return 1
+endif
+[itemdef i_rockdung_jailor_brain]
+ID=i_memory
+type=t_eq_script
+name=brain
+on @timer
+if <cont.hits><<cont.maxhits>
+    cont.hits +=5
+endif
+cont.mana=0
+if <morex>==2
+    if <cont.memoryfindtype.02000.link>
+        obj=<cont.memoryfindtype.02000.link.uid>
+        obj.damage {20 30} 02 <cont.uid>
+        obj.say *stunned*
+        obj.tag.nomovetill = <eval <serv.time>+13>
+    endif
+    morex=0
+    timer = 3
+    return 1
+endif
+if <cont.f_rockdung_wallcount 4> > 3
+    if (rand(4)==1)
+    cont.forcecast 502,<cont.uid>
+    cont.mana=1
+    timerd 30
+    return 1
+    endif
+endif
+if ((<cont.f_rockdung_reveal>==1) && (rand(2)==1))
+    cont.mana=25
+    cont.forcecast 48,<cont.uid>
+    timerd 35
+    return 1
+endif    
+if <cont.memoryfindtype.02000.link>
+    if <cont.memoryfindtype.02000.link.CanSeeLos <cont.uid>>
+        if ((<cont.memoryfindtype.02000.link.distance <cont.uid>> > 2) && (9 > <cont.memoryfindtype.02000.link.distance <cont.uid>>))
+            if ((!(<cont.memoryfindtype.02000.link.flags>&statf_hidden))&&(!(<cont.memoryfindtype.02000.link.flags>&statf_invisible))&&(<cont.memoryfindtype.02000.link.hits> > 0))
+            if rand(2)==1
+              cont.anim 9
+              if !<cont.isevent.e_frozen>
+             cont.tag.nomovetill <eval <serv.time> +4>
+             trysrc <cont.uid> src.f_rockdung_jThrow
+               endif
+             morex = 2
+             timerd = 4
+             return 1
+         endif
+         endif
+        endif
+    endif
+endif
+ timer 1
+ return 1
+ 
+[function f_rockdung_jThrow]
+src.memoryfindtype.02000.link.effect 0,027f7,4,16,0,07a0//bb6 027f7
+
+
+[chardef c_rockdung_jSlave]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+tevents=e_resisty
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0810
+tag.noprovocation=1
+karma=-1000
+fame=0
+modar=0
+title=Slave
+brain=brain_human
+str=100
+dex=200
+int=1
+color=colors_skin
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_pants_short
+itemnewbie=i_pickaxe
+on @regionenter
+timerf 1,f_rockdung_slaveAnim
+on @gethit
+dorand 2
+    src.f_rockdung_goJail
+    src.f_rockdung_goSpiderJail
+enddo
+on @spelleffect
+if <serv.spell.<argn1>.flags>&spellflag_harm
+ 	dorand 2
+    	src.f_rockdung_goJail
+    	src.f_rockdung_goSpiderJail
+	enddo
+endif
+[function f_rockdung_slaveAnim]
+anim 9
+sfx 0126
+tag.nomovetill <eval <serv.time>+15>
+timerf {1 4},f_rockdung_slaveAnim
+
+[chardef c_rockdung_executor]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+tevents=e_rockdung_ignorewisp
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b15
+tag.dmg_bonus_pets=150
+tag.dmg_bonus_summons=100
+tag.resist_poison=20
+tag.resist_magic=10
+tag.resist_cold=100
+tag.resist_flus=80
+tag.resist_phys=10
+tag.dmg_bonus_blunt=20
+karma=-10000
+fame={4000 6000}
+modar=60
+title=Elven Executor
+brain=brain_human
+str=200
+maxhits=650
+dex=200
+int=300
+maxmana=1
+swordsmanship=1200
+macefighting=1500
+tactics=1200
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{1500 2500}
+item=random_special_food,R15
+item=i_prsten_valecnika,R20
+item=i_amulet_fighter,R10
+item=i_ring_titans,R30
+item=ttm_lvl4,R25
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_boots_calf
+color=0b19
+itemnewbie=i_studded_gloves
+color=0b19
+itemnewbie=i_leather_tunic
+color=0b19
+itemnewbie=i_studded_leggings
+color=0b19
+itemnewbie=i_rockdung_executorweapon
+
+on @hit
+    src.findid.i_rune_reactive_armor.remove
+    if ((<src.flags>&statf_conjured) || (<src.baseid>==c_mechanical_golem) ||(<src.brain>==13))
+        argn1 *=4
+    endif
+hits += <eval <argn1>/3>
+if <hits> > <maxhits>
+    hits=<maxhits>
+endif
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><4
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,2,10
+
+[itemdef i_rockdung_jailorweapon]
+id=i_fishing_pole
+type=t_weapon_mace_sharp
+name=Whip
+speed=50
+range=0,1
+skill=macefighting
+dam=30
+on @create
+tag.special=1
+hitpoints=1000
+
+[itemdef i_rockdung_executorweapon]
+id=i_ornate_axe
+type=t_weapon_mace_smith
+name=Executor's Axe
+speed=50
+range=0,1
+skill=macefighting
+dam=60
+on @create
+tag.special=1
+hitpoints=1000
+
+[itemdef i_rockdung_jSpiderSwitch]
+//morey timer reuse, morex timer open, link co
+id = 01094
+on @create
+attr=010
+on @dclick
+if <timer>==-1
+    morez=1
+    //open
+    message open!
+    timer=<morex>
+    dispid = 01095
+    update
+    link.move 0 0 -20
+else
+if <morez>==1
+    message uz otvirate
+else
+    message re-use <eval <timer>>s.
+endif
+endif
+return 1
+on @timer
+if <morez>==1 
+    trigger=@close //close
+endif
+return 1
+on @close
+    dispid = 01094
+    update
+    timer=<morey>
+    morez = 0
+    link.move 0 0 20
+return 1
+
+[itemdef i_rockdung_jSpiderDlazka]
+id=i_paver_stone
+name=dlazka
+on @step
+if <src.baseid>==c_rockdung_jspider
+src.go 5315,1814
+return 1
+endif
+
+
+[chardef c_rockdung_jSpider]
+id=c_spider_lord
+name=mutated forest spider
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tevents=e_poison_imune,e_rockdung_noparalyze
+dam=63
+armor=30
+bloodcolor=0b15
+on @create
+events +e_rockdung_customdmg
+color=0b31//color_o_verite
+tag.armod=53
+str=250
+int=200
+dex=170
+maxhits=800
+karma=-10000
+fame=1000
+wrestling=1000
+tactics=1000
+item=i_gold,{800 1000}
+on @hit
+src.effect 3,i_fx_curse,1,16,0,0b13
+src.spelleffect s_poison,2000,<uid>
+if <src.mana> > 4
+src.mana -=5
+endif
+
+[chardef c_rockdung_cBear] //do klatki na poczatku
+id=c_bear_grizzly
+name=wild black bear
+can=MT_RUN|MT_WALK
+tevents=e_rockdung_noareaspells
+dam=92
+armor=90
+on @create
+events +e_rockdung_customdmg
+tag.noprovocation=1
+color=0b24
+tag.dmg_bonus_summons=100
+tag.dmg_bonus_pets=100
+tag.armod=75
+str=500
+int=200
+dex=150
+maxhits=2000
+karma=-10000
+fame=9000
+wrestling=1000
+tactics=1000
+item=i_gold,{1000 3500}
+item=ttm_lvl4,R30
+item=i_rockdung_bear_heart
+item=i_ability_rage_mid,R5
+item=i_ability_rage_high,R10
+on @gethit
+if (<R20>==1) && (!<findid.i_rockdung_rage>)
+say Grroooarr!
+spelleffect s_rockdung_rage,1000
+endif
+on @hit
+src.findid.i_rune_reactive_armor.remove
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><5
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,2,20
+if <src.mana> > 4
+src.mana -=5
+endif
+
+[itemdef i_rockdung_bear_heart]
+id=i_reag_worm_heart
+name=heart of black bear
+type=t_normal
+on @create
+color=0799
+on @dclick
+if <topobj>!=<src.uid>
+return 1
+endif
+if <src.isevent.e_staff_morf>
+	if !<src.findid.i_rockdung_bear_rage.uid>
+	src.say Grrroarr!
+	serv.newitem i_rockdung_bear_rage,1,<src.uid>
+	src.effect 3,0375a,3,16,1,0798
+	src.tag.dmg_bonus_phys +=25
+	src.moddex +=30
+	src.tag.resist_phys -=20
+	new.timer=2
+	new.morex=150
+	src.consume 1 i_rockdung_bear_heart
+	endif
+endif
+return 1
+[itemdef i_rockdung_bear_rage]
+id=i_memory
+name=bearrage
+type=t_eq_script
+on @timer
+cont.effect 3,0377a,3,16,1,0798
+morex -=1
+if <morex>==0
+remove
+return 1
+else
+timer=2
+return 1
+endif
+on @destroy
+cont.tag.dmg_bonus_phys -=25
+cont.moddex -=30
+cont.tag.resist_phys +=20
+
+[chardef c_rockdung_warhorse] //do klatki na poczatku
+id=c_horse_brown_lt
+name=Elven War Horse
+can=MT_RUN|MT_WALK
+tevents=e_rockdung_noparalyze
+dam=110
+armor=90
+on @create
+events +e_rockdung_customdmg
+color=0b24
+tag.dmg_bonus_summons=70
+tag.dmg_bonus_pets=70
+tag.armod=75
+str=500
+int=200
+dex=170
+maxhits=1000
+karma=-10000
+fame=9000
+wrestling=1000
+tactics=1000
+item=i_gold,{1500 2000}
+on @hit
+src.findid.i_rune_reactive_armor.remove
+if <src.mana> > 4
+src.mana -=5
+endif
+if (<r2>==1) && (<src.isplayer>)
+src.anim 21
+src.tag.nomovetill=<eval <serv.time>+20>
+endif
+
+/////////////////////////////////////////////////
+//// BLACKSMITH
+/////////////////////////////////////////////////
+[chardef c_rockdung_blacksmith]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+karma=-10000
+fame={4000 6000}
+modar=75
+title=Elven Blacksmith
+brain=brain_human
+str=700
+maxhits=1000
+dex=200
+int=300
+maxmana=1
+macefighting=1500
+tactics=1200
+parrying=1000
+color=colors_skin
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_ponytail 1 }
+itemnewbie=i_boots_calf
+color=0b19
+itemnewbie=i_studded_gloves
+color=0b19
+itemnewbie=i_leather_tunic
+color=0b19
+itemnewbie=i_studded_leggings
+color=0b19
+item=i_rockdung_elvenhammer
+item=i_gold,{4000 5000}
+item=random_dupre_rock,R20
+cont=<findlayer.21.uid>
+itemnewbie=i_apron_full
+color=0b15
+on @hit
+if <r2>==1
+src.tag.nomovetill=<eval <serv.time>+20>
+src.say *stunned*
+	if (<r2>==1) && (!<src.findid.i_rune_rockdung_armorcurse>)
+	src.spelleffect 520,1000
+	endif
+endif
+
+////////////////////////////////////////////////
+//KEYMASTERS
+
+[itemdef i_rockdung_key2dlazdice]
+id=i_paver_stone
+name=key2mster dlazka
+on @create
+attr=090
+color=07a1
+on @step
+if <timer>==-1
+link.say @0b14,1,1 Co to tu zkousite?
+timer=120
+endif
+on @timer
+return 1
+
+[chardef c_rockdung_key2master] // w bibliotece
+id=c_man
+can=MT_EQUiP|MT_USEHANDS
+name=Isumiel
+tspeech=spk_rockdung_isumiel
+tevents=e_resisty
+on @create
+events +e_rockdung_customdmg
+title=Gate Keeper
+tag.name.hue=0b14
+str=1000
+dex=1000
+int=1000
+on @gethit
+src.stone 1
+src.timerf 3,stone 0
+say @0b14,1,1 Hlupaku, tak odeme nic nedostanes!
+return 1
+
+[speech spk_rockdung_isumiel]
+on=klic
+if <distance> < 3
+say @0b14,1,1 tak, mam klic, ale nic neni zadarmo!
+endif
+on=cena
+if <distance> < 3
+say @0b14,1,1 dostanete ho za 5.000 a srdce cerneho medveda
+endif
+on=mam
+if <distance> < 3
+if (<src.restest 1 i_rockdung_bear_heart> && <src.restest 5000 i_gold>)
+say @0b14,1,1 tady mate klic, ale vezte, ze dal na vas ceka jedine smrt! Hahahaha!
+src.consume 1 i_rockdung_bear_heart
+src.consume 5000 i_gold
+serv.newitem i_rockdung_key_2,1,<src.uid>
+timerf 4, go 6430,370,0
+timerf 600, go 5226,1883,1
+else
+say @0b14,1,1 nic nemas!
+endif
+endif
+
+[itemdef i_rockdung_key_2]
+id=i_key_copper
+type=t_normal
+name=Klic 2
+on @create
+color=07a1
+
+/////////////////////////////////////////////////
+//////////////// TREES //////////////////////////
+/////////////////////////////////////////////////
+[itemdef 0224b] 
+defname=i_willow_tree
+//grafika
+[itemdef i_rockdung_tree]
+//morey - timer respa, morex= hity
+id=i_willow_tree
+name=Holy Tree
+on @create
+more1=0
+morey = 1800
+morex=30
+on @dclick
+if !(<src.flags>&020)
+return 1
+endif
+if <distance> > 1
+    //src.message daleko
+    return 1
+endif
+obj=<uid>
+forplayers 1
+    local.dam=rand(10,20)
+    damage <eval <local.dam>>,080
+    effect 3,i_fx_curse,3,16,1,<hval <obj.color>-1>
+endfor
+if <timer>>0
+    //src.message jeste ne
+    src.damage 50,080
+    src.effect 3,i_fx_curse,3,16,1,<hval <color>-1>
+    return 1
+endif
+if <more1>==<morex>
+    return 1
+endif
+if !((<src.weapon.type>==t_weapon_mace_sharp) || (<src.weapon.type>==t_weapon_sword))
+    src.message tim to nepujde
+return 1
+endif
+
+
+src.anim 9
+more1 +=1
+if <more1><<morex>
+    src.message +1 [<eval <more1>>]
+else
+//src.message znicene
+move 0 0 -50
+morez=1
+timer=<morey>
+return 1
+endif
+timerd=rand(25,35)
+return 1
+on @timer
+if <morez>==1
+more1=0
+morez=0
+move 0 0 50
+return 1
+endif
+return 1
+
+[chardef c_rockdung_tree_guard_gold]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_rockdung_noparalyze,e_resisty
+on @create
+events +e_rockdung_customdmg
+//homedist=5
+tag.name.hue=0b14
+tag.resist_magic=40
+tag.resist_necro=100
+tag.resist_phys=20
+tag.resist_pierce=-20
+tag.resist_blunt=-30
+karma=-10000
+fame={4000 6000}
+modar=40
+title=Guardian of the Golden Tree
+brain=brain_human
+str=50
+maxhits=1500
+dex=100
+int=3000
+maxmana=1
+magery=300
+color=colors_skin
+//loot
+item=i_gold,{800 1000}
+item=random_special_reagents,{25 40}
+item=random_reagents,{15 25}
+item=i_scroll_greater_heal,{3 5}
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0798
+item=i_sandals
+item=i_rockdung_tree_guard_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_staff_quarter_iron
+color=0798
+name=Staff
+on @regionenter
+tag.nomovetill=07fffffff 
+
+[chardef c_rockdung_tree_guard_silver]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_rockdung_noparalyze,e_resisty
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+//homedist=5
+tag.resist_magic=40
+tag.resist_necro=100
+tag.resist_phys=20
+tag.resist_pierce=-20
+tag.resist_blunt=-30
+karma=-10000
+fame={4000 6000}
+modar=40
+title=Guardian of the Silver Tree
+brain=brain_human
+str=50
+maxhits=1500
+dex=100
+int=3000
+maxmana=1
+magery=300
+color=colors_skin
+//loot
+item=i_gold,{800 1000}
+item=random_special_reagents,{25 40}
+item=random_reagents,{15 25}
+item=i_scroll_greater_heal,{3 5}
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=07a1
+item=i_sandals
+item=i_rockdung_tree_guard_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_staff_quarter_iron
+color=07a1
+name=Staff
+on @regionenter
+tag.nomovetill=07fffffff 
+
+[typedef t_rockdung_playeronly]
+on=@step
+if !<src.isplayer>
+if !<morep>
+if (<src.dir>==0)
+src.move 0 1 0
+elseif (<src.dir>==1)
+src.move -1 1 0
+elseif (<src.dir>==2)
+src.move -1 0 0
+elseif (<src.dir>==3)
+src.move -1 -1 0
+elseif (<src.dir>==4)
+src.move 0 -1 0
+elseif (<src.dir>==5)
+src.move 1 -1 0
+elseif (<src.dir>==6)
+src.move 1 0 0
+elseif (<src.dir>==7)
+src.move 1 1 0
+endif
+else
+src.go=<morep>
+endif
+endif
+
+[typedef t_rockdung_treeDoor]
+//morez Z, morex timer, more1/2 TREEs uid
+on @dclick
+if <timer>==-1
+    if ((<uid.<more1>.morez>==1) && (<uid.<more2>.morez>==1))
+    move 0 0 <morez>
+    timer=<morex>
+    return 1
+    endif
+    message Stromy ti brani projit
+endif
+return 1
+on @timer
+move 0 0 -<morez>
+return 1
+
+[itemdef i_rockdung_tree_guard_brain]
+id=i_memory
+type = t_eq_script
+name=mem
+on @timer
+cont.mana=1
+obj=<cont.memoryfindtype.0200.link.link>
+if <obj.morez>==1
+    timer=1
+    return 1
+endif
+if <obj.more1><1
+    timer=1
+    return 1
+endif
+cont.face <obj.uid>
+cont.forcecast 504,<obj.uid>
+timer=rand(4,6)
+return 1
+
+[itemdef i_rockdung_tTraps]
+//more1= restart pasti
+id = i_crystal_ball
+on @create
+attr=090
+color=07a1
+morey=0
+more1=300
+on @timer
+if <morey>==<more1>
+rockdung_tRemoveTraps
+rockdung_tTraps <color>
+morey = 0
+timer=1
+return 1
+endif
+morey +=1
+rockdung_ttrap_reveal
+timer=1
+return 1
+
+[function rockdung_ttrap_reveal]
+obj=<uid>
+forplayers 13
+  if <CanSeeLos <obj.uid>>
+      spelleffect s_reveal,1000
+  endif
+endfor
+[function rockdung_tRemoveTraps]
+foritems 13
+    if <type>==t_rockdung_tTrap
+        remove
+    endif
+endfor
+
+[function rockdung_tTraps]
+//args = 1 gold, 2 silver
+local.fullX=1
+local.fullY=1
+for 32
+    local.i=1
+    while <local.i>==1
+    if <args>==0798
+    local.x=<eval rand(5235,5257)>
+    elseif <args>==07a1
+    local.x=<eval rand(5203,5226)>
+    endif
+    local.y=<eval rand(1861,1865)>
+            local.a=0
+            for <getargcount <local.fullX>>
+            if ((<eval <getarg <local._for>,<local.fullX>>>==<eval <local.x>>) && (<eval <getarg <local._for>,<local.fullY>>>==<eval <local.y>>))
+                local.a=1
+            endif
+            endfor
+            if <local.a>==0
+                        serv.newitem 03891
+                        new.type=t_rockdung_tTrap
+                        new.attr=090
+                        new.p=<eval <local.x>>,<eval <local.y>>,5
+                        new.color=<color>
+                        new.link=<uid>
+                        new.timer=-1
+                        local.fullX .=,<eval <local.x>>
+                        local.fullY .=,<eval <local.y>>
+                 local.i=2
+            endif
+
+    endwhile
+endfor
+
+[typedef t_rockdung_tTrap]
+on @step
+if <timer>==-1
+if (<src.isplayer>) && (<src.hits>>0) && (!<src.isgm>)
+    if <color>==07a1
+        serv.newnpc c_rockdung_tTrapSilver
+    else
+        serv.newnpc c_rockdung_tTrapGold
+    endif
+        new.p=<p>
+        new.update
+        new.tag.ctrl=<link>
+        new.events +e_rockdung_tTrap_mob
+        new.timerf 360,remove
+        link.morex +=1
+        timer=rand(120,180)
+endif
+endif
+on @timer
+return 1
+
+[events e_rockdung_tTrap_mob]
+on @destroy
+uid.<tag.ctrl>.morex -=1
+    
+[typedef t_rockdung_tTrapDoor]
+on @dclick
+if <timer>==-1
+    if <link.morex>==0
+    timer = <morex>
+    move 0 0 <morez>
+    //open
+    else
+    message neco zije
+    endif
+endif
+return 1
+
+on @timer
+move 0 0 -<morez>
+link.morey=<link.more1>
+link.trigger=@timer
+return 1
+
+[chardef c_rockdung_tTrapSilver]
+id=c_bird
+name=storm bird
+can=mt_walk|mt_run
+on @create
+events +e_rockdung_customdmg
+color=0bb7
+str=1
+maxhits = 150
+int = 1000
+maxmana = 100
+dex=10
+magery=4000
+karma=-5000
+fame=100
+item=i_gold,{100 200}
+on @spellcast
+mana=100
+argn1=505 //custom chain
+on @gethit
+if <src.uid>!=<uid>
+    return 1
+endif
+
+[chardef c_rockdung_tTrapGold]
+id=c_bird
+name=fiery bird
+can=mt_walk|mt_run
+on @create
+events +e_rockdung_customdmg
+color=0b12
+str=1
+maxhits = 150
+int = 1000
+maxmana = 100
+dex=10
+magery=1300
+karma=-5000
+fame=100
+item=i_gold,{150 200}
+on @spellcast
+mana=100
+argn1=506 //custom masskvf
+on @gethit
+if <src.uid>!=<uid>
+    return 1
+endif
+
+
+
+////////////////////////////////////////////////
+//////////////////// EVENTS & GLOBALS///////////
+////////////////////////////////////////////////
+[chardef c_looter]
+id=c_man
+name=looter
+on @create
+events +e_rockdung_customdmg
+str=100
+dex=100
+int=100
+item=i_rockdung_npclooting
+timer=1
+
+[itemdef i_rockdung_npclooting]
+id=i_memory
+name=looting
+type=t_eq_script
+on @timer
+if !((<cont.action>==-1) || (<cont.action>==06d) || (<cont.action>==067) || (<cont.action>==065)) //jesli cos robi to nielootuje
+timer=4
+return 1
+endif
+if <tag0.rockdung_lootamount><1 //jesli nie ma co lootit
+	if <tag0.home>
+	cont.home=<tag.home>
+	cont.homedist=<tag.homedist>
+	tag.home=
+	tag.homedist=
+	endif
+	tag.corpse=<cont.rockdung_loot_findcorpse>
+	if <tag0.corpse> > 0
+		tag.home=<cont.home>
+		cont.home=<uid.<tag.corpse>.p>
+		tag.homedist=<cont.homedist>
+		cont.homedist=1
+		timer=<eval <cont.distance <tag.corpse>> + 2>
+		return 1
+	endif
+	timer=5
+	return 1
+else
+ref5=<tag.corpse>
+if !<ref5.uid>
+tag.rockdung_lootamount=0
+timer=5
+return 1
+endif
+if !<cont.CanSeeLOS <ref5.uid>>
+tag.rockdung_lootamount=0
+timer=5
+return 1
+endif
+local.item=0
+	forcont <ref5>
+	if ((<type>!=t_beard) && (<type>!=t_hair) && (<baseid>!=i_bandage))
+	local.item=<uid>
+	endif
+	endfor
+	if <local.item>==0 
+	tag.rockdung_lootamount=0
+	timer=5
+	return 1
+	else
+	trysrc <cont.uid> uid.<local.item>.bounce
+	cont.say @0b14, *looting <uid.<local.item>.name>*
+	tag.rockdung_lootamount -=1
+	timer=rand(3,7)
+	endif	
+endif
+timer=3
+return 1
+
+[function rockdung_loot_findcorpse]
+ref3=<uid>
+foritems 11
+if <ref3.CanSeeLOS <uid>>
+ if ((<type>==t_corpse) && <link.uid>))
+  local.x=0
+  forcont <uid>
+  if ((<type>!=t_beard) && (<type>!=t_hair) && (<baseid>!=i_bandage))
+  local.x +=1
+  endif
+  endfor
+  if <local.x> > 0
+  ref3.findid.i_rockdung_npclooting.tag.rockdung_lootamount=<local.x>
+  return <uid>
+  endif
+ endif
+endif
+endfor
+return 0
+
+
+[typedef t_rockdung_npcTrap]
+//morex=timer , more1=npcdef
+on @step
+if ((<src.isplayer>) && (<src.hits> > 0) && (!<src.isgm>))
+if <timer>==-1
+    serv.newnpc <tag.mob>
+    new.p=<p>
+    new.update
+    new.timerf <morex>,remove
+    timer=<morex>
+endif
+endif
+on @timer
+return 1
+
+[typedef t_rockdung_paraTrap]
+on @step
+if ((<src.isplayer>) && (<src.hits> > 0) && (!<src.isgm>))
+if <timer>==-1
+serv.newitem 03967
+new.p=<p>
+new.attr=092
+new.timer=1
+src.spelleffect s_paralyze,1000
+timer=5
+endif
+endif
+on @timer
+return 1
+
+[typedef t_rockdung_DispelTrap]
+on @step
+if ((<src.isplayer>) && (<src.hits> > 0) && (!<src.isgm>))
+if <timer>==-1
+src.spelleffect s_dispel,1000
+timer=5
+endif
+endif
+on @timer
+return 1
+
+
+[events e_rockdung_ignorewisp]
+on @npclookatchar
+if <src.baseid>==c_wisp_s
+    return 1
+endif
+[events e_rockdung_noparalyze]
+on @spelleffect
+if <argn1>==38
+    return 1
+endif
+on @itemstep
+if <act.baseid>==i_fx_field_paralyze
+	act.remove
+    return 1
+endif
+[events e_rockdung_NoAreaSpells]
+on @spelleffect
+if ((<argn>==57) || (<argn>==49) || ((<argn>==55))//dopisac te nowe !!!
+    return 1
+endif
+
+[function f_rockdung_hpregen]
+hits += <argv[0]>
+if <hits> > <maxhits>
+    hits=<maxhits>
+    
+endif
+timerf <eval <argv[1]>>,f_rockdung_hpregen,<argv[0]>,<argv[1]>
+
+[function f_rockdung_stopprovok]
+attacker.delete <argv[0]>
+ref5=<argv[0]>
+if <brain>==2
+say Ups! Nejak jsem se spletl
+endif
+ref5.attacker.delete <uid>
+
+[function damcalc] //dmg, armor, faktor, bonus , resist
+float.armor=<eval <argv[1]>>
+float.dam=<floatval <eval <argv[0]>> + <floatval ((<eval <argv[3]>*<argv[0]>>)/100)>> //bonus
+float.rad=<floatval (<float.armor> / 157.08) * 90>
+float.faktor=<eval <argv[2]>> //tag.armod default = DAM*2/3
+float.maxdmg <floatval <float.dam> - ((<float.armor>/20) + (sin(<float.rad>) * <float.faktor>))>
+float.mindmg <floatval <float.dam> - ((<float.armor>/8) + (sin(<float.rad>) * <float.faktor>))>
+float.maxdmg -= <floatval (<eval <argv[4]>>/100)*<float.maxdmg>>> //resist
+float.mindmg -= <floatval (<eval <argv[4]>>/100)*<float.mindmg>>> //resist
+local.mindmg=<feval <floatval <float.mindmg> + 0.5>>
+local.maxdmg=<feval <floatval <float.maxdmg> + 0.5>>
+if <local.mindmg> < 0
+local.mindmg=0
+endif
+if <local.maxdmg> < 0
+local.maxdmg=0
+endif
+local.finalDmg=<eval rand(<local.mindmg>,<local.maxdmg>)>
+return <local.finaldmg>
+
+
+[events e_rockdung_customdmg]
+
+//on=@skilleffect
+//if <argn1>==15
+//if (rand(2)==1)
+//findid.i_memory_enticement_unava.remove
+//say <argo.name>, twoja gra dodaje mi sil!
+//say Vas Uus Mani
+//anim 17
+//spelleffect 513,1000
+//endif
+//endif
+
+
+on @spelleffect
+if ((<serv.spell.<argn1>.flags>&spellflag_harm) && (<src.isevent.e_rockdung_customdmg> || <src.istevent.e_rockdung_customdmg>))
+if (<src.uid>!=<uid>)
+Say Co to delas?
+src.attacker.delete <uid>
+src.timerf 1, say Ups!
+return 1
+endif
+endif
+
+
+on=@hit 
+if (<src.isevent.e_rockdung_customdmg> || <src.istevent.e_rockdung_customdmg>)// anti-provok
+	 if <tag0.vyprovokovany>
+	 tag.vyprovokovany=
+	 if <src.brain>==2
+	 src.say Co to delas?
+	 endif
+	 local.timer=rand(2,6)
+	 timerf <eval <local.timer>>,f_rockdung_stopprovok <src.uid>
+	 endif
+endif
+
+if (<tag0.backstab>)             //rogue backstab
+    if (<rockdung_getDir <src.uid>>==1)
+        local.back=<src.rockdung_backstab>
+        if (<local.back>)
+            if <tag0.back><<serv.time>
+            tag.dmgmod 260
+            //argn1 *=26
+            //argn1 /=10
+            say *critical*
+            tag.back=<eval <serv.time>+ rand(40,80)>
+            src.rockdung_stabbed <uid>
+            go <local.back>
+            endif
+        endif
+    else (<rockdung_getDir <src.uid>>==2)
+        say *critical*
+        tag.dmgmod 260
+        //Argn1 *=26
+        //argn1 /= 10
+        src.rockdung_stabbed <uid>
+    endif
+endif
+/////////////////////////////////////////////////
+/////////////////////////SPELLS////////////////
+//////////////////////////////////////////////////
+
+
+[spell 501]
+defname=s_summon_heal_npc
+name=summon heal
+cast_time=2
+runes = IMX
+flags=spellflag_good|spellflag_targ_char
+manause = 0
+//EFFECT_ID=i_fx_HEAL_EFFECT
+//EFFECT=10,50
+skillreq=magery 1.0
+interrupt=1.0,1.0
+on @select
+on @effect
+spelleffect s_greater_heal 2500 <src.uid>
+
+
+[Spell 500]
+DEFNAME=s_light_aura_npc
+NAME=Aura of Light
+SOUND=01f7
+RUNES=ULS
+CAST_TIME=1.2
+RESOURCES=i_reag_garlic, i_reag_ginseng, i_reag_batwing
+FLAGS=SPELLFLAG_GOOD|spellflag_targ_char
+EFFECT_ID=0
+EFFECT=0
+DURATION=0
+MANAUSE=25
+SKILLREQ=MAGERY 10.0, WHITEMAGIC 96.0
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+if <hits>==0
+return 1
+endif
+findid.i_memory_poison.trigger=@konec
+serv.newitem i_rune_light_aura,1,<uid>
+new.morex=15
+new.link=<uid>
+new.timerd=1
+sound=01F7
+SPELLEFFECT s_magic_reflection 1000 <src.uid>
+modar +=25
+EVENTS +e_light_aura
+
+[Spell 502]
+DEFNAME=s_mass_wall_dispel_npc
+NAME=npc dispel // elven priest
+SOUND=01f7
+RUNES=VAG
+CAST_TIME=2.2
+//RESOURCES=i_reag_garlic, i_reag_ginseng, i_reag_batwing
+FLAGS=SPELLFLAG_GOOD|spellflag_targ_char
+EFFECT_ID=0
+EFFECT=0
+DURATION=0
+MANAUSE=1
+SKILLREQ=MAGERY 10.0
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+foritems 4
+    if (((<baseid>==i_fx_field_paralyze) || (<baseid>==i_fx_energy_field) || (<baseid>==i_wall_stone_7)) && (<type>==t_spell))
+        remove
+    endfor
+endif
+
+[Spell 503]
+DEFNAME=s_mass_wall_dispel_npc2
+NAME=npc dispel // elven archer recruits
+SOUND=01f7
+RUNES=VAG
+CAST_TIME=1.2//RESOURCES=i_reag_garlic, i_reag_ginseng, i_reag_batwing
+//FLAGS=SPELLFLAG_TARG_OBJ| SPELLFLAG_DIR_ANIM
+FLAGS=
+EFFECT_ID=0
+EFFECT=0
+DURATION=0
+MANAUSE=1
+SKILLREQ=MAGERY 10.0
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+//obj=<uid>
+foritems 9
+    if (((<baseid>==i_fx_energy_field) || (<baseid>==i_fx_field_paralyze) || (<baseid>==i_wall_stone_7)) && (<type>==t_spell) )
+        remove
+    endfor
+endif
+
+[Spell 504]
+DEFNAME=s_rockdung_heal_tree
+NAME=npc dispel // elven archer recruits
+SOUND=01f7
+RUNES=IMS
+CAST_TIME=1.2//RESOURCES=i_reag_garlic, i_reag_ginseng, i_reag_batwing
+//FLAGS=SPELLFLAG_TARG_OBJ| SPELLFLAG_DIR_ANIM
+FLAGS=spellflag_good
+EFFECT_ID=i_fx_heal_effect//0375a
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+if <more1>>0
+    flexeffect 2,i_fx_heal_effect,2,20,0,0,0,0,<p.x>,<p.y>,<eval <p.z>+15>,<p.x>,<p.y>,<p.z>
+    more1 -= 1
+endif
+
+[spell 505]
+DEFNAME=s_rockdung_trap_chain
+NAME=npc chain // storm crow
+SOUND=01f7
+RUNES=
+CAST_TIME=1.5
+FLAGS=spellflag_harm
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+forchars 7
+    if !STRMATCH(*rockdung*,<baseid>)
+        spelleffect s_lightning,<src.magery>,<src.uid>
+    endif
+endfor
+    
+[spell 506]
+DEFNAME=s_rockdung_trap_chain
+NAME=npc mass kvf
+SOUND=01f7
+RUNES=
+CAST_TIME=1.5
+FLAGS=spellflag_harm
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on=@select
+
+on=@effect
+forchars 7
+    if !STRMATCH(*rockdung*,<baseid>)
+        spelleffect 51,<src.magery>,<src.uid>
+    endif
+endfor
+
+
+[itemdef i_rockdung_scroll_summontree]
+type=t_scroll
+id = i_scroll_flamestrike
+name=Summon Tree of Life
+on @create
+attr=attr_magic
+color=07a1
+morex=507
+morey=1000    
+    
+[spell 507]
+DEFNAME=s_rockdung_summon_tree
+NAME=tree of life
+SOUND=01f7
+RUNES=KMLY
+scroll_item=i_rockdung_scroll_summontree
+CAST_TIME=2.5
+FLAGS=spellflag_good
+EFFECT_ID=i_fx_bless_effect
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on=@select
+obj=<uid>
+foritems 7
+    if <baseid>==i_rockdung_treeoflife
+    obj.message Not allowed.
+    return 1
+    endif
+endfor
+on=@start
+tag.nomovetill=<eval 20+<serv.time>>
+on=@effect
+serv.newitem i_rockdung_treeoflife
+new.p=<p>
+new.nudgedown 2
+new.attr=010
+new.timer=1
+serv.newitem 0247c
+new.p=<p>
+new.nudgedown 3
+new.name=Tree of Life
+new.color=07a1
+new.timer=60
+new.attr=012
+[itemdef i_rockdung_treeoflife]
+id = 0247d
+name=Tree of Life
+on @create
+color = 07a1
+morex = 60
+on @timer
+morex -=1
+forplayers 2
+if !(<flags>&statf_dead)
+effect=3,i_fx_sparkle,3,16,1,0
+    hits +=8
+    if <hits>><maxhits>
+        hits=<maxhits>
+    endif
+    mana +=5
+    if <mana>><maxmana>
+        mana=<maxmana>
+    endif
+    findid.i_rune_curse.remove
+    findid.i_memory_poison.remove
+    findid.i_bleeding.remove
+    findid.i_rune_rockdung_silence.trigger=@timer
+    findid.i_rune_rockdung_manaleech.remove
+    findid.i_rune_rockdung_staminaleech.remove
+    events -e_rockdung_disarm
+    events -e_bleeding
+    findid.i_rune_rockdung_armorcurse.trigger=@timer
+endif
+endfor
+if <morex>==0
+    remove
+    return 1
+endif
+timer=1
+return 1
+
+
+
+[spell 508]
+///silence
+DEFNAME=s_rockdung_silence
+NAME=Silence
+SOUND=01f7
+RUNES=AOW
+CAST_TIME=1.5
+FLAGS=spellflag_harm|spellflag_fx_targ|spellflag_targ_char|spellflag_dir_anim|spellflag_curse
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+
+on @effect
+if <istevent.e_rockdung_customdmg>
+return 1
+endif
+sysmessage @0796,1,1 Tvoje magicke schopnosti jsou nyni zablokovany!
+effect=3,i_fx_curse,3,16,1,07a0
+events +e_rockdung_silence
+serv.newitem i_rune_rockdung_silence,1,<uid>
+new.color=0795
+new.timer={30 40}
+
+[events e_rockdung_silence]
+on @spellselect
+if <argn1>!=515
+message *blocked*
+effect=3,i_fx_curse,3,16,1,080f
+return 1
+endif
+[itemdef i_rune_rockdung_silence]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+cont.events -e_rockdung_silence
+remove
+return 1
+
+
+
+[spell 509]
+DEFNAME=s_rockdung_manaleech
+NAME=Mana Leech
+SOUND=01f7
+RUNES=DW
+CAST_TIME=1.5
+FLAGS=spellflag_harm|spellflag_fx_targ|spellflag_targ_char|spellflag_dir_anim|spellflag_curse
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+//
+on @effect
+if <istevent.e_rockdung_customdmg>
+return 1
+endif
+if <findid.i_rune_rockdung_manaleech>
+return 1
+endif
+serv.newitem i_rune_rockdung_manaleech,1,<uid>
+new.morex={30 60}
+new.color=0796
+new.timer=1
+
+[itemdef i_rune_rockdung_manaleech]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+if <morex>>0
+cont.effect 3,0377a,3,16,1,0795
+if <cont.mana>>5
+cont.mana -={1 5}
+else
+cont.mana=0
+endif
+morex -=1
+timer=1
+else
+remove
+endif
+return 1
+
+[spell 510]
+DEFNAME=s_rockdung_staminaleech
+NAME=Mana Leech
+SOUND=01f7
+RUNES=DP
+CAST_TIME=1.5
+FLAGS=spellflag_harm|spellflag_fx_targ|spellflag_targ_char|spellflag_dir_anim|spellflag_curse
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+//
+on @effect
+if <istevent.e_rockdung_customdmg>
+return 1
+endif
+if <findid.i_rune_rockdung_staminaleech>
+return 1
+endif
+serv.newitem i_rune_rockdung_staminaleech,1,<uid>
+new.morex={30 60}
+new.color=0799
+new.timer=1
+
+[itemdef i_rune_rockdung_staminaleech]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+if <morex>>0
+cont.effect 3,0377a,3,16,1,0798
+if <cont.stam>>4
+cont.stam -={1 4}
+else
+cont.stam=0
+endif
+morex -=1
+timer=1
+else
+remove
+endif
+return 1
+
+[spell 511]
+DEFNAME=s_rockdung_massheal //do areny
+NAME=Mass Greater Heal
+SOUND=01f7
+RUNES=VIM
+CAST_TIME=4.5
+scroll_item=i_rockdung_scroll_massheal
+FLAGS=spellflag_good
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on @effect
+forplayers 5
+if !(<flags>&statf_dead)
+spelleffect 29,1000
+endif
+endfor
+
+[spell 512]
+DEFNAME=s_rockdung_ress //do areny
+NAME=Arena Quick Ress
+SOUND=01f7
+RUNES=AC
+CAST_TIME=2.5
+scroll_item=i_rockdung_scroll_resurrection
+FLAGS=spellflag_good|spellflag_targ_char|spellflag_targ_dead
+EFFECT_ID=i_fx_heal_effect
+EFFECT=0
+DURATION=0
+MANAUSE=20
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+on @effect
+if !(<flags>&statf_dead)
+return 1
+endif
+resurrect
+hits=<maxhits>
+
+[spell 513]
+defname=s_rockdung_enticementboost
+NAME=greater strenght
+SOUND=01f7
+RUNES=VUM
+CAST_TIME=
+scroll_item=i_rockdung_scroll_massheal
+FLAGS=spellflag_good
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+on @effect
+effect 3,i_fx_sparkle,3,32,1
+if <findid.i_rockdung_enticementboost.uid>
+return 1
+endif
+
+newitem i_rockdung_enticementboost,1,<uid>
+new.timer=300
+new.tag.str=<str>
+new.tag.dex=<dex>
+str *=2
+dex = 200
+modar +=75
+regenvalhits +=100
+
+[itemdef i_rockdung_enticementboost]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+cont.str=<tag.str>
+cont.dex=<tag.dex>
+cont.modar -=75
+cont.regenvalhits -=100
+remove
+return 1
+
+[spell 514]
+defname=s_rockdung_rage //Morion boost
+SOUND=01f7
+RUNES=IC
+CAST_TIME=1.5
+scroll_item=
+FLAGS=spellflag_good|spellflag_targ_char
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+on @effect
+effect 3,0375a,3,200,1,0798
+
+serv.newitem i_rockdung_rage,1,<uid>
+new.timer=10
+new.tag.dex=<dex>
+modstr +=350
+tag.resist_magic -=30
+dex = 200
+modar -=20
+
+[itemdef i_rockdung_rage]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+cont.modstr -=350
+cont.dex=<tag.dex>
+cont.modar +=20
+cont.tag.resist_magic +=30
+remove
+return 1
+
+[itemdef i_rockdung_scroll_ultimate_defense]
+type=t_scroll
+id = i_scroll_protection
+name=Ultimate Protection
+on @create
+attr=attr_magic
+color=color_o_valorite
+morex=515
+morey=1000
+on @dclick
+if <src.istimerf.rockdung_ud_del>
+return 1
+endif
+
+[spell 515]
+defname=s_rockdung_ultimate_defense //arenatank UD
+SOUND=01f7
+RUNES=VUS
+CAST_TIME=2.0
+scroll_item=i_rockdung_scroll_ultimate_defense
+FLAGS=spellflag_good
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+on @effect
+effect 3,0375a,3,200,1
+timerf 10,effect 3,0375a,3,100,1
+modar +=50
+timerf 15,rockdung_ud_del
+
+[function rockdung_ud_del]
+modar -=50
+
+[itemdef i_rockdung_olivine]
+id=03194
+type=t_normal
+name=olivine 
+on @create
+color=0b1d
+
+////////////elementals spell
+[spell 516]
+defname=s_rockdung_eIceball
+FLAGS=spellflag_harm|spellflag_targ_char|spellflag_dir_anim
+EFFECT=0
+CAST_TIME=1.0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+on @effect
+action=-1
+flexeffect 0,038bd,3,16,0,07a0,0,0,<src.p.x>,<src.p.y>,<eval <src.p.z>+10>,<p.x>,<p.y>,<eval <p.z>>
+local.dam=rand(60,70)
+local.dam -= <eval <ar>/4>
+damage <eval <local.dam>> 02084 <src.uid>
+
+[spell 517]
+defname=s_rockdung_eIcePara
+FLAGS=spellflag_harm|spellflag_targ_char|spellflag_dir_anim
+EFFECT=0
+CAST_TIME=1.0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+on @start
+anim 19
+on @effect
+serv.newitem 08e4
+new.p=<p>
+new.color=0bb7
+new.name=ice
+new.attr=012
+new.timer=4
+tag.nomovetill=<eval <serv.time> + 40>
+action=-1
+damage {20 30} 02004 <src.uid>
+
+[spell 518]
+defname=s_rockdung_eStoneThrow
+FLAGS=spellflag_harm|spellflag_targ_char|spellflag_dir_anim
+EFFECT=0
+CAST_TIME=2.0
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+
+on @effect
+effect 3,i_trap_boulder,3,40,0
+tag.nomovetill=<eval <serv.time> + 20>
+action=-1
+damage <damcalc 90,<armor>,50,0,0> 080 <src.uid>
+
+[spell 519]
+defname=s_rockdung_lomendilwisp
+FLAGS=spellflag_good|spellflag_targ_char
+EFFECT=0
+RUNES=KX
+CAST_TIME=1.5
+DURATION=0
+MANAUSE=0
+SKILLREQ=magery 0
+INTERRUPT=1.0,1.0
+
+on @effect
+serv.newnpc c_rockdung_wisplomendil
+new.p=<p>
+new.tag.master=<uid>
+tag0.wisps +=1
+
+[spell 520]
+///silence
+DEFNAME=s_rockdung_armor_curse
+NAME=Armor curse
+SOUND=01f7
+RUNES=AS
+CAST_TIME=1.5
+FLAGS=spellflag_harm|spellflag_fx_targ|spellflag_targ_char|spellflag_dir_anim|spellflag_curse
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+
+on @effect
+if <istevent.e_rockdung_customdmg>
+return 1
+endif
+sysmessage @0796,1,1 Tvuj phys. resist byl snizen!
+tag0.resist_phys -=20
+effect=3,i_fx_glow_spike,1,16,1,07a1
+serv.newitem i_rune_rockdung_armorcurse,1,<uid>
+new.timer=10
+
+[itemdef i_rune_rockdung_armorcurse]
+id=i_rune_curse
+type=t_eq_script
+on @timer
+cont.tag0.resist_phys +=20
+remove
+return 1
+
+[spell 521]
+///disarm
+DEFNAME=s_rockdung_disarm
+NAME=Armor curse
+SOUND=01f7
+RUNES=AJ
+CAST_TIME=1.5
+FLAGS=spellflag_harm|spellflag_fx_targ|spellflag_targ_char|spellflag_dir_anim|spellflag_curse
+EFFECT_ID=
+EFFECT=0
+DURATION=0
+MANAUSE=0
+SKILLREQ=MAGERY 0.1
+INTERRUPT=1.0,1.0
+
+on @effect
+if <istevent.e_rockdung_customdmg>
+return 1
+endif
+if !<weapon>
+return 1
+endif
+sysmessage @0796,1,1 <weapon.name> vypadl ti z rukou!
+unequip <weapon>
+effect=3,i_fx_curse,3,16,1
+events +e_rockdung_disarm
+timerf 8,events -e_rockdung_disarm
+
+[events e_rockdung_disarm]
+on @itemequiptest
+if <act.isweapon>
+sysmessage @0796,1,1 Mocna kouzla ti neumoznuji uchopit zbran
+return 1
+endif
+
+[REGIONRESOURCE mr_rockdung_olivine]
+skill=600,1100
+amount=1
+reap=i_rockdung_olivine
+reapamount=1
+regen=60*10
+
+
+[events e_rockdung]
+//// PLAYER EVENT
+//on @login
+//src.regenvalmana -=15
+
+on @itemdclick
+if (<act.baseid>==i_scroll_snowstorm) || (<act.baseid>==i_scroll_thunder_blast) || (<act.baseid>==i_scroll_fire_ring) || (<act.baseid>==i_scroll_ice_ring) || (<act.baseid>==i_scroll_poison_ring)
+message Not allowed.
+return 1
+endif
+
+[ITEMDEF i_rockdung_regen]
+id=i_memory
+name=rockdung regen
+type=t_eq_Script
+on=@timer
+return 1
+on=@destroy
+link.regenvalmana -=15
+link.sysmessage Zlepsena regenerace many te opustila.
+
+[REGIONTYPE r_rockdung]
+on @enter
+if <src.isplayer>
+src.events +e_rockdung
+if !(<src.findid.i_rockdung_regen.uid>)
+   serv.newitem=i_rockdung_regen,1,<src.uid>
+   new.link=<src.uid>
+   src.regenvalmana +=15
+   src.sysmessage Citis ze zde lepe regenerujes manu.
+endif
+endif
+
+on @exit
+if <src.isplayer>
+if (<src.findid.i_rockdung_regen.uid>)
+src.consume 1000 i_rockdung_regen
+endif
+src.events -e_rockdung
+endif
+src.consume 1000 i_rockdung_olivine
+src.consume 1000 i_rockdung_scroll_summontree
+src.consume 1000 i_rockdung_elvenhammer
+src.consume 1000 i_rockdung_olivineshield
+src.consume 1000 i_rockdung_morionkey
+src.consume 1000 i_rockdung_key_1
+src.consume 1000 i_rockdung_key_2
+
+
+[REGIONTYPE r_rockdung_dul t_rock]
+//250
+RESOURCES=45.0 mr_rockdung_olivine
+RESOURCES=80.0 mr_nothing
+RESOURCES=100.0 mr_iron
+RESOURCES=60.0 mr_silver
+RESOURCES=5.0 mr_mytheril
+
+[itemdef i_rockdung_anvil]
+id=02dd5
+name=elven anvil
+type=t_anvil
+
+[itemdef i_rockdung_forge]
+id=i_elven_forge
+name=elven forge
+type=t_forge
+
+on=@targon_item
+if (<src.targ.uid>==<uid>)
+if (<src.talentmining> > 49.9)
+   if (<src.restest 2 i_ingot_titanium>)&&(<src.restest i_ingot_uniculium>)
+   sdialog d_mining_adamatine
+   return 1
+   endif
+ELSE
+ return 0
+endif
+endif
+
+
+[skillmenu sm_rockdung_olivineshield]
+Elven anvil
+on=i_shield_elven @0b15 Olivine Crystal Shield (10 olivine)
+makeitem i_rockdung_olivineshield
+
+[itemdef i_rockdung_olivineshield]
+id=i_shield_elven
+name=Olivine Crystal Shield
+resources=10 i_rockdung_olivine
+skillmake=blacksmithing 50.0,t_weapon_mace_smith
+armor=5
+on @create
+color=0b15
+hitpoints=100
+[itemdef i_rockdung_elvenhammer]
+id=i_hammer_smith
+dam=5
+on @create
+color=0481
+hitpoints=1000
+on @dclick
+equip
+target
+return 1
+on @targon_item
+if <src.targ.baseid>==i_rockdung_olivine
+src.skillmenu sm_rockdung_olivineshield
+return 1
+endif
+
+
+[DIALOG d_mining_adamatine]
+0,0
+resizepic 50 50 3600 380 200
+
+page 0
+text 115 80  52 0
+text 180 120 1152 1
+button 125 120 4005 4006 1 0 1
+
+[DIALOG d_mining_adamatine TEXT]
+Jaky kov si prejes ztavit nebo slit?
+Adamantine Ingot
+
+[DIALOG d_mining_adamatine BUTTON]
+on=1
+local.pocet=0
+while (<src.restest 2 i_ingot_titanium>)&&(<src.restest i_ingot_uniculium>)
+   src.consume 2 i_ingot_titanium
+   src.consume 1 i_ingot_uniculium
+   local.pocet +=1
+endwhile
+IF (<local.pocet>)
+src.emote sleva adamantine ingoty
+src.sysmessage Pockej na dokonceni procesu...
+timerf <eval <local.pocet>/10>, src.newitem i_ingot_adamantine,<local.pocet>,<src.uid>
+timerf <eval <local.pocet>/10>, sound=0228
+ELSE
+   src.message Nemas dostatek materialu..
+   return 1
+ENDIF
+
+
+[AREADEF Stinova Enklava]
+TAG.no_bank_kit=1
+EVENTS=r_rockdung,r_rockdung_dul
+P=5230,1863,5
+RECT=5130,1806,5376,1958,0
+FLAGS=089a
+
+[ROOMDEF Prvni cast]
+GROUP=Stinova Enklava
+RECT=5130,1806,5165,1915,0
+RECT=5165,1806,5200,1845,0
+RECT=5200,1806,5225,1827,0
+
+[ROOMDEF Druha cast]
+TAG.drop_modifikace=175
+GROUP=Stinova Enklava
+RECT=5225,1806,5267,1835,0
+RECT=5267,1826,5279,1835,0
+RECT=5203,1830,5225,1846,0
+RECT=5225,1835,5247,1846,0
+RECT=5172,1846,5287,1877,0
+RECT=5223,1877,5238,1890,0
+
+[ROOMDEF Treti cast]
+TAG.drop_modifikace=200
+GROUP=Stinova Enklava
+RECT=5269,1806,5293,1826,0
+RECT=5293,1806,5375,1886,0
+
+[ROOMDEF Ctvrta cast]
+TAG.drop_modifikace=225
+GROUP=Stinova Enklava
+RECT=5288,1886,5357,1948,0
+RECT=5211,1901,5288,1948,0
+RECT=5243,1882,5288,1901,0
+
+[ROOMDEF Pokladnice]
+GROUP=Stinova Enklava
+RECT=5180,1901,5192,1914,0
+
+//[ROOMDEF Arena]
+//GROUP=Stinova Enklava
+//RECT=5302,1841,5322,1858,0
+//
+//[ROOMDEF Labyrint]
+//GROUP=Stinova Enklava
+//RECT=5289,1891,5340,1945,0
+//
+//[ROOMDEF Velky sal]
+//GROUP=Stinova Enklava
+//RECT=5224,1923,5260,1945,0
+//
+//[ROOMDEF Dul]
+//GROUP=Stinova Enklava
+//RECT=5352,1805,5375,1832,0
+//RECT=5367,1832,5375,1841,0
+
+[typedef t_rockdung_itemgiver]
+//morex=timer, tag.item=co
+on @dclick
+if (<tag0.timer<src.uid>> > <serv.time>)
+	if <eval (<tag0.timer<src.uid>>-<serv.time>)/36000)> > 0
+	src.message Uz jsi svou odmenu dostal! Prijd za <eval (<tag0.timer<src.uid>>-<serv.time>)/36000)> hodin.
+	else
+	src.message Uz jsi svou odmenu dostal! Prijd za <eval (<tag0.timer<src.uid>>-<serv.time>)/600)> minut.
+	endif
+return 1
+endif
+tag.timer<src.uid>=<eval <serv.time>+(600*<morex>)>
+src.message Tady mas svou odmenu
+serv.newitem <tag.item>,1,<src.uid>
+return 1
+
+[ITEMDEF i_rockdung_fame_ball]
+//morex=timer
+id=0e2d
+name=Fame crystal ball
+
+on @create
+attr=010
+color=0b15
+morex=1440
+tag.fame=3000
+
+on @click
+if <src.isgm>
+message [<eval <tag.fame>>]
+src.sysmessage tag.fame - fama
+src.sysmessage morex - timer v min
+endif
+
+on @dclick
+if (<tag0.timer<src.uid>> > <serv.time>)
+	if <eval (<tag0.timer<src.uid>>-<serv.time>)/36000)> > 0
+	src.message Uz jsi svou odmenu dostal! Prijd za <eval (<tag0.timer<src.uid>>-<serv.time>)/36000)> hodin.
+	else
+	src.message Uz jsi svou odmenu dostal! Prijd za <eval (<tag0.timer<src.uid>>-<serv.time>)/600)> minut.
+	endif
+return 1
+endif
+tag.timer<src.uid>=<eval <serv.time>+(600*<morex>)>
+src.message Za odmenu ziskavas slavu
+if (<src.fame> > <eval (10000 - <tag.fame>)>)
+src.sysmessage Fame [+<eval (10000 - <src.fame>)>]
+src.fame = 10000
+src.effect=3,i_fx_BLESS_EFFECT,6,15,1
+src.sound=snd_SPELL_INVISIBILITY
+else
+src.fame += <tag.fame> 
+src.sysmessage Fame [+<eval <tag.fame>>]
+src.effect=3,i_fx_BLESS_EFFECT,6,15,1
+src.sound=snd_SPELL_INVISIBILITY
+endif
+return 1
+
+[itemdef 02216]
+[itemdef 0221a]
+[itemdef 0222b]
+[itemdef 03194]
+[itemdef 02dd5]
+[itemdef 02dd6]
+[itemdef 0247c]
+[itemdef 0247d]
+[itemdef 02b7b]
+[itemdef 0319e]
+[itemdef 02fdc]
+[itemdef 02fe6]
+[itemdef 03660]
+[itemdef 035f2] 
+[itemdef 02201]
+[itemdef 02202]
+//07aa piekne namehue 
+
+///TEMPLATES
+//slaby
+[template rockdung_gift1]
+container=i_bag
+item=i_gold,{8000 12000}
+item=i_scroll_blank,{5 20}
+item=i_weapon_enchant,{1 3}
+item=ttm_lvl4
+item=ttm_lvl5,R10
+
+//stredni
+[template rockdung_gift2]
+container=i_bag
+item=i_gold,{10000 18000}
+item=i_scroll_blank,{30 50}
+item=i_weapon_enchant,{2 4}
+item=i_fishing_mapka_flaska,R10
+item=ttm_lvl4
+item=ability_high,R8
+item=stats_high,R6
+
+//dobry
+[template rockdung_gift3]
+container=i_bag
+item=i_gold,{18000 30000}
+item=i_scroll_blank,{50 80}
+item=i_fishing_mapka_flaska
+item=i_weapon_enchant,{5 10}
+item=ttm_lvl5,R2
+item=ability_high
+item=stats_high
+
+
+[template rockdung_poor]
+container=i_backpack
+item=i_scroll_greater_heal,{15 25}
+morey=1000
+item=i_potion_manatotal,{4 6}
+item=i_potion_healgreat,{3 5}
+item=i_potion_invisibility,{1 3}
+item=i_bottle_empty,{5 10}
+item=i_deed_reagent50
+item=i_bandage,{100 150}
+
+[template rockdung_good]
+container=i_backpack
+item=i_scroll_greater_heal,{40 50}
+morey=1000
+item=i_potion_manatotal,{10 20}
+item=i_potion_healgreat,{5 10}
+item=i_potion_invisibility,{3 6}
+item=i_sunkova_pizza,{3 6}
+item=i_bottle_empty,{10 15}
+item=i_deed_reagent100
+item=i_deed_reagent50,R3
+item=i_bandage,{200 300}
+
+
+[itemdef i_morion_circlet]
+id=i_circlet
+name=Morionova koruna
+type=t_jewelry
+weight=10
+Value=5000
+tevents=e_modstat_item,e_artefakt,e_resistance
+CATEGORY=Artefakty Enklava
+SUBSECTION=Sperky
+DESCRIPTION=Morionova koruna
+
+on @create
+color=0ad5
+tag.timer=30
+dorand 3
+tag.int=<eval (rand(-5,5))>
+tag.str=<eval (rand(-5,5))>
+tag.dex=<eval (rand(-5,5))>
+enddo
+dorand 9
+tag.resist_cold=<eval (rand(0,5))>
+tag.resist_slash=<eval (rand(0,5))>
+tag.resist_poison=<eval (rand(0,5))>
+tag.resist_fire=<eval (rand(0,5))>
+tag.resist_pierce=<eval (rand(0,5))>
+tag.resist_elec=<eval (rand(0,5))>
+tag.resist_flus=<eval (rand(0,5))>
+tag.resist_necro=<eval (rand(0,5))>
+tag.resist_blunt=<eval (rand(0,5))>
+enddo
+dorand 9
+tag.dmg_bonus_cold=<eval (rand(0,5))>
+tag.dmg_bonus_slash=<eval (rand(0,5))>
+tag.dmg_bonus_poison=<eval (rand(0,5))>
+tag.dmg_bonus_fire=<eval (rand(0,5))>
+tag.dmg_bonus_pierce=<eval (rand(0,5))>
+tag.dmg_bonus_elec=<eval (rand(0,5))>
+tag.dmg_bonus_flus=<eval (rand(0,5))>
+tag.dmg_bonus_necro=<eval (rand(0,5))>
+tag.dmg_bonus_blunt=<eval (rand(0,5))>
+enddo
+
+
+[itemdef i_shield_olivine_crystal]
+ID=i_shield_elven
+NAME=Olivine Crystal Shield
+value=5000
+ARMOR=38
+tevents=e_resistance,e_modstat_item,e_artefakt
+CATEGORY=Artefakty Enklava
+SUBSECTION=Stity
+DESCRIPTION=Olivine crystal shield
+
+on @create
+color=0b15
+hitpoints=1000
+tag.int=-5
+tag.resist_pierce=<eval (rand(5,10))>
+tag.timer=30
+
+[itemdef i_staff_healing]
+ID=i_staff_black
+NAME=Elven Staff
+value=5000
+tevents=e_modstat_item,e_artefakt
+CATEGORY=Artefakty Enklava
+SUBSECTION=Zbrane
+DESCRIPTION=Elven staff
+
+on @create
+color=0610
+hitpoints=1000
+tag.int=10
+tag.ability=17
+tag.ability_power=40
+tag.dmgtype=0
+tag.level=4
+tag.noenchant=1
+tag.timer=30
+
+[itemdef i_elven_blades]
+ID=i_sai
+NAME=Elven Blades
+type=t_weapon_fence
+value=5000
+tevents=e_modstat_item,e_artefakt
+CATEGORY=Artefakty Enklava
+SUBSECTION=Zbrane
+DESCRIPTION=Elven blades
+
+on @create
+color=0b15
+hitpoints=1000
+tag.dex=10
+tag.enchant=6
+tag.dmgtype=1
+tag.level=4
+tag.ability=13
+tag.ability_chance=50
+tag.ability_power=15
+tag.noenchant=1
+tag.infotext1=Fencing [+15]
+tag.timer=30
+
+[itemdef i_stary_cuthalionuv_luk]
+id=i_yumi
+name=Stary Cuthalionuv Luk
+tevents=e_modstat_item,e_artefakt,e_resistance
+type=t_weapon_bow
+speed=55
+range=14
+VALUE=5000
+CATEGORY=Artefakty Enklava
+SUBSECTION=Zbrane
+DESCRIPTION=Stary Cuthalionuv luk
+
+on @create
+hitpoints=1000
+color=07a1
+tag.level=4
+tag.dmgtype=3
+tag.ability=6
+tag.ability_chance=20
+tag.enchant=9
+tag.dex=5
+tag.dmg_bonus_pierce=5
+tag.resist_magic=-5
+tag.infotext1=Archery [+15]
+tag.noenchant=1
+tag.timer=30
+
+[itemdef i_elven_bow]
+id=i_bow_composite
+name=Elven Bow
+tevents=e_modstat_item,e_artefakt
+type=t_weapon_bow
+speed=70
+range=10
+VALUE=5000
+CATEGORY=Artefakty Enklava
+SUBSECTION=Zbrane
+DESCRIPTION=Elven bow
+
+on @create
+hitpoints=1000
+tag.level=4
+tag.dmgtype=3
+tag.ability=5
+tag.ability_power=15
+tag.enchant=6
+tag.dex=10
+tag.infotext1=Archery [+15]
+tag.noenchant=1
+tag.timer=30
+
+local.x=<eval rand(1,3)>
+if <local.x>==1//fire
+color=0b13
+tag.npctype_def=Fire Monster
+tag.npctype=4,<eval rand(30,40)>,c_flaming_lord,c_flaming_daemon,c_hell_fire_hound,c_flaming_predator,c_igneous,c_frutimiere,c_flaming_spider,c_guard_flame_buck,c_flaming_elemental,c_fire_serpent,c_fire_imp,c_lava_snake,c_fleogap,c_flambus,c_golem_lava,c_fire_ant_warrior,c_fire_ant_worker,c_fire_ant_queen
+endif
+if <local.x>==2//ice
+color=07a1
+tag.npctype_def=Ice Monster
+tag.npctype=4,<eval rand(30,40)>,c_m_ice_serpent,c_m_frostspider,c_living_snow,c_slime_frozen,c_e_living_ice,c_tarantulla,c_ogre_frost,c_kodiak,c_korgarr,c_m_dragon_ice,c_m_icefiend,c_ice_lord,c_ice_hound,c_glacier,c_ice_snake,c_rai_ju,c_bear_polar,c_m_frost_troll,c_m_frost_ettin
+endif
+if <local.x>==3//humans
+color=0ba8
+tag.npctype_def=Humans
+tag.npctype=3,<eval rand(30,40)>,c_man,c_woman,c_elf_male,c_elf_female
+endif
+
+
+[itemdef i_elven_crossbow]
+id=i_crossbow_repeating
+name=Elven Crossbow
+tevents=e_modstat_item,e_artefakt
+type=t_weapon_bow
+speed=55
+range=9
+VALUE=5000
+CATEGORY=Artefakty Enklava
+SUBSECTION=Zbrane
+DESCRIPTION=Elven Crossbow
+
+on @create
+hitpoints=1000
+tag.level=4
+tag.dmgtype=2
+tag.ability=5
+tag.ability_power=15
+tag.enchant=6
+tag.dex=10
+tag.infotext1=Archery [+15]
+tag.noenchant=1
+tag.timer=30
+
+local.x=<eval rand(1,3)>
+if <local.x>==1//fire
+color=0b13
+tag.npctype_def=Fire Monster
+tag.npctype=4,<eval rand(30,40)>,c_flaming_lord,c_flaming_daemon,c_hell_fire_hound,c_flaming_predator,c_igneous,c_frutimiere,c_flaming_spider,c_guard_flame_buck,c_flaming_elemental,c_fire_serpent,c_fire_imp,c_lava_snake,c_fleogap,c_flambus,c_golem_lava,c_fire_ant_warrior,c_fire_ant_worker,c_fire_ant_queen
+endif
+if <local.x>==2//ice
+color=07a1
+tag.npctype_def=Ice Monster
+tag.npctype=4,<eval rand(30,40)>,c_m_ice_serpent,c_m_frostspider,c_living_snow,c_slime_frozen,c_e_living_ice,c_tarantulla,c_ogre_frost,c_kodiak,c_korgarr,c_m_dragon_ice,c_m_icefiend,c_ice_lord,c_ice_hound,c_glacier,c_ice_snake,c_rai_ju,c_bear_polar,c_m_frost_troll,c_m_frost_ettin
+endif
+if <local.x>==3//humans
+color=0ba8
+tag.npctype_def=Humans
+tag.npctype=3,<eval rand(30,40)>,c_man,c_woman,c_elf_male,c_elf_female
+endif
+
+///NPC s mensim lootem
+[chardef c_rockdung_berserker_low]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_USEHANDS|MT_EQUIP
+tspeech=0564
+tevents=e_rockdung_ignorewisp
+moverate=140
+on @create
+events +e_rockdung_customdmg
+regenvalhits=40
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_magic=10
+tag.resist_cold=100
+tag.resist_flus=80
+tag.dmg_bonus_slash=30
+karma=-10000
+fame={4000 6000}
+modar=50
+title=Elven Berserker
+brain=brain_human
+str=300
+maxhits=550
+dex=200
+int=300
+maxmana=1
+swordsmanship=1200
+fencing=1000
+tactics=1200
+parrying=1000
+magery = 1000
+color=colors_skin
+//loot
+item=i_gold,{2000 3000}
+item=ttm_lvl4,R90
+item=ttm_lvl3,R30
+item=i_amulet_warrior,R10
+item=i_ring_opal,R90
+item=i_prsten_valecnika,R90
+item=random_dupre_rock,R120
+item=i_ability_rage_high,R60
+item=i_ability_rage_mid,R5
+//
+itemnewbie i_rockdung_berserker_brain
+timer=2
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_boots_calf
+color=0b15
+itemnewbie=i_studded_gloves
+color=0b15
+itemnewbie=i_studded_tunic
+color=0b15
+itemnewbie=i_shirt_fancy
+color=color_o_verite
+itemnewbie=i_studded_leggings
+color=0b18
+
+on @npcrestock
+itemnewbie=i_spellbook
+more1=0
+more2=08000
+itemnewbie=i_rockdung_blades
+
+on @hit
+if <src.findid.i_rune_reactive_armor.uid>
+    src.findid.i_rune_reactive_armor.remove
+endif
+if <src.flags>&statf_conjured
+argn1 *=3
+endif
+
+on @spellselect
+if <argn>!=48
+    return 1
+endif
+
+
+
+[chardef c_rockdung_ranger_low]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=0564
+moverate=150
+on @create
+events +e_rockdung_customdmg
+regenvalhits=50
+tag.name.hue=0b15
+tag.resist_poison=20
+tag.resist_magic=20
+tag.resist_pierce=20
+tag.resist_blunt=-10
+tag.resist_flus=70
+tag.dmg_bonus_summons=80
+tag.dmg_bonus_pets=90
+karma=-10000
+fame={4000 6000}
+modar=70
+title=Elven Ranger
+brain=brain_human
+str=340
+maxhits=600
+dex=200
+int=2000
+maxmana=1
+archery=1500
+tactics=1500
+parrying=1000
+color=colors_skin
+//loot
+item=i_gold,{2000 3500}
+item=random_arrow_rock,{30 50}
+item=ttm_lvl4,R60
+item=i_bracelet_archery,R10
+item=random_shamino_rock,R120
+item=i_ring_potection,R80
+item=i_ability_slow_mid,R50
+item=i_ability_hunter_high,R100
+item=i_ability_hunter_mid,R20
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+color=colors_hair
+itemnewbie=i_helm_open
+color=0b18
+itemnewbie=i_ringmail_gloves
+color=0b15
+itemnewbie=i_chainmail_tunic
+color=0b15
+itemnewbie=i_ringmail_sleeves
+color=0b18
+itemnewbie=i_ringmail_leggings
+color=0b18
+itemnewbie=i_boots_calf
+color=0b15
+
+on @npcrestock
+itemnewbie=i_toulec
+itemnewbie=i_rockdung_bow
+
+on @hit
+if (rand(3)==1)
+    if <findid.i_rockdung_bow.color>==0b13
+        src.damage <eval rand(10,15)>,dam_fire,<uid>
+    src.effect 3,i_fx_explode,3,16,1
+    elseif <findid.i_rockdung_bow.color>==0ba8
+        src.damage <eval rand(10,15)>,dam_cold,<uid>
+    src.effect 3,i_fx_glow_spike,5,16,0804,0,3
+    elseif <findid.i_rockdung_bow.color>==07a1
+        src.damage <eval rand(10,15)>,020,<uid>
+    src.effect 1,0
+    endif
+endif
+
+
+[itemdef i_rockdung_lever_end]
+id=01094
+name=lever
+type=t_rockdung_opendoor
+
+on @create
+attr=010
+more=01095
+
+[typedef t_rockdung_opendoor]
+on=@dclick
+if (<timer>!=-1)
+return 1
+else
+if !<isempty <tag.text>>
+src.message <tag.text>
+endif
+SOUND=00ed
+uid.<tag.brana1>.move <morep>
+uid.<tag.brana2>.move <morep>
+tag.dispid=<dispid>
+dispid=<more>
+update
+timer=<more2>
+endif
+return 1
+
+on=@timer
+uid.<tag.brana1>.move -<morex> -<morey> -<morez>
+uid.<tag.brana2>.move -<morex> -<morey> -<morez>
+sound=00ed
+dispid=<tag.dispid>
+tag.dispid=""
+update
+timer=-1
+update
+return 1

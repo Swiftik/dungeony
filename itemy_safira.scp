@@ -1,0 +1,472 @@
+//uprava axe a brneni VALUE Elvatar 7.8. 2007
+[ITEMDeF i_mask_tribal_amon]
+ID=i_mask_tribal_red
+NAME=Amon Mask
+VALUE=70
+//MATERIALSWEIGHT=5
+ARMOR=6
+
+on=@create
+COLOR=045e
+TYPE=31
+HITPOINTS={31 33}
+
+CATEGORY=Custom Items
+SUBSECTION=Pyramida
+DESCRIPTION=Amon Mask
+
+on=@equiptest
+if <hitpoints> > 33
+hitpoints={31 33}
+endif
+
+on=@EQUIP
+SRC.TAG.PYRAMIDA_PROTECT=1
+
+on=@UNEQUIP
+SRC.TAG.PYRAMIDA_PROTECT=""
+
+[itemdef i_mask_amon_golden]
+ID=i_mask_tribal_red
+NAME=Amon Mask
+VALUE=70
+//MATERIALSWEIGHT=5
+ARMOR=15
+tevents = e_nasazeni_item
+tevents = e_modstat_item
+tevents = e_resistance
+
+on=@create
+COLOR=0798
+TYPE=31
+HITPOINTS=500
+attr=04
+tag.nasazeni=06
+tag.name=Golden Amon Mask
+tag.dmg_bonus_magic=5
+tag.str=5
+
+CATEGORY=Custom Items
+SUBSECTION=Pyramida
+DESCRIPTION=Golden Amon Mask
+
+on=@EQUIP
+SRC.TAG.PYRAMIDA_PROTECT=1
+
+on=@UNEQUIP
+SRC.TAG.PYRAMIDA_PROTECT=""
+
+[itemdef i_saphira_war_2h_axe]
+ID=i_axe_two_hand
+NAME=Ra Battle Axe
+TYPE=t_weapon_sword
+SKILL=Swordsmanship
+REQSTR=90
+TWOHANDS=Y
+VALUE=60
+WEIGHT=8
+DAM=0
+
+CATEGORY=Provisions - Weapons - Color
+SUBSECTION=Bronzove zbrane
+DESCRIPTION=Saphirska valecna sekera
+
+ON=@create
+HITPOINTS={20 35}
+COLOR=07ea
+attr=attr_newbie
+
+[itemdef i_saphira_war_axe]
+ID=0f49
+NAME=Saphira War Axe
+TYPE=t_weapon_sword
+SKILL=Swordsmanship
+REQSTR=18
+TWOHANDS=N
+VALUE=50
+//MATERIAL=20
+WEIGHT=3.5
+DAM=0
+RESOURCES=50 i_ingot_bronze
+
+CATEGORY=Provisions - Weapons - Color
+SUBSECTION=Bronzove zbrane
+DESCRIPTION=Saphirska valecna sekera
+
+ON=@create
+HITPOINTS={31 70}
+COLOR=bronze_armor_color
+attr=attr_newbie
+
+
+
+//-----------------saphira zbroj---------------------
+
+
+[itemdef i_saphira_bronze_arms]
+ID=i_bone_arms
+NAME=Bronze Arms
+TYPE=t_armor_leather
+ARMOR=45
+REQSTR=45
+VALUE=46
+WEIGHT=4
+RESOURCES=50 i_ingot_bronze
+CATEGORY=Provisions - Armor
+SUBSECTION=Saphira Armor
+DESCRIPTION=Bronze Arms
+
+ON=@create
+HITPOINTS={40 45}
+COLOR=bronze_armor_color
+
+on=@equiptest
+if <hitpoints> > 45
+hitpoints={40 45}
+endif
+
+[itemdef i_saphira_bronze_leggings]
+ID=i_bone_leggings
+NAME=Bronze Leggings
+TYPE=t_armor_leather
+ARMOR=45
+REQSTR=45
+VALUE=56
+WEIGHT=5
+RESOURCES=50 i_ingot_bronze
+CATEGORY=Provisions - Armor
+SUBSECTION=Saphira Armor
+DESCRIPTION=Bronze Legs
+
+ON=@create
+HITPOINTS={40 45}
+COLOR=bronze_armor_color
+
+on=@equiptest
+if <hitpoints> > 45
+hitpoints={40 45}
+endif
+
+[itemdef i_saphira_leather_skirt]
+ID=01c09
+NAME=Studded Leather Skirt
+TYPE=t_armor_leather
+ARMOR=5
+REQSTR=8
+VALUE=34
+WEIGHT=1.5
+RESOURCES=50 i_ingot_bronze
+CATEGORY=Provisions - Armor
+SUBSECTION=Saphira Armor
+DESCRIPTION=Leather Shirt
+
+ON=@create
+HITPOINTS={31 37}
+COLOR=bronze_armor_color
+
+on=@equiptest
+if <hitpoints> > 37
+hitpoints={31 37}
+endif
+
+[itemdef i_saphira_leather_skirt2]
+ID=01517
+NAME=Studded Leather Shirt
+TYPE=t_armor_leather
+ARMOR=5
+REQSTR=8
+VALUE=34
+WEIGHT=1.5
+RESOURCES=50 i_ingot_bronze
+CATEGORY=Provisions - Armor
+SUBSECTION=Saphira Armor
+DESCRIPTION=Leather Shirt
+
+ON=@create
+HITPOINTS={31 37}
+COLOR=bronze_armor_color
+
+on=@equiptest
+if <hitpoints> > 37
+hitpoints={31 37}
+endif
+
+
+////////////////////sosky a dekorace
+[itemdef 9616]
+defname=i_pet_effret
+NAME=Effret
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 9775]
+DEFNAME=i_pet_scarab
+NAME=Scarabus
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 9639]
+DEFNAME=i_pet_mumie
+NAME=Mummy
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 9662]
+DEFNAME=i_pet_mag
+NAME=Mummy
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 10188]
+DEFNAME=i_plate_jingasa
+NAME=Jingasa
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 10922]
+DEFNAME=i_token
+NAME=Token
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 10315]
+DEFNAME=i_tea_green
+NAME=Green tea
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 9600]
+DEFNAME=i_pet_goat_billy
+NAME=Billy goat
+VALUE=500
+WEIGHT=1
+
+[ITEMDEF 9605]
+DEFNAME=i_pet_demonek
+NAME=Daemon
+VALUE=500
+WEIGHT=1
+
+[itemdef i_socha_scarab]
+id=9775
+NAME=Scarabus
+TYPE=t_normal
+VALUE=500
+WEIGHT=1
+
+[itemdef i_socha_mumie]
+id=9639
+NAME=Golden statue of Mummy
+TYPE=t_normal
+VALUE=500
+WEIGHT=1
+on=@create
+color={0ba9 1 07ea 1 0798 1}
+
+[itemdef i_socha_effret]
+id=9616
+NAME=Effret
+TYPE=t_normal
+VALUE=500
+WEIGHT=1
+
+[itemdef i_socha_imhotep]
+id=020ec
+NAME=Scarabus
+TYPE=t_normal
+VALUE=500
+WEIGHT=1
+on=@create
+color={0ba9 1 07ea 1}
+
+[itemdef i_socha_sphynx]
+id=9752
+NAME=Sphynx
+TYPE=t_normal
+VALUE=500
+WEIGHT=1
+
+
+//////univerzalni artefakt, popis na RT kelevar foru
+//////scripted by Aeneas v1.0 25.11.2013
+
+[itemdef i_artefakt]
+id=i_crystal_ball
+name=Artefakt
+type=t_normal
+FLIP=01
+
+on=@create
+attr=010
+tag.staty=1
+tag.resisty=1
+tag.bonusstat=1
+tag.regen=0
+tag.level=100
+tag.str=10
+tag.timerstaty=10
+tag.timerresisty=10
+tag.timerbonus=10
+tag.timerregen=10
+tag.resist_physical=10
+tag.dmg_bonus_phys=05
+tag.resist_magic=05
+tag.dmg_bonus_magic=50
+tag.stam=100
+tag.maxstam=1500
+tag.regenstam=9
+tag.textdostal=Dostal jsi bonus
+tag.textma=Uz mas bonus
+tag.textbonus=Bonus vyprsel
+tag.textresisty=Bonus vyprsel
+tag.textstaty=Bonus vyprsel
+tag.textregen=Bonus vyprsel
+tag.artefakt=1
+tag.nasledovnici=00
+tag.nepatris=Nepatris k teto skupine
+
+on=@dclick
+if (!<tag0.nasledovnici>==<src.tag0.nasledovnici>)
+    src.message <tag0.nepatris>
+    return 1
+else   
+if (!<src.tag.artefakt<tag0.artefakt>>=<tag0.artefakt>)
+    src.sysmessage @color_o_bloodrock, <tag0.textdostal>
+    src.tag.artefakt<tag0.artefakt>=<tag0.artefakt>
+if (<tag0.staty> > 0) && (!<src.findid.i_memory_staty>)
+    newitem i_memory_staty
+    new.tag.artefakt=<tag0.artefakt>
+    new.tag.text=<tag0.textstaty>
+    new.tag.int=<tag0.int>*(<tag0.level>/100)
+    new.tag.str=<tag0.str>*(<tag0.level>/100)
+    new.tag.dex=<tag0.dex>*(<tag0.level>/100)
+    new.timer=<tag0.timerstaty>
+    src.equip <new.uid>
+endif
+
+if (<tag0.resisty> > 0) 
+    newitem i_memory_resisty
+    new.tag.artefakt=<tag0.artefakt>
+    new.tag.text=<tag0.textresisty>
+    new.tag.resist_magic=<tag0.resist_magic>*(<tag0.level>/100)
+    new.tag.resist_physical=<tag0.resist_physical>*(<tag0.level>/100)
+    new.tag.resist_cold=<tag0.resist_cold>*(<tag0.level>/100)
+    new.tag.resist_fire=<tag0.resist_fire>*(<tag0.level>/100)
+    new.tag.resist_necro=<tag0.resist_necro>*(<tag0.level>/100)
+    new.tag.resist_elec=<tag0.resist_elec>*(<tag0.level>/100)
+    new.tag.resist_flus=<tag0.resist_flus>*(<tag0.level>/100)
+    new.tag.resist_pierce=<tag0.resist_pierce>*(<tag0.level>/100)
+    new.tag.resist_slash=<tag0.resist_slash>*(<tag0.level>/100)
+    new.tag.resist_blunt=<tag0.resist_blunt>*(<tag0.level>/100)
+    new.tag.resist_poison=<tag0.resist_poison>*(<tag0.level>/100)
+    new.tag.dmg_bonus_magic=<tag0.dmg_bonus_magic>*(<tag0.level>/100)
+    new.tag.dmg_bonus_physical=<tag0.dmg_bonus_physical>*(<tag0.level>/100)
+    new.tag.dmg_bonus_cold=<tag0.dmg_bonus_cold>*(<tag0.level>/100)
+    new.tag.dmg_bonus_fire=<tag0.dmg_bonus_fire>*(<tag0.level>/100)
+    new.tag.dmg_bonus_necro=<tag0.dmg_bonus_necro>*(<tag0.level>/100)
+    new.tag.dmg_bonus_elec=<tag0.dmg_bonus_elec>*(<tag0.level>/100)
+    new.tag.dmg_bonus_flus=<tag0.dmg_bonus_flus>*(<tag0.level>/100)
+    new.tag.dmg_bonus_pierce=<tag0.dmg_bonus_piercec>*(<tag0.level>/100)
+    new.tag.dmg_bonus_slash=<tag0.dmg_bonus_slash>*(<tag0.level>/100)
+    new.tag.dmg_bonus_blunt=<tag0.dmg_bonus_blunt>*(<tag0.level>/100)
+    new.tag.dmg_bonus_poison=<tag0.dmg_bonus_poison>*(<tag0.level>/100)
+    new.timer=<tag0.timerresisty>
+    src.equip <new.uid>
+endif
+
+if (<tag0.bonusstat> > 0) 
+    newitem i_memory_bonusstat
+    new.tag.artefakt=<tag0.artefakt>
+    new.tag.text=<tag0.textbonus>
+    if ((<src.hits>+<tag0.hits>*(<tag0.level>/100))<(<tag0.maxhits>))
+        src.hits=<src.hits>+<tag0.hits>*(<tag0.level>/100)
+    elseif ((<tag0.maxhits>>0))
+        src.hits=<tag0.maxhits>
+    endif
+    if ((<src.mana>+<tag0.mana>*(<tag0.level>/100))<(<tag0.maxmana>))
+    src.mana=<src.mana>+<tag0.mana>*(<tag0.level>/100)
+    elseif ((<tag0.maxmana>>0))
+        src.mana=<tag0.maxmana>
+    endif
+    if ((<src.stam>+<tag0.stam>*(<tag0.level>/100))<(<tag0.maxstam>))
+    src.stam=<src.stam>+<tag0.stam>*(<tag0.level>/100)
+    elseif ((<tag0.maxstam>>0))
+        src.stam=<tag0.maxstam>
+    endif
+    new.timer=<tag0.timerbonus>
+    src.equip <new.uid>
+endif
+
+if (<tag0.regen> > 0) 
+    newitem i_memory_artregen
+    new.tag.artefakt=<tag0.artefakt>
+    new.tag.text=<tag0.textregen>
+    new.tag.regenstam=<tag0.regenstam>*(<tag0.level>/100)
+    new.tag.regenhits=<tag0.regenhits>*(<tag0.level>/100)
+    new.tag.regenmana=<tag0.regenmana>*(<tag0.level>/100)
+    new.timer=<tag0.timerregen>
+    src.equip <new.uid>
+endif
+else
+    src.sysmessage @color_o_bloodrock, <tag0.textma>
+    return 1
+endif    
+endif
+
+[itemdef i_memory_staty]
+id=i_memory
+name=Memory artefakt bonus staty
+type=t_eq_script
+tevents=e_modstat_item
+
+on=@timer
+cont.message @color_o_bloodrock, <tag0.text>
+cont.tag0.artefakt<tag0.artefakt>=
+remove
+return 1
+
+[itemdef i_memory_resisty]
+id=i_memory
+name=Memory artefakt bonus resisty a bonusy
+type=t_eq_script
+tevents=e_resistance
+
+on=@timer
+cont.message @color_o_bloodrock, <tag0.text>
+cont.tag0.artefakt<tag0.artefakt>=
+remove
+return 1
+
+[itemdef i_memory_bonusstat]
+id=i_memory
+name=Memory artefakt bonus hpstammana
+type=t_eq_script
+
+on=@timer
+cont.message @color_o_bloodrock, <tag0.text>
+cont.tag0.artefakt<tag0.artefakt>=
+remove
+return 1
+
+[itemdef i_memory_artregen]
+id=i_memory
+name=Memory artefakt bonus regen
+type=t_eq_script
+
+on=@timer
+cont.message @color_o_bloodrock, <tag0.text>
+cont.tag0.artefakt<tag0.artefakt>=
+remove
+return 1
+
+on=@equip
+cont.regen_stamina <eval <tag0.regenstam>>
+cont.regen_mana <eval <tag0.regenmana>>
+cont.regen_hitpoints <eval <tag0.regenhits>>
+
+on=@unequip
+cont.regen_stamina -<eval <tag0.regenstam>>
+cont.regen_mana -<eval <tag0.regenmana>>
+cont.regen_hitpoints -<eval <tag0.regenhits>>
+
+[eof]

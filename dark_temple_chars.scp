@@ -1,0 +1,782 @@
+//[chardef 4154]
+//defname=c_dt_trimasel
+//NAME=Trimasel
+//ID=0A
+//dam=30
+//armor=30
+//
+//on=@create
+//COLOR={0453 0455}
+//STR=2000
+//DEX=500
+//INT=500
+//FAME={9000 12900}
+//KARMA=-7000
+//
+//WRESTLING=90.0
+//TACTICS=90.0
+//MAGERY=90.0
+//ANATOMY=100.0
+//
+//ITEM=LOOT_daemon
+//ITEM=LOOT_daemon
+//ITEM=LOOT_drake
+//ITEM=RANDOM_MAGIC_SWORD
+//ITEM=RANDOM_MAGIC_BOW
+//
+//ITEM=i_reag_daemon_bone
+//AMOUNT=20
+//
+//ITEM=0EFA
+//ATTR=04
+//MORE=08080800
+//MORE2=01752231
+//MOREX=16
+//
+//ITEM=i_trimasel_heal
+//
+//on=@death
+//foritems 60
+//if (<baseid>==i_dt_heart_trimasel)
+//f_dt_trimasel
+//endif
+//endfor
+//
+////elementalove vylepseni
+//[chardef 4155]
+////AIR ELEMENTAL
+//defname=c_dt_storm
+//NAME=Storm
+//ID=0D
+//SOUND=snd_ELEMENTL_AIRELEM1
+//ICON=020ed
+//ANIM=079dff
+//dam=10
+//armor=30
+//CAN=MT_WALK|MT_FLY
+//on=@create
+//COLOR=0481
+//STR=200
+//DEX=400
+//INT=400
+//
+//PARRYING=100.0
+//MAGERY={80.0 95.0}
+//MAGICRESISTANCE={80.0 95.0}
+//TACTICS={60.0 80.0}
+//WRESTLING={80.0 100.0}
+//
+//NPC=brain_monster
+//FAME={3000 5000}
+//KARMA={-4000 -4999}
+//
+//ITEM=loot_elem_air
+//ITEM=0795A
+//
+//CATEGORY=Z_DarkLord
+//SUBSECTION=Elementals
+//DESCRIPTION=Storm
+////------------------------------
+//[chardef 4156]
+////EARTH ELEMENTAL
+//defname=c_dt_claygolem
+//NAME=Clay Golem
+//ID=0E
+//SOUND=snd_ELEMENTL_ERTHEL1
+//ICON=020d7
+//ANIM=079c7f
+//dam=25
+//armor=17
+//CAN=MT_WALK|MT_GHOST
+//on=@create
+//COLOR=0721
+//
+//
+//STR=400
+//DEX=200
+//INT=10
+//
+//PARRYING={60.0 85.0}
+//MAGICRESISTANCE={50.0 95.0}
+//TACTICS={60.0 100.0}
+//WRESTLING={90.0 100.0}
+//
+//NPC=brain_monster
+//FAME={3000 5000}
+//KARMA={-3000 -3999}
+//
+//ITEM=loot_elem_earth
+//ITEM=07958
+//
+//CATEGORY=Z_DarkLord
+//SUBSECTION=Elementals
+//DESCRIPTION=Clay Golem
+////-------------------------------
+//[chardef 4157]
+////FIRE ELEMENTAL
+//defname=c_dt_inferno
+//NAME=Inferno
+//ID=0F
+//SOUND=snd_ELEMENTL_FIRELEM1
+//ICON=020f3
+//ANIM=079dff
+//dam=15
+//armor=20
+//CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+//on=@create
+//COLOR=0845
+//STR=300
+//DEX=200
+//INT=100
+//PARRYING={55.0 65.0}
+//MAGERY={80.0 95.0}
+//MAGICRESISTANCE={60.0 75.0}
+//TACTICS={80.0 100.0}
+//WRESTLING={70.0 100.0}
+//FAME={3000 5000}
+//KARMA={-4000 -4999}
+//NPC=brain_monster
+//ITEMNEWBIE=i_spellbook
+//MORE1=008020010
+//MORE2=040440400
+//
+//ITEM=loot_elem_fire
+//ITEM=07957
+//
+//CATEGORY=Z_DarkLord
+//SUBSECTION=Elementals
+//DESCRIPTION=Inferno
+////---------------------------------
+//[chardef 4158]
+//defname=c_dt_deluge
+////WATER ELEMENTAL
+//NAME=Deluge
+//ID=010
+//SOUND=snd_ELEMENTL_WATREL1
+//ICON=0210b
+//ANIM=079dff
+//CAN=MT_WALK|MT_SWIM|MT_USEHANDS
+//dam=15
+//armor=20
+//on=@create
+//COLOR=0480
+//STR=300
+//DEX=200
+//INT=100
+//PARRYING={55.0 65.0}
+//MAGERY={80.0 95.0}
+//MAGICRESISTANCE={60.0 75.0}
+//TACTICS={55.0 65.0}
+//WRESTLING={70.0 90.0}
+//
+//NPC=brain_monster
+//FAME={3000 5000}
+//KARMA={-4000 -4999}
+//ITEM=loot_elem_water
+//ITEM=07959
+//
+//CATEGORY=Z_DarkLord
+//SUBSECTION=Elementals
+//DESCRIPTION=Deluge
+//
+//[CHARDEF c_dt_vortex]
+//id=c_elem_air
+//NAME=Zbesila Energie
+//SOUND=snd_ELEMENTL_AIRELEM5
+//AVERSIONS=t_telepad
+//ICON=37eb
+//DAM=8,10
+//ARMOR=10
+//CAN=MT_WALK|MT_FLY|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+//
+//ON=@Create
+//	COLOR=06a
+//	NPC=brain_monster
+//	STR=300
+//	DEX=2500
+//	INT=1
+//	//ALIGNMENT=EVIL
+//	//SPELLCIRCLE=3,5
+//	TACTICS=500.0
+//	WRESTLING=500.0
+//	POISONING=600.0
+//	FAME=500
+//	KARMA=-100
+//	ITEMNEWBIE=i_light_source
+//	ATTR=attr_magic|attr_newbie
+//	itemnewbie=i_dt_memory_effekt
+//	CATEGORY=Miscellaneous
+//	SUBSECTION=Blade Spirits
+//	DESCRIPTION=Energy Vortex
+
+[CHARDEF c_dt_vezen]
+NAME=Kragon
+id=c_man
+
+TSPEECH=spk_dark_temple_chars
+CAN=
+
+ON=@Create
+	NPC=brain_vendor
+	TITLE=Dark Temple vezen
+	COLOR=colors_skin
+	STR={61 75}
+	DEX=0
+	INT={86 100}
+	MEDITATION={75.0 100.0}
+	INSCRIPTION={50.0 65.0}
+	MAGERY={86.0 100.0}
+	WRESTLING={15.0 38.0}
+	MAGICRESISTANCE={55.0 78.0}
+	TACTICS={15.0 38.0}
+	ITEMNEWBIE=random_male_hair
+	COLOR=colors_hair
+	ITEMNEWBIE=random_facial_hair
+	COLOR=match_hair
+
+ON=@NPCRestock
+	ITEM=RANDOM_LIGHT
+	ITEM=i_robe
+	COLOR=colors_blue
+	ITEM=random_shoes
+	COLOR=colors_blue
+
+
+[SPEECH spk_dark_temple_chars]
+ON=**
+	IF (<DISTANCE> > 2)
+		SAY Pojd bliz, nevidim te!
+		RETURN 1
+	ENDIF
+	RETURN 0
+ON=*OSEL*
+ON=*OSLE*
+	SAY Osel jsi ty!
+	RETURN 1
+ON=*GUMO*
+ON=*PAKO*
+ON=*DEBIL*
+ON=*OCAS*
+ON=*SVINE*
+ON=*HOVADO*
+ON=*IDIOT*
+ON=*PIC*
+ON=*PARCHANT*
+ON=*VUL*
+ON=*VOLE*
+ON=*KURV*
+	DORAND 3
+		SAY Ty ses ale sprost<SRC.SEX ej/a>!!
+		SAY Podivejte se, jak je t<SRC.SEX en/a> <SRC.NAME> sprost<SRC.SEX ej/a>!!
+		SAY Hele <SRC.SEX vole/zenska>, nadavej si nekomu jinymu, jinak te sejmu!
+	ENDDO
+	RETURN 1
+ON=*POJD*
+ON=*STUJ*
+	IF (<BODY>==0190)
+		SAY Nejsem tvuj starej abys me komandova<SRC.SEX l/la>
+	ELSE
+		SAY Nejsem tvoje stara abys me komandova<SRC.SEX l/la>
+	ENDIF
+	RETURN 1
+ON=*BAF*
+ON=*KUK*
+	IF (<BODY>==0190)
+		SAY Fuj to sem se ale lek!
+	ELSE
+		SAY Fuj to sem se ale lekla!
+	ENDIF
+	RETURN 1
+ON=*SRAL*
+ON=*NASER*
+ON=*NASRAT*
+ON=*POSER*
+	SAY No aby ses neposra<SRC.SEX l/la> ty, jak te budu kopat do prdele!!
+	RETURN 1
+ON=*HMM*
+	SAY Takove finty na me nezkousej!!
+	RETURN 1
+ON=*:)*
+ON=*:-)*
+	SAY No to je fakt sranda
+	RETURN 1
+ON=*:O*
+ON=*:-O*
+	SAY No cemu se divis?
+	RETURN 1
+//-----------------------------------------------------------
+ON=*KRYSTAL*
+ON=*MAM*
+	IF (<SRC.RESTEST 1 i_dt_teleport_crystal>)
+		SAY Vybone. Dej to sem!
+		SRC.CONSUME=1 i_dt_teleport_crystal
+		SAY Tak. Ted je rada na me. S tou kombinaci jsem ti kecal. Ale aby jsis nemyslel, ze jsem svine, tak ti dam tenhle klic.
+		SAY Omrkni Israfelovi komnaty. Mozna tam neco najdes!
+		SRC.NEWITEM=i_dt_special_key
+		SRC.ACT.COLOR=0845
+		SRC.ACT.NAME=Israfel room key
+		SRC.ACT.MORE=2
+		SRC.ACT.BOUNCE
+		NEWITEM=i_dt_teleporter
+		new.LINK=<uid>
+		new.timer=5
+		src.new.equip
+		SAY Tak pa... ja mizim...
+		RETURN 1
+	ENDIF
+	RETURN 0
+ON=*AHOJ*
+ON=*CAU*
+ON=*DOBRY*
+ON=*CUS*
+if <src.restest 1 i_dt_vezen_request>
+	say Uz jsme se zdravili... neopakuj se.
+	return 1
+ENDIF
+		DORAND 2
+		SAY Zdravim te <SRC.NAME>. Jak vidis nejsem zrovna v dobre situaci. Mel bych pro tebe navrh. Co ty na to?
+		SAY Ahoj <SRC.NAME>, Jak vidis nejsem zrovna v dobre situaci. Mel bych pro tebe navrh. Co ty na to?
+		ENDDO
+		newitem=i_dt_vezen_request,1,<src.uid>
+		return 1
+//---------------------
+		
+//--------------------
+ON=*DOBRE*
+ON=*GOOD*
+ON=*JDE*
+ON=*OK*
+ON=*JAKY*
+ON=*NAVRH*
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY Vyborne. Prejdeme rovnou k veci. Udelame dohodu. Ty mi pomuzes ven a ja ti pomuzu dovnitr.
+	SAY Kdyz mi doneses teleportacni krystal, tak ti povim kombinaci vypinacu tady na proti na zdi.
+	RETURN 1
+ON=NE*
+ON=*SER*
+	SAY Hmm, delas velkou chybu. Beze me se nedostanes pres dvere na konci chodny.
+	SAY Aby jsi mohl projit, potrebujes vedet kombinaci vypinacu. Jsem ochoten ti ji rici, kdyz mi doneses teleportacni krystal.
+	RETURN 1
+//------------------
+ON=*NAVRH*
+ON=*RADA*
+ON=*PORADIT*
+ON=*HELP*
+ON=*POMOC*
+ON=*JAK*
+ON=*KDE*
+ON=*KRYSTAL*
+ON=*DVERE*
+ON=*ZAMCENE*
+ON=*ZAMEK*
+ON=*NEVIM*
+ON=OK
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+if (<src.restest 1 i_dt_special_key>
+			SAY No ten klic, co u sebe mas, ti pomuze.
+			RETURN 1
+else
+		SRC.NEWITEM=i_dt_special_key
+		SRC.ACT.COLOR=0C6
+		SRC.ACT.NAME=Library key
+		SRC.ACT.MORE=1
+		SRC.ACT.BOUNCE
+	RETURN 0
+
+ON=*NAVRH*
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY Jo tak ten navrh.
+	SAY No hele. Dam ti klic, ktery jsem ukradl straznemu. Tim se dostanes do knihovny. Omrkni to tam.
+	RETURN 1
+ON=OK
+ON=*RADA*
+ON=*PORADIT*
+ON=*HELP*
+ON=*POMOC*
+ON=*JAK*
+ON=*NEVI*
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY No hele. Dam ti klic, ktery jsem ukradl straznemu. Tim se dostanes do knihovny. Omrkni to tam.
+	RETURN 1
+ON=*KRYSTAL*
+ON=*KDE*
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY Ten krystal by mel byt nekde tady.
+	SAY No hele. Dam ti klic, ktery jsem ukradl straznemu. Tim se dostanes do knihovny. Omrkni to tam.
+	RETURN 1
+ON=*DVERE*
+ON=*ZAMCENE*
+ON=*ZAMEK*
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY Jo aha, ty dvere.
+	SAY No hele. Dam ti klic, ktery jsem ukradl straznemu. Tim se dostanes do knihovny. Omrkni to tam.
+	RETURN 1
+ON=*NIC*
+ON=NE
+if !<src.restest 1 i_dt_vezen_request>
+	say S nezdvorakem se nebavim!
+	return 1
+ENDIF
+	SAY Hlupaku. Vis kolik je moznych kombinaci? Zestarnes nez zjistis tu spravnou!
+	RETURN 1
+//--------------------
+ON=**
+	SAY
+	SAY Ted jsem nejak mimo. O co de?
+	SAY
+	RETURN 1
+
+
+[chardef c_dt_npc_mage]
+ID=c_man
+name=#NAMES_DROW_MALE
+DESIRES=i_gold
+AVERSIONS=t_TRAP,t_eerie_stuff
+can=MT_RUN|MT_WALK|mt_fly|MT_EQUIP|MT_USEHANDS
+armor=55
+dam=10,50
+TSPEECH=0564
+
+on @create
+tag.armod=30
+	title=Dark Temple Mage
+	brain=brain_human
+	events +e_dt_npc_koule
+	STR=300
+	MAXHITS=1000
+	INT=200
+	maxmana=3000
+	tag.resist_magic=50
+	DEX=150
+	color=0455
+	magery=3000
+	tactics=1000
+	wrestling=1000
+	Macefighting=0
+	flags |= 040
+	karma=-5000
+	fame=1000
+	tag.hits=0
+	itemnewbie i_hair_ponytail
+	color=colors_hair
+	itemnewbie i_robe
+	color=0b23
+	item i_gold,{1500 2300}
+	item=ttm_lvl4,R20
+	item=random_reagent,{5 7}
+	item=i_ability_armorcurse_high,R50
+	item=i_ability_armorcurse_low,R15
+	item=random_reagent,{1 5}
+	item=i_reag_eye_of_newt,4
+	item=i_spellbook
+	addspell=s_flamestrike 
+	addspell=s_greater_heal
+	addspell=s_lightning
+	addspell=s_magic_reflection
+	itemnewbie=i_staff_arcanum
+	color=0810
+	itemnewbie 01718
+	color=0b23
+	item=i_guild_level_listina_item,R120
+	tag.level=2
+	item=i_guild_level_listina_item,R120
+	tag.level=3
+	item=i_guild_level_listina_item,R300
+	tag.level=4
+
+on @gethit
+  	tag.hits +=1
+	if <tag.hits>==30
+		trysrc <uid> newnpc c_snake_sea
+		new.findid.c_snake_sea.link=<uid>
+		new.effect 3,i_fx_sparkle,3,16,1,08a2//0804
+		new.name=Dark Snake
+		new.color=0810
+		new.update
+		tag.hits=0
+	endif
+
+on @spellcast
+if !((<argn1>==29)||(<argn1>==30)||(<argn1>==36)||(<argn1>==51))
+	dorand 2
+	argn1=30
+	argn1=51
+	enddo
+endif
+
+
+[chardef c_dt_npc_koule]
+ID=c_man
+name=#NAMES_HUMANMALE
+DESIRES=i_gold
+AVERSIONS=t_TRAP,t_eerie_stuff
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+dam=0,50
+armor=60
+
+on @create
+tag.armod=30
+	tag.hits =0
+	tag.morf =0
+	tag.pojistka=1
+	title=Dark Temple Guard
+	tracking=1000
+	brain=brain_human
+	events +e_dt_npc_koule
+	events +e_dt_npc_morf
+	STR=500
+	MAXHITS=800
+	INT=200
+	DEX=800
+	flags |= 040
+	karma=-5000
+	fame=1000
+	tactics=1000
+	wrestling=1500
+	color=colors_skin
+	itemnewbie random_male_hair
+	color=colors_hair
+	itemnewbie i_dt_npc_koule_brain
+	timer=2
+	itemnewbie i_robe
+	color=0b23
+	itemnewbie 01718
+	color=0b23
+	item i_gold,{1000 2500}
+	item=ttm_lvl4,R20
+	item=random_reagent,{10 20}
+	item=i_ability_armorcurse_mid,R30
+	item=random_reagent,{10 20}
+	item=i_reag_blood_vial,{10 15}
+	item=i_reag_eye_of_newt,5
+	item=i_guild_level_listina_item,R120
+	tag.level=2
+	item=i_guild_level_listina_item,R120
+	tag.level=3
+	item=i_guild_level_listina_item,R300
+	tag.level=4
+
+
+[events e_dt_npc_morf]
+on @gethit
+if ((<src.baseid>!=c_dt_npc_koule)&&(<src.baseid>!=c_dt_npc_ptak)&&(<src.baseid>!=c_dt_npc_mage))
+tag.hits +=1
+if <tag.hits>==20
+	if <tag.morf>==0
+	trysrc <uid> findid.i_dt_npc_koule_brain.remove
+	body=c_dt_npc_ptak
+	magery=0
+	tactics=1000
+	wrestling=1500
+	mana=0
+	stam=1000
+	update
+	timerf 0,effect 3,i_fx_smoke,3,16,1,0
+	color=color_o_shadow
+	tag.resist_magic=0
+	tag.morf=1
+	else
+	timerf 0,effect 3,i_fx_smoke,3,16,1,0
+	body=c_man
+	mana=3000
+	color=03eb
+	magery=2000
+	tag.resist_magic=50
+	trysrc <uid> findid.i_robe.equip
+	trysrc <uid> findid.01718.equip
+	newitem=i_dt_npc_koule_brain.remove,1,<uid>
+	new.timer=2
+	tag.morf=0
+	endif
+tag.hits=0
+endif
+else
+src.flags=00
+return 1
+endif
+
+on @spellcast
+if ((<argn1>==24)||(<argn1>==28)||(<argn1>==33)||(<argn1>==39)||(<argn1>==43)||(<argn1>==46)||(<argn1>==47)||(<argn1>==49)||(<argn1>==50)||(<argn1>==57)||(<argn1>==58)||(<argn1>==60)||(<argn1>==61)||(<argn1>==62)||(<argn1>==63)||(<argn1>==64)||(<argn1>>64))
+	dorand 3
+	argn1=69
+	argn1=27
+	argn1=51
+	enddo
+endif
+
+on @spelleffect
+if ((<argn1>==24)||(<argn1>==28)||(<argn1>==33)||(<argn1>==39)||(<argn1>==43)||(<argn1>==46)||(<argn1>==47)||(<argn1>==49)||(<argn1>==50)||(<argn1>==57)||(<argn1>==58)||(<argn1>==60)||(<argn1>==61)||(<argn1>==62)||(<argn1>==63)||(<argn1>==64)||(<argn1>>64))
+return 1
+
+
+[events e_dt_npc_koule]
+on @gethit
+flags |= 040
+on @spelleffect
+if <argn1>==38
+return 1
+endif
+if <argn1>==49
+return 1
+endif
+if <argn1>==30
+return 1
+endif
+
+on=@itemstep
+if <act.baseid>==i_fx_field_paralyze
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+[itemdef i_dt_npc_koule_brain]
+id=i_memory
+name=kulicka
+type=t_eq_script
+on @timer
+if <morex>=0
+	if <cont.memoryfindtype.02000.link>
+	if <cont.memoryfindtype.02000.link.CanSeeLos <cont.uid>>
+	if <cont.memoryfindtype.02000.link.distance <cont.uid>> < 9
+	cont.stam=0
+	cont.face <cont.memoryfindtype.02000.link.uid>
+	dorand 2
+	cont.anim 9
+	cont.anim 31
+	enddo
+	cont.tag.nomovetill <eval <serv.time> +5>
+	trysrc <cont.uid> src.f_dtkoule
+	timerd=<cont.memoryfindtype.02000.link.distance <cont.uid>>
+	link=<cont.memoryfindtype.02000.link.uid>
+	morex=1
+	return 1
+	endif
+	endif
+	endif
+	timer=1
+	return 1
+if (<uid.<cont.uid>.tag.pojistka>=1)
+	timerd=rand(5,12)
+	cont.tag.nomovetill=
+	morex=0
+	return 1
+endif
+else
+	local.dam=rand(10,20)
+	link.damage <eval <local.dam>> 0280 <cont.uid>
+	link.effect 3,14027,6,16,1
+	cont.face <link.uid>
+	link.emote Aaau to pali...
+	timerd=rand(5,12)
+	cont.tag.nomovetill=
+	morex=0
+	return 1
+endif
+endif
+
+
+[function f_dtkoule]
+src.memoryfindtype.02000.link.effect 0,14052,6,16,0,0
+
+[chardef c_dt_npc_ptak]
+ID=c_eagle
+name=#NAMES_HUMANMALE
+DESIRES=i_gold
+AVERSIONS=t_TRAP,t_eerie_stuff
+can=MT_RUN|MT_WALK|mt_fly
+armor=75
+dam=20
+
+on @create
+tag.armod=25
+	tag.hits =0
+	tag.morf =0
+	title=Dark Temple Guard
+	tracking=1000
+	brain=brain_human
+	events +e_dt_npc_koule
+	events +e_dt_npc_morf
+	STR=250
+	MAXHITS=800
+	INT=200
+	DEX=800
+	flags |= 040
+	karma=-5000
+	fame=1000
+	tactics=1000
+	wrestling=1500
+
+
+[chardef c_corvus_corax]
+ID=c_vampire_bat
+name=Corvus corax
+DESIRES=i_gold
+AVERSIONS=t_TRAP,t_eerie_stuff
+can=MT_RUN|MT_WALK|mt_fly
+armor=140
+dam=35
+
+on @create
+    tag.resist_phys=100
+    tag.resist_elec=100
+    tag.resist_poison=100
+    tag.resist_flus=100
+    tag.resist_blunt=-190
+    tag.resist_magic=90
+    color=0810
+    title=Dark Temple Guard
+    tracking=1000
+    events +e_corvus_corax
+    STR=1000
+    MAXHITS=100
+    INT=200
+    DEX=1000
+    flags |= 040
+    karma=-5000
+    fame=1000
+    tactics=1000
+    wrestling=1500
+    item i_trimasel_guard
+    timerd={45 60}
+    item i_trimasel_guard_timer
+    timer={50 55}
+    item=i_spellbook
+    more1=0
+    more2=010000
+
+[events e_corvus_corax]
+on=@spelleffect
+if ((<distance> > 2)
+    src.effect 3,14089,6,15,1,0
+    local.dam=rand(40,80)
+    src.damage <eval <local.dam>> 0280 <uid>
+    return 1
+endif
+
+on=@itemstep
+if <act.baseid>==i_fx_field_paralyze
+    if <act.type>==t_spell
+    act.remove
+    return 1
+    endif
+endif

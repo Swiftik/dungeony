@@ -1,0 +1,173 @@
+[speech spk_rockdung_serpent]
+on=*ahoj*
+on=*zdravim*
+say Vitej clovece, co te ke mne privadi?
+on=thoronil
+say = Thoronil byl zdejsi mocny kouzelnik, kdysi jsem byl jeho ucnem.
+say Pred davnymi casy, po vyhnani sveho pritele Lomendila, opustil tyto zeme.
+on = odchod
+on = kam
+say To nikdo nevi, ukryva se pred Elemielem. Jenom jakesi divne zapisky po nem zustaly.
+on= zapisky
+say Nikdo zdejsi jejich vyznamu nerozumi, jediny kdo se vypravil do dalekych zemi byl Lomendil. Mohu ti jejich kopii venovat.
+on=kopie
+on=ukazat
+on=venovat
+say Nebude to ale zadarmo, potrebuji zajistit dodavku elfich stitu pro mistniho obchodnika.
+say Prines mi 5 techto stitu a ja ti v patrani pomohu.
+on=mam
+if (<src.restest 5 i_shield_elven>)
+src.consume 5 i_shield_elven
+say Zde mas ty zapisky.
+src.newitem i_book_lg,1,<src.uid>
+new.name Zapisky
+new.more1 1
+new.body.0=Ve skalni rozvaline, kde	jasny plamen v zime hreje.
+new.body.1=V miste, kde z	kokosovych palem kruh	roste.
+new.body.2=V severnich lesich	 na zver bohate.
+else
+say Nic pro mne zatim nemas, vrat se az to budes mit. 
+endif
+
+[speech spk_rockdung_mage_1]
+on=*ahoj*
+on=*zdravim*
+say Vitej clovece, co te ke mne privadi?
+on=thoronil
+say Thoronil? To jmeno jsem jiz dlouho neslysel, ale kdysi jsme si spolu dopisovali.
+on=dopisovali
+on=dopis
+say Holub, ktery... Ale pockat, opravdu to chces vedet?
+on=ano
+say No dobra, nevim kde Thoronil je, ale mel jsem od nej trenovaneho holuba a vim jak dlouho letal.
+say Kdyz mi prineses dvacet kop korenu mandragory, tak ti to prozradim.
+on=mam
+if (<src.restest 1200 i_reag_mandrake_root>)
+src.consume 1200 i_reag_mandrake_root
+say Holub na urcene misto deset dni letel...
+say Dekuji ti za mandragoru.
+else
+say Nic pro mne zatim nemas, vrat se az to budes mit. 
+endif
+
+[speech spk_rockdung_mage_2]
+on=*ahoj*
+on=*zdravim*
+say Vitej clovece, co te ke mne privadi?
+on=thoronil
+say Thoronil je elfsky kouzelnik, proc ho hledas?
+on=Kniha
+say O zadne jeho knize nic nevim. Zanechal u mne pouze holuba, po kterem jsem mu nejaka kouzla zasilal.
+on=kouzla
+say Zadna pro tebe zajimava, mohu ti ale rici jak dlouho holub letal.
+say Sezen mi dvanact tuctu cernych perel a sest kop netopirich kridel a reknu ti to.
+say Jeste bych chtel 30 svitku ohniveho a ledoveho kruhu.
+on=mam
+if (<src.restest 144 i_reag_black_pearl> && <src.restest 360 i_reag_batwing> && <src.restest 30 i_scroll_fire_ring> && <src.restest 30 i_scroll_ice_ring>)
+src.consume 144 i_reag_black_pearl
+src.consume 360 i_reag_batwing
+src.consume 30 i_scroll_fire_ring
+src.consume 30 i_scroll_ice_ring
+say Ten holub na urcene misto dvacet dni letel.
+say Byl ale pochroumany a tak letal dvakrat pomaleji nez zdravy.
+else
+say Nic pro mne zatim nemas, vrat se az to budes mit. 
+endif
+
+[speech spk_rockdung_mage_3]
+on=*ahoj*
+on=*zdravim*
+say Vitej clovece, co te ke mne privadi?
+on=thoronil
+say = Thoronil? To jmeno jsem jiz dlouho neslysel, kdysi jsem s nim byl v kontaktu.
+on = kontaktu
+on = kontakt
+say Po svem holubovi mi zpravy zasilal.
+say Myslim ze holub cestoval.. hmm nemohu si vzpomenout kolik dni.
+say Ale nejake zbozi by me pameti mohlo pomoci.
+on=zbozi
+say Prines mi sto mandel hadich supin a uvidim co se da delat.
+on=mam
+if (<src.restest 1500 i_reag_serpent_scale>)
+src.consume 1500 i_reag_serpent_scale
+say Uz jsem si vzpomel.
+say Holub se po ctrnacti dnech vracel.
+else
+say Nic pro mne zatim nemas, vrat se az to budes mit. 
+endif
+
+[speech spk_rockdung_thoronil]
+on=*ahoj*
+on=*zdravim*
+say Vitej clovece, co te ke mne privadi?
+on=Lomendil
+on=Kniha
+say Jste tu z poslani Elemiela?
+on=ano
+say V tom pripade zhyn ty bidny cerve!
+src.hits=0
+on=ne
+say To je dobre, Elemiel je bratr Lomendila, kvuli kteremu jsem z mesta Serpent's Hold odesel.
+say Povez mi tedy, co te ke mne privadi? Chces se necemu naucit?
+on=priucit
+on=naucit
+say V me zdejsi knihovne je mnoho kouzel.
+say Pokud mi nejdrive pomuzes, dovolim ti vstoupit do me knihovny a muzes se necemu priucit.
+on=pomoc
+say Pracuji na novem kouzle, ale potrebuji k tomu nekolik specialnich rostlin. Prines mi tucet techto rostlinek. V bazinach je muzes najit.
+say Dale shanim lesni houby, ktere v hlubokych lesich kolem Vesperu rostou. Tech mi prines take tucet.
+on=mam
+if (<src.restest 12 i_rockdung_houba> && <src.restest 12 i_rockdung_rostlina>)
+src.consume 12 i_rockdung_rostlina
+src.consume 12 i_rockdung_houba
+say Vyborne, mnohokrat ti dekuji. Tady mas klic od me knihovny.
+src.newitem i_key_thoronil,1,<src.uid>
+else
+say Nic pro mne zatim nemas, vrat se az to budes mit. 
+endif
+
+[itemdef i_rockdung_rostlina]
+id=0c85
+name=Glabella papendix
+type=t_normal
+on=@create
+attr=010
+color=color_o_agapite
+
+on=@dclick
+if <morex>==0
+serv.newitem i_rockdung_rostlina,1,<src.uid>
+new.morex 1
+new.attr=00
+remove
+//else
+//src.message Tato rostlina je uz utrzena.
+endif
+return 1
+
+[itemdef i_rockdung_houba]
+id=0d12
+name=Fungus forestus
+type=t_normal
+on=@create
+attr=010
+color=color_o_mytheril
+
+on=@dclick
+if <morex>==0
+serv.newitem i_rockdung_houba,1,<src.uid>
+new.morex 1
+new.attr=00
+remove
+else
+//src.message Tyto houby jsou uz utrzene.
+endif
+return 1
+
+[itemdef i_key_thoronil]
+id=i_key_iron
+name=Klic od knihovny
+type=t_normal
+on=@create
+attr=00
+color=00

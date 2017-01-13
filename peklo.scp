@@ -1,0 +1,396 @@
+//pohyblivy teleport Phek-lho 4p
+//8 teleportu nalinkovat do kruhu
+//[itemdef i_peklo_port]
+//id=i_moongate_blue
+//name=teleportacni brana
+//type=t_normal
+//
+//on=@create
+//ATTR=010
+//color=0490
+//
+//
+//on=@STEP
+//if (!<SRC.isplayer>)
+//	RETURN 1
+//ENDIF
+//IF ( <SRC.FLAGS>&2 )
+//	SRC.P=4814,3138,0
+//	SRC.UPDATE
+//ENDIF
+//	TIMER=20
+//	SRC.P=<MOREP>
+//	SRC.UPDATE
+//
+//on=@TIMER
+//	TIMER=-1
+//	TYPE=t_normal
+//RETURN 1
+//
+//pohyblivy teleport Phek-lho 4p
+//8 teleportu nalinkovat do kruhu
+//[itemdef i_peklo_port1]
+//id=i_moongate_blue
+//name=teleportacni brana
+//type=t_normal
+//
+//on=@create
+//ATTR=010
+//color=0490
+//
+//
+//on=@STEP
+//if (!<SRC.isplayer>)
+//	RETURN 1
+//ENDIF
+//IF ( <SRC.FLAGS>&2 )
+//	SRC.P=4814,3138,0
+//	SRC.UPDATE
+//ENDIF
+//	TIMER=150
+//	SRC.P=5276,1480,0
+//	SRC.UPDATE
+//RETURN 1
+//
+//on=@TIMER
+//TIMER=-1
+//IF (RAND(8)>=6)
+//	MOREP=5331,1385,0 //2 patro zaciatok
+//	LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSEIF (RAND(8)>=6)
+//	MOREP=5331,1347,0 //2 patro robar
+//	LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSEIF (RAND(8)>=6)
+//	MOREP=5290,1339,0 //2 patro 
+//	LINK.LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSEIF (RAND(8)>=6)
+//	MOREP=5227,1290,0 //1 patro les
+//	LINK.LINK.LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSEIF (RAND(8)>=6)
+//	MOREP=5554,1330,0 //3 patro alchemist
+//	LINK.LINK.LINK.LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSEIF (RAND(8)>=6)
+//	MOREP=5554,1330,0 //3 patro alchemist
+//	LINK.LINK.LINK.LINK.LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ELSE
+//	MOREP=4814,3138,0 //zaciatok
+//	LINK.LINK.LINK.LINK.LINK.LINK.LINK.ID=i_peklo_port1
+//	ID=i_peklo_port
+//	RETURN 1
+//ENDIF
+
+[itemdef i_pegas_statue]
+//NALINKOVAT NA TRUHLU
+ID=01228
+NAME=paegas statue
+TYPE=3070
+
+on=@create
+COLOR=045e
+ATTR=010
+
+CATEGORY=Custom Items
+SUBSECTION=Phek-lho
+DESCRIPTION=Paegas Statue (vypinac)
+
+[TYPEDEF 3070]
+//Phek-lho SOCHA VYPINAC
+on=@DCLICK
+	SRC.MESSAGE Otocil jsi sochou.
+	SOUND 022b
+	LINK.TYPE=1
+	LINK.MOREX=1
+	TIMER=15
+	ID=0139d
+	NAME=paegas statue
+	TYPE=3070
+	SRC.REGION.ALLCLIENTS UPDATE
+
+on=@TIMER
+   TIMER=-1
+   ID=01228 //0139d
+   NAME=paegas statue
+   Z=15
+   IF <LINK.MOREX>==1
+	LINK.TYPE=3069
+	LINK.MOREX=0
+  // ELSE
+	//TIMER=100
+   ENDIF
+RETURN 1
+
+[TYPEDEF 3069]
+//truhla chranena magickym polem Phek-lho
+on=@DCLICK
+	SRC.NEWITEM=0376a
+	SRC.ACT.P=5213,1469,2
+	SRC.DAMAGE={20 50}
+	SOUND 01f0
+	SRC.ACT.TIMER=10
+	SRC.ACT.ATTR=02
+	SRC.MESSAGE Truhla je chranena magickym polem.
+RETURN 1
+
+//////////////////////////////////////////////////////////////////////////
+//Gaty do Phek-lha								//
+//	- random morep							//
+//	- pri vycarovani hodit nato .xtimer 0 potom sa to spusti 	//
+//									//
+//cr by Laiho								//
+//////////////////////////////////////////////////////////////////////////
+[ITEMDEF i_peklo_gaty_napoveda]
+ID=014EC
+NAME=Zapisky
+TYPE=t_normal
+
+on=@create
+color=0b10
+attr=010
+
+on=@dclick
+if <src.distance> < 3
+dialogclose d_peklo_napoveda
+dialog d_peklo_napoveda
+return 1
+endif
+
+[DIALOG d_peklo_napoveda]
+0,0
+gumppic 0 0 04e0
+
+dtext 90 70 035 Elfi Kombinace: Er mallë
+dtext 180 310 035 Sepsal Lendrai
+
+local.gata=<link.tag.spravna_gata>
+
+if (<local.gata>==2)
+gumppic 150 125 2361
+else
+gumppic 150 125 2360
+endif
+
+if (<local.gata>==5)
+gumppic 120 155 2361
+else
+gumppic 120 155 2360
+endif
+
+if (<local.gata>==1)
+gumppic 90 185 2361
+else
+gumppic 90 185 2360
+endif
+
+if (<local.gata>==8)
+gumppic 120 220 2361
+else
+gumppic 120 220 2360
+endif
+
+if (<local.gata>==4)
+gumppic 150 255 2361
+else
+gumppic 150 255 2360
+endif
+
+if (<local.gata>==7)
+gumppic 180 220 2361
+else
+gumppic 180 220 2360
+endif
+
+if (<local.gata>==3)
+gumppic 210 185 2361
+else
+gumppic 210 185 2360
+endif
+
+if (<local.gata>==6)
+gumppic 180 155 2361
+else
+gumppic 180 155 2360
+endif
+
+
+[itemdef i_peklo_gata]
+id=i_moongate_blue
+name=teleportacni brana
+on=@create
+ATTR=010
+color=0490
+
+[ITEMDEF i_peklo_gate_control]
+ID=i_crystal_ball//7960
+NAME=Phek-lho gate control
+
+on=@click
+if <src.isgm>
+src.sysmessage !NEMAZAT!
+src.sysmessage Control ball
+src.sysmessage Automaticky meni suradnice portu gatam ak prejde timer.
+src.sysmessage Mozno restartovat cez dclick
+endif
+
+on=@dclick
+if <src.isgm>
+timer=0
+endif
+
+on=@create
+color=0799
+timer=18000
+attr=090
+
+serv.newitem i_peklo_gata
+tag.ref1=<new.uid>
+new.p=5344,1441,0
+
+serv.newitem i_peklo_gata
+tag.ref2=<new.uid>
+new.p=5344,1421,0
+
+serv.newitem i_peklo_gata
+tag.ref3=<new.uid>
+new.p=5364,1421,0
+
+serv.newitem i_peklo_gata
+tag.ref4=<new.uid>
+new.p=5364,1441,0
+
+serv.newitem i_peklo_gata
+tag.ref5=<new.uid>
+new.p=5344,1431,0
+
+serv.newitem i_peklo_gata
+tag.ref6=<new.uid>
+new.p=5354,1421,0
+
+serv.newitem i_peklo_gata
+tag.ref7=<new.uid>
+new.p=5364,1431,0
+
+serv.newitem i_peklo_gata
+tag.ref8=<new.uid>
+new.p=5354,1441,0
+
+on=@timer
+timer=140000
+//serv.log Peklo - gaty restart
+message restart
+ref1=<tag.ref1>
+ref2=<tag.ref2>
+ref3=<tag.ref3>
+ref4=<tag.ref4>
+ref5=<tag.ref5>
+ref6=<tag.ref6>
+ref7=<tag.ref7>
+ref8=<tag.ref8>
+
+dorand 8
+LINK.P=5551,1369,6 
+LINK.P=5506,1389,6 
+LINK.P=5448,1364,6 
+LINK.P=5475,1318,6 
+LINK.P=5516,1332,6 
+LINK.P=5522,1299,6 
+LINK.P=5540,1345,6 
+LINK.P=5524,1393,10
+enddo
+
+local.random=<eval rand(1,8)>
+
+if (<local.random>==1)
+tag.spravna_gata=1
+ref1.MoreP=5276,1480,0
+ref2.MoreP=4814,3138,0
+ref3.MoreP=5331,1385,0
+ref4.MoreP=5331,1347,0
+ref5.MoreP=5290,1339,0
+ref6.MoreP=5554,1330,0
+ref7.MoreP=5227,1290,0
+ref8.MoreP=5450,1444,0
+elseif (<local.random>==2)
+tag.spravna_gata=2
+ref1.MoreP=5331,1347,0
+ref2.MoreP=5276,1480,0
+ref3.MoreP=4814,3138,0
+ref4.MoreP=5331,1385,0
+ref5.MoreP=5290,1339,0
+ref6.MoreP=5450,1444,0
+ref7.MoreP=5227,1290,0
+ref8.MoreP=5554,1330,0
+elseif (<local.random>==3)
+tag.spravna_gata=3
+ref1.MoreP=5290,1339,0
+ref2.MoreP=5331,1347,0
+ref3.MoreP=5276,1480,0
+ref4.MoreP=4814,3138,0
+ref5.MoreP=5331,1385,0
+ref6.MoreP=5450,1444,0
+ref7.MoreP=5227,1290,0
+ref8.MoreP=5554,1330,0
+elseif (<local.random>==4)
+tag.spravna_gata=4
+ref1.MoreP=5554,1330,0
+ref2.MoreP=5450,1444,0
+ref3.MoreP=5331,1347,0
+ref4.MoreP=5276,1480,0
+ref5.MoreP=4814,3138,0
+ref6.MoreP=5331,1385,0
+ref7.MoreP=5290,1339,0
+ref8.MoreP=5227,1290,0
+elseif (<local.random>==5)
+tag.spravna_gata=5
+ref1.MoreP=5554,1330,0
+ref2.MoreP=5450,1444,0
+ref3.MoreP=5227,1290,0
+ref4.MoreP=5331,1347,0
+ref5.MoreP=5276,1480,0
+ref6.MoreP=4814,3138,0
+ref7.MoreP=5331,1385,0
+ref8.MoreP=5290,1339,0
+elseif (<local.random>==6)
+tag.spravna_gata=6
+ref1.MoreP=4814,3138,0
+ref2.MoreP=5331,1347,0
+ref3.MoreP=5227,1290,0
+ref4.MoreP=5331,1385,0
+ref5.MoreP=5450,1444,0
+ref6.MoreP=5276,1480,0
+ref7.MoreP=5554,1330,0
+ref8.MoreP=5290,1339,0
+elseif (<local.random>==7)
+tag.spravna_gata=7
+ref1.MoreP=5450,1444,0
+ref2.MoreP=5227,1290,0
+ref3.MoreP=5554,1330,0
+ref4.MoreP=5290,1339,0
+ref5.MoreP=5331,1347,0
+ref6.MoreP=4814,3138,0
+ref7.MoreP=5276,1480,0
+ref8.MoreP=5331,1385,0
+elseif (<local.random>==8)
+tag0.spravna_gata=8
+ref1.MoreP=5331,1347,0
+ref2.MoreP=5450,1444,0
+ref3.MoreP=5290,1339,0
+ref4.MoreP=5554,1330,0
+ref5.MoreP=5227,1290,0
+ref6.MoreP=5331,1385,0
+ref7.MoreP=4814,3138,0
+ref8.MoreP=5276,1480,0
+endif
+return 1
+[EOF]

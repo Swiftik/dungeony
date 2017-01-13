@@ -1,0 +1,308 @@
+[typedef t_hythloth_hrob]
+ON=@DCLICK
+IF <DISTANCE>>2
+     SRC.MESSAGE=Jsi prilis daleko!
+     RETURN 1
+ELSE
+     dialog d_hythloth_hrob 0,<tag0.text>
+     RETURN 1
+ENDIF
+
+ON=@TIMER
+     LINK.MOVE 0 0 -<morez>
+     SOUND=002e
+     TIMER=-1
+     RETURN 1
+
+[DIALOG d_hythloth_hrob]
+200,200
+page 0
+gumppic 0 0 101
+dhtmlgump 44 121 140 120 0 0 <def.center> <def.bfont_llgray> <tag.text>
+dhtmlgump 43 120 140 120 0 0 <def.center> <def.bfont_dgray> <tag.text>
+
+//text 268 210 995 0
+//text 256 225 995 1
+//text 270 240 995 2
+//text 267 255 995 3
+//text 277 280 997 4
+gumppic 22 274 216
+button 196 274 216 216 1 0 1
+
+//[DIALOG d_hythloth_hrob TEXT]
+//Zde ulehl k
+//vecnemu spanku
+//rytir temna 
+//a cerny mag
+//Nestorius
+
+[DIALOG d_hythloth_hrob BUTTON]
+ON=1
+if (<timer>!=-1)
+SRC.SYSMESSAGE Dvere uz jsou otevrene...
+ELSE
+SRC.SYSMESSAGE=Otevrel jsi tajne dvere
+SOUND=004a
+LINK.MOVE 0 0 <morez>
+TIMER=<more2>
+endif
+return 1
+
+[CHARDEF c_netrax]
+DEFNAME=c_netrax
+NAME=Netrax
+ID=c_Liche
+ICON=i_pet_LICH
+DAM=15,25
+ARMOR=50
+moverate=85
+RESOURCES=
+CAN=MT_WALK
+DESIRES=t_bone,i_gold,t_wand,t_reagent,e_undead
+TEVENTS=e_undead
+TEVENTS=e_summon
+TAG.SUMMON=c_spirit_hunter,c_bone_walker,c_vampire_wolf,c_m_skeleton_heavy_archer,c_m_mummy,c_m_skeleton_mage,c_m_skeleton_knight,c_m_wraith
+tag.maxsummon=2
+
+ON=@Create
+tag.armod=5
+	NPC=brain_undead
+	STR={415 505}
+	MAXHITS={1160 1190}
+	DEX={116 135}
+	INT={625 655}
+	PARRYING={55.0 65.0}
+	MAGERY={90.0 100.0}
+	MAGICRESISTANCE={90.0 100.0}
+	TACTICS={65.0 70.0}
+	WRESTLING={75.0 80.0}
+	FAME={3500 6500}
+	KARMA={-5000 -5999}
+	FLAGS=<FLAGS>|00260
+	ITEMNEWBIE=i_spellbook
+	ADDSPELL=s_Harm
+	ADDSPELL=s_poison
+	ADDSPELL=s_curse
+	ADDSPELL=s_paralyze
+	ADDSPELL=s_dispel
+	ADDSPELL=s_fire_bolt
+	ADDSPELL=s_Hallucination
+	tag.resist_necro 65
+	tag.resist_cold 100
+
+ON=@NPCRestock
+	ITEM=i_reag_blackmoor,{12}
+	ITEM=i_reag_executioners_cap,{12}
+	ITEM=loot_LICH_LORD
+	ITEM=i_reag_nightshade,{5}
+	item=i_ring_strength,R10
+	item=i_ring_dexterity,R10
+	item=i_bracelet_mages,R500
+	item=i_bracelet_archery,R500
+	item=i_bracelet_parrying,R500
+	item=i_amulet_warrior,R500
+	item=i_amulet_fighter,R500
+	item=i_amulet_fencing,R500
+	item=i_amulet_alchemy,R500
+	item=i_amulet_mana,R500
+	item=i_ankh_ring,R10
+	item=i_ring_serpent,R500
+	item=i_ring_titans,R500
+	item=i_ring_inteligence,R10
+	item=i_bracelet_taming,R500
+	item=i_ring_potection,R500
+	item=i_amulet_protection,R500
+	item=i_amulet_alchemy,R500
+	item=i_netraxuv_prsten
+	timer=20
+	
+	CATEGORY=Monsters
+	SUBSECTION=Hythloth
+	DESCRIPTION=Netrax
+
+[itemdef i_netraxuv_prsten]
+ID=i_ring_silver
+NAME=Netraxuv prsten
+value=10
+type=0
+weight=1
+
+CATEGORY=Custom Items
+SUBSECTION=Hythloth
+DESCRIPTION=Netraxuv prsten
+
+on=@DCLICK
+SRC.MESSAGE Drzis prsten slavneho Netraxe. Stale pulsuje energii.
+RETURN 1
+
+[itemdef i_netraxova_koule]
+ID=03660
+NAME=Netraxova koule
+value=10
+type=0
+weight=1
+
+CATEGORY=Custom Items
+SUBSECTION=Hythloth
+DESCRIPTION=Netraxova koule
+
+on @create
+tag.obtiznost=80
+tag.teleport=5959,147,22
+
+on=@CLICK
+SRC.MESSAGE Divas se na slavnou Netraxovu kouli, ktera slouzila k cviceni sily mysli.
+RETURN 1
+
+on=@DCLICK
+if !((<src.p.x>==5970) && (<src.p.y>==147) && (<src.p.z>==22))
+SRC.MESSAGE Pro zahajeni souboje si stoupni na symbol pentagramu.
+RETURN 1
+endif
+if (<src.mana> < <src.maxmana>)
+SRC.MESSAGE Pro zahajeni vycviku musis byt plne koncentrovan.
+RETURN 1
+endif
+if (<src.int> < 11)
+SRC.MESSAGE Tva mysl je prilis slaba. Ani nezkousej vyvolat souboj mysli.
+RETURN 1
+endif
+if (rand(<src.int>)>(<tag.obtiznost>))
+	src.go <tag.teleport>
+elseif (rand(<src.int>)>(<tag.obtiznost>/2))
+	src.mana=0
+	SRC.MESSAGE Neuspel jsi a prisel o vsechnu manu.
+	src.effect 3,14525,6,15,1
+elseif (rand(<src.int>)>(<tag.obtiznost>/6))
+	src.mana=0
+	DORAND 2
+	src.spelleffect 51,1000
+	src.spelleffect 30,1000
+	ENDDO
+	SRC.MESSAGE Byl jsi porazen a krom ztraty many jsi byl zranen.
+	src.effect 3,14525,6,15,1
+elseif (rand(<src.int>)>(<tag.obtiznost>/12))
+	src.mana=0
+	src.int -=1
+	DORAND 2
+	src.spelleffect 51,1000
+	src.spelleffect 30,1000
+	ENDDO
+	SRC.MESSAGE Neobstal jsi. Krom tezkych poraneni te boli hlava.
+	src.effect 3,14525,6,15,1
+else
+	src.spelleffect 30,20000
+	SRC.MESSAGE Kriticky jsi selhal.
+	src.effect 3,14525,6,15,1
+endif
+
+/////// Netraxova zena ///////
+/////////////////////
+[speech spk_hythloth_netrax]
+on=*ahoj*
+on=*hi*
+on=*zdravim*
+say Zdravim Vas, zivouci. Co delate na miste, kde odpocivaji mrtvi?
+on=dvere
+on=pomoc
+on=cesta
+on=klic
+say Hledate cestu dale a dvere jsou zavreny. Manzel by nechtel, abych Vam pomohla.
+say Naplnis-li vsak tento dzban, otevru ti dvere.
+on=dzban
+on=nadoba
+say Nekde byl sud s tekutinou, ktera je schopna utisit moji zizen.
+say Tady je muj dzban. Pospes si.
+src.newitem i_nadoba_netrax_prazdna
+new.bounce
+on=mam
+if <src.restest 1 i_nadoba_netrax_plna>
+src.sysmessage Dekuji ti, cesta je volna
+src.consume 1 i_nadoba_netrax_plna
+remove
+else 
+say Nic nemas, snazis se mne oklamat!
+src.spelleffect 30,1000
+endif
+[chardef c_netraxova_zena]
+id=03ca
+name=Duch Netraxovy zeny
+tspeech=spk_hythloth_netrax
+on @create
+flags=01
+title=duch
+karma=1000
+fame=1000
+str=100
+dex=100
+int=100
+
+[ITEMDEF i_nadoba_netrax_prazdna]
+ID=i_pitcher_glass
+name=Prazdny Dzban
+TYPE=T_PITCHER_EMPTY
+TDATA1=i_pitcher_glass
+FLIP=1
+RESOURCES=6 i_GLASS
+VALUE=9
+WEIGHT=2
+CATEGORY=Dungeons
+SUBSECTION=Hythloth
+DESCRIPTION=Empty Glass Pitcher
+
+on=@dclick
+IF (<TOPOBJ.UID>!=<SRC.UID>)
+src.sysmessage Musis to mit u sebe!
+RETURN 1
+endif
+target Na co to chces pouzit?
+return 1
+
+on=@targon_item
+if ( ( ! <src.targ.canseelos> ) || ( <src.targ.distance> > 3 ) )
+   src.sysmessage Jsi od toho moc daleko!
+   return 1
+endif
+if (<src.targ.baseid>==i_barrel_hythloth)
+   src.sysmessage Nalil<src.sex /a> jsi vodu do dzbanu.
+   remove
+   src.newitem i_nadoba_netrax_plna
+   new.bounce
+   return 1
+else
+    src.sysmessage Nic se nestalo!
+    return 1
+endif
+
+[ITEMDEF i_nadoba_netrax_plna]
+ID=i_pitcher_glass
+name=Plny Dzban
+TYPE=T_PITCHER_EMPTY
+TDATA1=i_pitcher_glass
+FLIP=1
+RESOURCES=6 i_GLASS
+VALUE=9
+WEIGHT=2
+CATEGORY=Dungeons
+SUBSECTION=Hythloth
+DESCRIPTION=Full Glass Pitcher
+
+on @create
+color=0795
+
+[ITEMDEF i_barrel_hythloth]
+ID=i_barrel_water
+WEIGHT=25
+CATEGORY=Provisions - Miscellaneous
+SUBSECTION=Containers
+DESCRIPTION=Water Barrel Hytloth
+SKILLMAKE=CARPENTRY 75.0, t_carpentry
+RESOURCES=2 i_barrel_staves, 1 i_barrel_hoops, 1 i_barrel_lid
+
+on @create
+attr=010
+timer=-1
+
+on=@dclick
+src.sysmessage Nejde s tim hnout ani pit vodu. Zda se to magicke.
+return 1

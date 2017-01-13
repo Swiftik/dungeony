@@ -1,0 +1,43 @@
+[itemdef i_amonova_dlazba]
+ID=0497
+TYPE=2011
+
+on=@create
+ATTR=attr_static|attr_move_never
+
+[TYPEDEF 2011]
+ON=@DCLICK
+IF <SRC.TAG0.PYRAMIDA_PROTECT>==1
+	SRC.MESSAGE Vitej amonuv knezi, zahaj ritual .
+	RETURN 0
+ELSE
+	SRC.MESSAGE Zemri vetrelce.
+	SRC.KILL 
+	RETURN 1
+ENDIF
+
+ON=@STEP
+IF (<SRC.isevent.rt>)
+  RETURN 1
+ENDIF
+IF (<SRC.FLAGS>&2)
+	RETURN 1
+ENDIF
+if (!<src.isevent.player>)
+	IF (<SRC.NPC>==10)||(<SRC.NPC>==11)||(<SRC.NPC>==12)||(<SRC.NPC>==13)||(<SRC.NPC>==2)
+		RETURN 1
+	ENDIF
+endif
+IF <SRC.TAG0.PYRAMIDA_PROTECT>==1
+		SRC.MESSAGE Vitej amonuv knezi, zahaj ritual.
+		SOUND=011f
+		RETURN 1
+	ELSE
+		SRC.MESSAGE Zemri vetrelce.
+		SRC.KILL
+		RETURN 1
+ENDIF
+
+CATEGORY=Custom Items
+SUBSECTION=Pyramida
+DESCRIPTION=Dlažba Amonova svatynì

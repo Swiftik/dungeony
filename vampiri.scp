@@ -1,0 +1,303 @@
+[speech spk_carmilla]
+DEFAULT=Cerstva krev! Tak pojd!
+ON=*
+DORAND 6
+SAY=Cerstva krev! Tak pojd!
+SAY Jsem Carmilla! Kralovna vsech upiru!
+SAY Jen pojd... uz brzy budu i tva kralovna...
+SAY Poznas mou moc... 
+SAY Jsem pani krve... a ty budes muj otrok
+SAY Tva krev chutna dobre...
+ENDDO
+
+[itemdef i_vampire_heal]
+ID=i_memory
+NAME=vampire heal
+type=t_eq_script
+
+on=@timer
+if !<cont.uid>
+remove
+endif
+timer=5
+if (<cont.hits>==<cont.maxhits>)
+return 1
+endif
+if (<cont.MEMORYFINDTYPE(memory_ispawned).link.link.timer>!=-1)
+timer=<cont.MEMORYFINDTYPE(memory_ispawned).link.link.timer>
+return 1
+endif
+cont.hits=<cont.maxhits>
+cont.EFFECT=3,0375A,6,15,1
+cont.EFFECT=3,0374a,6,15,1
+cont.EFFECT=3,01AE5,6,15,1
+return 1
+
+[itemdef i_krev_nesmrtelnosti]
+id=0142A
+name=Krev nesmrtelnosti
+
+on=@create
+color=07f3
+attr=010
+
+on=@dclick
+sound=01e7
+return 1
+
+on=@targon_item
+
+
+on=@timer
+color=07f3
+update
+timer=-1
+return 1
+on=@damage
+return 1
+on=@spell
+return 1
+
+[itemdef i_krev_upira]
+id=0122a
+
+on=@create
+color=07B2
+timer=120
+on=@dclick
+if ((rand(4))!=1)
+src.sysmessage Krev upira se smichala s obycejnou a je jiz k nicemu.
+remove
+return 1
+endif
+if <src.restest 1 i_bottle_empty>
+src.consume 1 i_bottle_empty
+remove
+newitem=i_vampire_blood,1,<src.uid>
+src.sysmessage Podarilo se ti nabrat krev upira.
+endif
+return 1
+on=@timer
+remove
+return 1
+
+
+[itemdef i_vampire_blood]
+id=0F06
+name=Vampire blood
+type=t_script
+value=5
+
+on=@create
+color=07B2
+
+on=@dclick
+target
+return 1
+on=@targon_char
+return 1
+on=@targon_item
+if (<src.targ.baseid>!=i_necklace_silver)
+return 1
+endif
+if ((<src.targ.cont.uid>==<src.findlayer.21.uid>)||(<src.targ.cont.cont.uid>==<src.findlayer.21.uid>))
+if (<src.alchemy><1050)
+src.sysmessage Tve schopnosti alchymie nejsou dostatecne.
+remove
+return 1
+endif
+src.targ.id=i_amulet_sacrifice
+src.targ.name=
+SOUND=0212
+effect 3,00373a,6,15,3
+src.sysmessage Povedlo se ti vyrobit Sacrifice Amulet.
+consume 1
+endif
+return 1
+
+[chardef 0426d]
+//Female Vampire
+DEFNAME=c_vampire_queen
+ID=C_WOMAN
+NAME=Carmilla
+dam=15,35
+armor=140
+CAN=MT_FEMALE|MT_WALK|MT_USEHANDS|MT_RUN|MT_EQUIP|MT_FLY
+//resources=1 i_krev_upira
+TSPEECH=spk_carmilla
+TEVENTS=e_vampire
+TEVENTS=e_poison_imune
+tevents=e_stone_imunita
+tevents=e_vampire_protect
+tevents=e_dragonscale
+tevents=e_life_drain
+tevents=e_nasledovnici_bonusnpc
+
+
+on=@create
+tag.armod=25
+     NPC=brain_undead
+     TITLE=Kralovna Vampiru
+     COLOR=0810
+     STR=700
+     MAXHITS={1850 1950}
+     DEX={200 250}
+     INT={250 300}
+     FLAGS=<FLAGS>|00240
+     ARMSLORE={52.0 75.0}
+     FENCING=100.0
+     magery=100.0
+     PARRYING=90.0
+     SWORDSMANSHIP={55.0 68.0}
+     WRESTLING={95.0 100.0}
+     MACEFIGHTING={45.0 75.0}
+     MAGICRESISTANCE={90.0 95.0}
+     TACTICS=100.0
+     HIDING={75.0 85.0}
+     NECROMANCY={90.0 96.0}
+     FAME=10000
+     KARMA=-18000
+     tag.resist_cold 100
+     tag.resist_elec 50
+     tag.resist_blunt 70
+	tag.noprovocation=1
+	tag.nopeacemaking=1
+	tag.lifedrain=2
+     tag.name.hue=0793
+	tag.body=8
+     
+
+On=@npcrestock
+     ITEM=0203C
+     COLOR=07AD
+     ITEM=01086
+     ITEM=0108A
+     item=01711
+     color=0454
+     item=01EFF
+     color=01
+     item=i_vampire_heal
+     	timer=5
+     item=01089
+     item=i_gold,{14000 15000}
+     item={TTM_LVL5 1 i_bottle_blood 5}
+     ITEM=i_reag_eye_of_newt,{50}
+	item=i_ability_lifedrain_mid
+	item=i_ability_lifedrain_high,R5
+
+on=@gethit
+if <tag0.bloodrage>
+tag.bloodrage=""
+return 1
+else
+return 0
+endif
+
+on=@hit
+if ((rand(10))==1)
+anim=17
+dorand 2
+say Vas Jux An Mani
+say Vysaj krev zivych! 
+enddo
+serv.newitem=i_carmilla_effekt
+new.more=1
+new.timer=3
+new.equip
+endif
+tag0.bloodrage +=1
+if (<tag.bloodrage> >4)
+str +=10
+hits +=10
+say @35 Zabiju vas... zabiju vas vsechny...
+tag.bloodrage=""
+findid.i_gold.amount +={250 500}
+endif
+
+on=@kill
+hits=<maxhits>
+say @35 Ubozaku ... a ted vysaji tvou krev!
+say *saje krev mrtveho ...*
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+on @spelleffect
+if (<argn1>==102)
+	if (rand(10) < 9)
+	say *Carmilla odolala ucinkum kouzla*
+	return 1
+	endif
+elseif (<argn>==1)||(<argn>==3)||(<argn>==8)||(<argn>==12)||(<argn>==27)||(<argn>==46)||(<argn>==69)||(<argn>==70)||(<argn>==100)||(<argn>==31)||(<argn>==37)||(<argn>==41)||(<argn>==53)||(<argn>==54)
+       return 1
+endif
+
+on=@death
+region.allclients sysmessage @color_o_bloodrock Podzemim se rozleha sileny rev... Kralovna Carmilla padla...
+serv.newitem=i_dt_explosion
+new.name=Krev
+new.color=color_o_bloodrock
+new.timer=5
+new.p=<src.p>
+newitem=i_krev_upira
+new.p=<p>
+
+[itemdef i_carmilla_effekt]
+id=i_memory
+name=Carmilla Effekt
+type=t_eq_script
+
+on=@timer
+trigger=@dclick
+return 1
+
+on=@dclick
+forchars 12
+if (<isplayer>)&&(!<isevent.e_vampire>)&&(!<isevent.e_vampire_protect>)&&!(<flags>&statf_dead)
+message Krvacis! 
+EFFECT=3,0374a,6,15,1
+EFFECT=3,i_fx_fireball_small,6,15,1
+hits -={50 75}
+endif
+endfor
+remove
+return 1
+
+[itemdef i_carmilla_brain]
+ID=i_memory
+type=t_eq_script
+
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,10)>
+if <local.x><4
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><7
+cont.forcecast 70,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><9
+cont.forcecast 163,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><11
+cont.forcecast 100,<cont.memoryfindtype.02000.link>
+timer=12
+return 1
+endif
+endif
+TIMER=1
+return 1
+
+
+

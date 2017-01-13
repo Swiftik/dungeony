@@ -1,0 +1,690 @@
+[CHARDEF c_sc_arak]
+id=c_man
+NAME=Arak
+SOUND=snd_HUMAN_M_DIE_01
+CAN=MT_WALK|MT_FEMALE|mt_usehands|MT_EQUIP
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP,t_eerie_stuff
+tspeech=spk_sc_arak
+DAM=40,45
+tevents=e_stone_imunita,e_poison_imune
+
+ON=@Create
+tag.armod=55
+	tag.resist_necro 10
+	STR={176 195}
+	MAXHITS={380 445}
+	DEX={170 180}
+	INT={171 185}
+	FENCING=120.0
+	WRESTLING=100.0
+	parrying={95.0 98.0}
+	macefighting=110.0
+	swordsmanship=110.0
+	MAGICRESISTANCE={60.0 80.0}
+	TACTICS=105.0
+	magery=105.0
+	NPC=brain_Human
+	KARMA={5500 6900}
+	FAME={6600 8500}
+	tag.vyprovokovany=1
+
+ON=@NPCRestock
+	item=i_mt_horse_brown_dk
+	dispid=03e92
+	item=i_spellbook
+	more1=0
+	more2=0
+	ITEM=i_ctnosti_helma
+	attr=04
+	ITEM=i_ctnosti_ramena
+	attr=04
+	ITEM=i_ctnosti_rukavice
+	attr=04
+	ITEM=i_ctnosti_krk
+	attr=04
+	ITEM=i_ctnosti_hrud
+	attr=04
+	ITEM=i_ctnosti_nohy
+	attr=04
+	ITEM=i_ctnosti_boty
+	attr=04
+	item=i_radiant_scimitar
+	attr=04
+	ITEM=i_shield_knight
+	name=Atrakuv Stit
+	attr=04
+	ITEM=i_cloak_humility
+	name=Cloak
+	attr=04
+	item=i_gold,{85 95}
+	item=i_arak_brain
+	timer=1
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+ON@NPCLookAtChar
+if !(<src.isplayer> && (<SRC.KILLS> < 3))
+attacker.add <src.uid>
+endif
+
+[itemdef i_arak_brain]
+ID=i_memory
+type=t_eq_script
+name=arak brain
+on=@timer
+cont.mana=100
+if (<cont.hits> < <cont.maxhits>) && (rand(<eval 2+ ((<cont.hits>*10)/<cont.maxhits>)>)==1)
+cont.forcecast 103,<cont.uid>
+timerd=15
+return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+if <cont.memoryfindtype.02000.link.uid> && <cont.memoryfindtype.02000.link.uid.isevent.e_undead>
+cont.forcecast 102,<cont.memoryfindtype.02000.link>
+timerd=16
+return 1
+else
+cont.forcecast 101
+timerd=20
+return 1
+endif
+endif
+TIMER=40
+return 1
+
+[speech spk_sc_arak]
+on=*ahoj*
+on=*hi*
+on=*zdravim*
+say Co to vidim, zde na temnem miste clovek. Mam ocekavat pomoc?
+say Jsem Arak, paladin radu planouciho srdce.
+on=ukol
+on=poslani
+say Mym ukolem je zabiti cernokneznika Abrataxe, uvitam tvoji pomoc.
+say Dokud zije, nedostanes se dal.
+on=pomoc
+say V hlubinach demonka Andariel drima. Musis ziskat tri relikvie.
+say Ty tvori predmety uchovavane jejimi sluzebniky.
+on=relikvie
+say Jsou tri, ty musis ziskat od sluzebiku temna a obetovat.
+say Muj ukol je pouze zabit Abrataxe.
+on=abratax
+say Velke zlo, jeho smrti se svetu ulevi.
+on=planouci srdce
+say Nejsme velky rad. Nasim heslem je kazdodenni prace.
+say Diky tomu zmuzeme mnoho.
+
+
+[chardef c_sc_vampire_bat]
+defname=c_sc_vampire_bat
+id=c_vampire_bat
+NAME=Elder Vampire Bat
+SOUND=snd_monster_mngbat1
+ICON=i_pet_vampirebat
+DAM=25,35
+RESDISPDNID=c_slime
+RESLEVEL=3
+RESDISPDNHUE=01
+ARMOR=60
+CAN=MT_WALK|MT_FLY
+DESIRES=i_gold,e_notoriety,e_horses,c_man,c_woman,t_corpse
+CATEGORY=New Monsters
+SUBSECTION=AOS
+DESCRIPTION=Vampire Bat
+
+ON=@Create 
+tag.armod=10
+	color=0b23
+	NPC=brain_monster
+	FAME={100 3000} 
+	KARMA={-5000 -6999} 
+	STR={325 356}
+	MAXHITS={530 650}
+	INT={56 85}
+	DEX={111 135}
+	MAGICRESISTANCE={550.0 60.0}
+	TACTICS={96.0 106.0}
+	WRESTLING={99.0 99.9}
+	parrying={95.0 98.0}
+
+ON=@NpcRestock
+	ITEM=i_gold,{2890 3920}
+	ITEM=i_kridlo_netopyra
+	ITEM=i_temny_vlk_utok
+		timer=1
+
+ON=@Hit
+	HITS += <EVAL (<ARGN1>/3)*2>
+	IF (<HITS> > <MAXHITS>)
+		HITS=<MAXHITS>
+	endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[itemdef i_kridlo_netopyra]
+ID=i_reag_batwing
+NAME=Kridlo Netopyra
+value=10
+type=0
+weight=1
+
+CATEGORY=Custom Items
+SUBSECTION=Stinking Caves
+DESCRIPTION=Kridlo Netopyra
+
+ON=@Create 
+color=0b23
+
+on=@DCLICK
+SRC.MESSAGE Toto kridlo bylo ziskano z velkeho netopyra.
+RETURN 1
+
+[CHARDEF c_elder_kraken]
+DEFNAME=c_elder_kraken
+NAME=Elder Kraken
+ID=c_CORPSER
+SOUND=snd_MONSTER_CORPSR1
+ICON=i_pet_CORPSER
+DAM=35,70
+ARMOR=80
+RESOURCES=5 i_ribs_raw, 8 i_reag_blood_moss
+//ALIGNMENT=CHAOTIC
+CAN=MT_WALK|MT_SWIM
+FOODTYPE=24 t_meat_raw
+AVERSIONS=r_civilization
+TEVENTS=e_poison_imune
+
+
+ON=@Create
+tag.armod=50
+	COLOR=0
+	STR=650
+	MAXHITS={2485 2500}
+	DEX={685 705}
+	INT={318 329}
+	FLAGS=<FLAGS>|0020
+	PARRYING={55.0 65.0}
+	MAGICRESISTANCE={15.0 20.0}
+	TACTICS={85.0 90.0}
+	WRESTLING={85.0 90.0}
+	HIDING=85.0
+	NPC=brain_monster
+	FAME={5000 8500}
+	KARMA={-5000 -5999}
+
+ON=@NPCRestock
+    item=i_gold,{5000 5600}
+    item=i_prsten_rungil
+	ITEMNEWBIE=i_spellbook
+ 	ADDSPELL=s_Weaken
+ 	ADDSPELL=s_mass_curse
+ 	ADDSPELL=s_mass_dispel
+ 	ADDSPELL=s_Harm
+ 	ADDSPELL=s_poison
+ 	ADDSPELL=s_fire_bolt
+ 	ADDSPELL=s_Hallucination
+
+on @hit
+if rand(12)==1 // para...
+    src.tag.nomovetill=<eval <serv.time>+30>
+    src.say *Kraken te uveznil svymi chapadly*
+    src.effect 3,i_fx_glow_spike,5,16,0804,0,3
+    src.newitem i_drak_mojmir_timer,1,<src.uid>
+    new.morex=3
+    new.timer=1
+    src.events +e_drak_mojmir_para
+    return 1
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+CATEGORY=Monsters
+SUBSECTION=Miscellaneous
+DESCRIPTION=Elder Kraken
+
+
+[itemdef i_prsten_rungil]
+ID=i_ring_silver
+NAME=Prsten Rungil
+value=10
+type=0
+weight=1
+
+CATEGORY=Custom Items
+SUBSECTION=Stinking Caves
+DESCRIPTION=Prsten Rungil
+
+on=@DCLICK
+SRC.MESSAGE Toto je nejspise legendarni prsten Rungil.
+RETURN 1
+
+[chardef c_sc_abratax]
+defname=c_sc_abratax
+ID=c_man
+name=Abratax
+SOUND=snd_HUMAN_M_DIE_01
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+dam=0,40
+armor=60
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP
+tevents=e_poison_imune
+tevents=e_paralyze_imune
+
+on @create
+tag.resist_magic=50
+tag.resist_necro=50
+tag.elem_magic=1
+magery=2000
+necromancy=1000
+karma=-10000
+fame=10000
+title=Cernokneznik
+brain=brain_human
+str=300
+maxhits=1200
+dex=100
+int=300
+maxmana=1000
+color=0454
+on=@npcrestock
+itemnewbie={ i_hair_short 1 i_hair_long 1 i_hair_ponytail 1 }
+itemnewbie=i_robe
+color=0b24
+item=i_mt_horse_brown_dk
+	dispid=03e91
+	color=0b24
+item=i_sandals
+item=RANDOM_GEM
+item=RANDOM_MAGIC_BRACELET
+item=i_npcbonus_undead_mid,R2
+item=i_stats_int_mid,R2
+item=random_reagents,{15 25}
+item=random_special_reagents,{25 40}
+item=i_gold,{5000 6000}
+item=i_ability_magiccritical_mid,R10
+item=i_abrataxuv_mozek
+item=i_abratax_brain
+timer=1
+item=i_memory_necromancy3
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_scepter
+color=0b23
+
+on @hit
+if ((rand(3)==1)
+src.spelleffect s_flamestrike,2000
+sound=1151
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+on=@kill
+hits +=10
+if <src.hits> > <src.maxhits>
+    src.hits=<src.maxhits>
+endif
+sound=1154
+say Tva duse doplnila me sily!
+
+[itemdef i_abratax_brain]
+ID=i_memory
+type=t_eq_script
+on=@timer
+cont.mana=1000
+if <cont.f_rockdung_wallcount 3> > 3
+ if (rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 30
+    return 1
+ endif
+endif
+if (<cont.hits> < <cont.maxhits>) && (rand(<eval 2+ ((<cont.hits>*10)/<cont.maxhits>)>)==1)
+cont.forcecast 29,<cont.uid>
+timerd=13
+return 1
+endif
+if ((<cont.f_rockdung_FindNearestSummon 5>>0) && (rand(3)==1))
+	cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 5>
+	timerd = 35
+	return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,11)>
+if <local.x><3
+cont.magery=1400
+cont.forcecast 100,<cont.memoryfindtype.02000.link>
+timerd=33
+return 1
+endif
+if <local.x><6
+cont.magery 2000
+cont.forcecast 70,<cont.memoryfindtype.02000.link>
+timerd=25
+return 1
+endif
+if <local.x><10
+cont.magery 1400
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timerd=15
+return 1
+endif
+if <local.x><11
+cont.magery 1400
+cont.forcecast 508,<cont.memoryfindtype.02000.link>
+timerd=25
+return 1
+endif
+if <local.x><12
+cont.magery 1200
+cont.forcecast 520,<cont.memoryfindtype.02000.link>
+timerd=20
+return 1
+endif
+endif
+TIMER=1
+return 1
+
+
+[itemdef i_abrataxuv_mozek]
+ID=i_flesh_brain
+NAME=Abrataxuv Mozek
+value=10
+type=0
+weight=1
+
+CATEGORY=Custom Items
+SUBSECTION=Stinking Caves
+DESCRIPTION=Abraxuv Mozek
+
+on=@DCLICK
+SRC.MESSAGE Po cernokneznikovi zbyl mozek pulsujici magii.
+RETURN 1
+
+
+[itemdef i_smaragd_sc]
+ID=i_reag_eye_of_newt
+NAME=Ovladaci Krystal
+value=1000
+type=0
+weight=1
+
+on=@create
+DISPID=13946
+
+CATEGORY=Custom Items
+SUBSECTION=Stinking Caves
+DESCRIPTION=Ritualni Smaragd
+
+on=@DCLICK
+SRC.MESSAGE Tento smaragd byl ulomek z vetsiho kusu.
+RETURN 1
+
+[itemdef i_kyselinovy_vybuch]
+id=i_gold
+name=Oblak Kyseliny
+type=t_normal
+
+on=@create
+attr=attr_invis|attr_move_never
+timer=2
+
+on=@timer
+f_acidflus_efekt1
+timer=2
+return 1
+
+
+[ITEMDEF i_lahev_kouzelne_vody]
+ID=i_flask1_blue_anim
+name=Kouzelna Voda
+TYPE=t_normal
+FLIP=1
+VALUE=9
+WEIGHT=2
+CATEGORY=Dungeons
+SUBSECTION=Stinking Caves
+DESCRIPTION=Kouzelna Voda
+
+on=@dclick
+src.sysmessage Tuto kouzelnou vodu mozna pujde nekde pouzit.
+return 1
+
+[ITEMDEF i_kouzelna_studna]
+ID=i_fountain_life
+name=Kouzelna Studanka
+WEIGHT=25
+CATEGORY=Dungeons
+SUBSECTION=Stinking Caves
+DESCRIPTION=Kouzelna studna
+
+on @create
+attr=010
+timer=-1
+
+on=@dclick
+if (<timer>=-1)
+if <src.restest 1 i_bottle_empty>
+src.sysmessage Napnil jsi lahvicku vodou
+SRC.CONSUME 1 i_bottle_empty
+SRC.NEWITEM i_lahev_kouzelne_vody
+SRC.ACT.bounce
+timer=300
+else 
+say Nemas nic, do ceho bys nalil vodu!
+endif
+else
+src.sysmessage Studanka je temer prazdna, musis pockat.
+endif
+
+[itemdef i_sc_most_krystal]
+//tag0.item CO, more1 TIMER
+id=i_crystal_ball
+name=Strazni Krystal
+on @dclick
+if !<tag0.item>
+message nastaw mnie! tag.item =item more1=timer
+return 1
+endif
+if <timer>!=-1
+message Most je jiz vysunuty.
+return 1
+endif
+target Vloz chybejici krystal.
+return 1
+
+on @targon_ground
+return 1
+on @targon_char
+return 1
+on @targon_item
+if <src.targ.topobj>!=<src.uid>
+return 1
+endif
+if <src.targ.baseid>==<tag.item>
+src.targ.remove
+morex=13
+trigger=@timer
+endif
+
+on @timer
+if <morex>==13
+sc_most_create 071f,7021,222,-50
+sc_most_create 071f,7022,222,-50
+sc_most_create 071f,7023,222,-50
+morex -=1
+timerd=2
+return 1
+elseif <morex>==12
+sc_most_create 071f,7021,221,-45
+sc_most_create 071f,7022,221,-45
+sc_most_create 071f,7023,221,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==11
+sc_most_create 071e,7021,220,-45
+sc_most_create 071e,7022,220,-45
+sc_most_create 071e,7023,220,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==10
+sc_most_create 071e,7021,219,-45
+sc_most_create 071e,7022,219,-45
+sc_most_create 071e,7023,219,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==9
+sc_most_create 071e,7021,218,-45
+sc_most_create 071e,7022,218,-45
+sc_most_create 071e,7023,218,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==8
+sc_most_create 071e,7021,217,-45
+sc_most_create 071e,7022,217,-45
+sc_most_create 071e,7023,217,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==7
+sc_most_create 071e,7021,216,-45
+sc_most_create 071e,7022,216,-45
+sc_most_create 071e,7023,216,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==6
+sc_most_create 071e,7021,215,-45
+sc_most_create 071e,7022,215,-45
+sc_most_create 071e,7023,215,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==5
+sc_most_create 071e,7021,214,-45
+sc_most_create 071e,7022,214,-45
+sc_most_create 071e,7023,214,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==4
+sc_most_create 071e,7021,213,-45
+sc_most_create 071e,7022,213,-45
+sc_most_create 071e,7023,213,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==3
+sc_most_create 071e,7021,212,-45
+sc_most_create 071e,7022,212,-45
+sc_most_create 071e,7023,212,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==2
+sc_most_create 0737,7021,211,-45
+sc_most_create 0737,7022,211,-45
+sc_most_create 0737,7023,211,-45
+morex -=1
+timerd=2
+return 1
+elseif <morex>==1
+sc_most_create 0737,7021,210,-50
+sc_most_create 0737,7022,210,-50
+sc_most_create 0737,7023,210,-50
+morex -=1
+timer=<more1>
+return 1
+elseif <morex>==0
+//zmaz most
+return 1
+endif
+
+[function sc_most_create]
+serv.newitem <argv[0]>
+new.p=<argv[1]>,<argv[2]>,<argv[3]>
+new.timer=<more1>
+new.type=t_sc_most
+new.update
+new.effect 2,i_fx_explode,3,16,1,0b1d
+new.effect 2,0373a,3,16,1,0b1d
+ 
+[typedef t_sc_most]
+on @timer
+forchars 0
+go 7022,223,-50
+endfor
+effect 2,i_fx_explode,3,16,1,0b1d
+remove
+return 1
+
+[speech spk_wislem_otevreni_sc]
+on=*ahoj*
+on=*zdravim*
+on=*hi*
+on=*dobry den*
+on=*pomoc*
+say Prokleti podobne tomu v trinsickych lesich uz tu kdysi bylo.
+say Zkuste vypatrat nejaky zaznam. Snad ve Wisp dungeonu jsem neco videl.
+on=Arfein
+say Ano, to jmeno, to je ono.
+say Arfein z Ulam Nasa mu rikali.
+on=Ulam Nasa
+say Kdysi slavne podzemni mesto elfu v Pustinach.
+say Zly demon jej znicil a nyni jej ovlada.
+on=Helios
+say Toto mi nic nerika. Zda se, ze jde o jmeno Ophidiana.
+on=Heliosova pecet
+say Bohuzel, zde Vam nepomohu.
+say Helios vypada na ophidianske jmeno.
+on=Krystal svetla
+on=mam
+if (<src.restest 1 i_heritage_token>)
+src.consume 1 i_heritage_token
+say Skvele, myslim, ze toto nam bude na trinsicky les stacit.
+say Jakmile prijde cas, ozvu se Vam.
+else
+say Mas to, co jsme hledali?
+say Zda se, ze nikoli, neplytvej mym casem.
+return 1
+endif
+
+
+[speech spk_ophidian_otevreni_sc]
+on=*ahoj*
+on=*zdravim*
+on=*hi*
+on=*dobry den*
+on=*pomoc*
+say Dobry den, jsem Dendrophinios, ophidiansky kouzelnik.
+on=Helios
+say Co je s nim? Nekolik jich znam.
+on=pecet
+say Jakou pecet mas na mysli? Snad ne studentskou.
+on=Heliosova Pecet
+say Vim o co jde. A vy byste radi skrze ni, ze?
+say Znam zpusob, ale nebude to zadarmo.
+say Chi 500 prutu blackrocku. 
+on=mam
+on=blackrock
+if (<src.restest 500 i_ingot_blackrock>)
+src.consume 500 i_ingot_blackrock
+src.newitem=i_turmansky_krystal
+src.new.bounce
+say Skvele, tento krystal by mel fungovat.
+else
+say Rikal jsem 500 kusu blackrocku.
+return 1
+endif

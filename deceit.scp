@@ -1,0 +1,81 @@
+[typedef t_deceit_hlavy]
+on=@DCLICK
+if !<tag0.baseid>
+say Nastav me! Chybi tag.baseid...
+return 1
+endif
+IF <DISTANCE>>1
+	SRC.MESSAGE=Jsi prilis daleko!
+	RETURN 1
+ENDIF
+IF <MOREX>==1
+	SAY Nemam jiz hlad.
+	RETURN 1
+ELSE
+	TARGET Co mi das.
+	RETURN 1
+ENDIF
+
+on=@TARGON_ITEM
+IF (<SRC.TARG.TYPE>==<tag.baseid>)
+	SRC.TARG.REMOVE
+	dispID=01110
+	update
+	TYPE=t_deceit_hlavy_active
+	COLOR=0112
+	SRC.SOUND=01ff
+	LINK.MORE +=1
+	TIMER=<more2>
+	MOREX=1
+	IF (<LINK.MORE>==<morey>)
+		LINK.MOVE 0 0 <morez>
+		SRC.SOUND=00f3
+	ENDIF
+	RETURN 1
+ELSE
+	SRC.MESSAGE Toto nejim, dekuji.
+	SRC.SOUND=0112
+	SRC.DAMAGE=25-80
+	RETURN 1
+ENDIF
+
+on=@TARGON_GROUND
+	SRC.SOUND=0051
+RETURN 1
+
+on=@DAMAGE
+	SRC.DAMAGE=55-150
+RETURN 1
+
+on=@SPELLEFFECT
+	SRC.DAMAGE=55-150
+	
+
+[typedef t_deceit_hlavy_active]
+on=@DCLICK
+	SAY Nemam jiz hlad.
+	RETURN 1
+
+
+on=@TIMER
+	TIMER=-1
+	COLOR=0
+	MOREX=0
+	LINK.MORE +=-1
+	type=t_deceit_hlavy
+IF (<LINK.Z>==<morez>)
+	LINK.move 0 0 -<morez>
+ENDIF
+	dispID=01111
+	UPDATE
+RETURN 1
+
+on=@DAMAGE
+	SRC.SOUND=01dd
+	SRC.DAMAGE=55-150
+RETURN 1
+
+on=@SPELLeffect
+	SRC.SOUND=01dd
+	SRC.DAMAGE=55-150
+RETURN 1

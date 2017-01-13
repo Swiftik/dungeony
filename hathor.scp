@@ -1,0 +1,1620 @@
+//--------chram Hathor------------
+[itemdef i_hathor_kolektor]
+ID=025b
+
+on=@create
+color=07fd
+attr=attr_move_never
+on=@spelleffect
+if ((<src.argn>==31)&&(<p.Z>==<SRC.p.Z>)&&(<morez>==0))
+local.xlink=<more>
+uid.<local.xlink>.p.z=<uid.<local.xlink>.more2>
+local.<local.xlink>=<more2>
+uid.<local.xlink>.p.z=<uid.<local.xlink>.more2>
+link.more=<link.more>+1
+if (<link.more>==8)
+serv.allclients EFFECT=3,036b0,6,15,1
+serv.allclients damage 80
+endif
+morez=1
+timer=2
+endif
+return 1
+
+on=@timer
+timer=-1
+if (<link.more>==8)
+return 1
+endif
+local.xlink=<more>
+uid.<local.xlink>.p.z=<uid.<local.xlink>.more>
+local.xlink=<more2>
+uid.<local.xlink>.p.z=<uid.<local.xlink>.more>
+link.more=<link.more>+-1
+morez=0
+return 1
+
+///////////////////////////// chleba hadanka  /////////////////////////////////////////
+
+[itemdef i_hathor_vez]
+ID=0103c
+NAME=vez
+on=@create
+attr=010
+COLOR=0798
+TYPE=t_weapon_sword
+on=@DCLICK
+if (<more> == 0) && (<morey> < 6)
+return 0
+else
+RETURN 1
+endif
+on=@TARGON_ITEM
+if (<src.targ.baseid> == i_hathor_vez)
+if ((<src.targ.more> == 0) && (<morey> < <src.targ.morey>) && (<more> == 0) && (<morez> == <src.targ.morez>))
+src.targ.more=<UID>
+morex=<src.targ.morex>
+color=<src.targ.color>
+P=<src.targ.p>
+nudgeup 1
+link.more=0
+link=<src.targ.UID>
+endif
+endif
+RETURN 1
+
+ON=@TIMER
+TIMER=-1
+RETURN 1
+
+ON=@DAMAGE
+RETURN 1
+
+ON=@SPELL
+RETURN 1
+
+
+////////////////////// dlazdice na zvuk ////////////////////////
+
+[itemdef i_hathor_zkouseka_sily]
+id=01ecc
+
+on=@create
+attr=010
+
+on=@Dclick
+if !(<timer>==-1)
+src.sysmessage Svou silu jsi mi ukazal, jiz nebranim ti kracet dal. 
+return 1
+endif
+if (<more2>==1)
+src.sysmessage Nepritel tu stale zivy stoji, pustim te dal az po boji.
+return 1
+endif
+src.NEWNPC <more>
+new.p=<morep>
+new.update
+new.newitem i_hathor_killmemory
+new.link=<uid>
+new.equip <src.act.act>
+more2=1
+local.xlink=<link.more2>
+uid.<local.xlink>.trigger=@UP
+src.sysmessage Ne kazdy hrdina smi projit dal, zde zkouska tva abys silu prokazal... 
+return 1
+
+on=@kill
+timer=300
+color=0798
+link.nudgeup 20
+update
+link.link.morex=<link.link.morex>+1
+more2=0
+if <link.link.morex>==9
+link.link.p.z=<link.link.more>
+endif
+more2=0
+return 1
+
+ON=@timer
+timer=-1
+color 0
+update
+link.nudgedown 20
+locaL.link=<link.more2>
+uid.<local.link>.trigger=@down
+if <link.link.morex>==9
+link.link.p.z=<link.link.more2>
+endif
+link.link.morex=<link.link.morex>+-1
+return 1
+
+/////////////////////////////////////////////////////////
+
+[TYPEDEF 1355]
+ON=@UP
+p.z=<more>
+if <link>==-1
+return 1
+endif
+link.trigger=@UP
+return 1
+
+ON=@down
+p.z=<more2>
+if <link>==-1
+return 1
+endif
+link.trigger=@down
+return 1
+
+ON=@timer
+timer -1
+RETURN 1
+
+ON=@DAMAGE
+RETURN 1
+
+ON=@SPELLeffect
+RETURN 1
+///////////////////////////////////
+[TYPEDEF 1356]
+//logic kachle
+on=@dclick
+if <src.mana> > 4
+src.mana -=5
+trigger=@changecolor
+trigger=@barvy
+return 1
+else
+src.message Citis se slab.
+return 1
+endif
+
+
+ON=@barvy
+if <morez>==2
+local.link=<more1>
+link.TRIGGER=@barvy
+local.link=<more2>
+link.TRIGGER=@barvy
+return 1
+endif
+local.link=<more1>
+link.TRIGGER=@CHANGECOLOR
+local.link=<more2>
+link.TRIGGER=@CHANGECOLOR
+if <morez>==1
+link.TRIGGER=@CHANGECOLOR
+endif
+return 1
+
+on=@timer
+timer=-1
+return 1
+
+ON=@CHANGECOLOR
+IF <COLOR>=0
+COLOR=0798
+ELSE
+COLOR=0
+ENDIF
+update
+return 1
+
+ON=@DAMAGE
+RETURN 1
+
+ON=@SPELL
+RETURN 1
+
+///////////////////
+
+[TYPEDEF 1357]
+//logic door
+on=@dclick
+if <timer>==-1
+if ((<link.color>==0798) && (<uid.<more1>.color>==0798) && (<uid.<more2>.color>==0798) && (<uid.<link.more1>.color>==0798) && (<uid.<link.more2>.color>==0798) && (<uid.<uid.<link.more1>.more1>.color>==0798) && (<uid.<uid.<link.more1>.more2>.color>==0798) &&(<uid.<uid.<link.more2>.more1>.color>==0798) && (<uid.<uid.<link.more2>.more2>.color>==0798))
+if !(<link.link.morez>)&&(<uid.<link.link.more>.morex>==<link.link.link.morex>)&&((<uid.<link.link.more>.z>+5)==<link.link.link.z>)
+link.link.morez=1
+link.link.name Sestav vez na 3. podstavec
+elseif (<link.link.morez>)&&(<uid.<link.link.more2>.morex>==<link.link.link.morex>)&&((<uid.<link.link.more2>.z>+5)==<link.link.link.z>)
+link.link.morez=0
+link.link.name Sestav vez na 1. podstavec
+else
+SRC.sysmessage Door is locked.
+return 1
+endif
+nudgedown 50
+timer=300
+link.color= { 0000 1 0000 1 0798 1 0798 1}
+link.update
+local.xlink=<more1>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.<local.xlink>=<more2>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.xlink=<link.more1>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.<local.xlink>=<link.more2>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.<local.xlink>=<uid.<link.more1>.more1>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.<local.xlink>=<uid.<link.more1>.more2>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.<local.xlink>=<uid.<link.more2>.more1>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+local.xlink=<uid.<link.more2>.more2>
+uid.<local.xlink>.color= { 0000 1 0000 1 0798 1 0798 1}
+uid.<local.xlink>.update
+return 1
+else
+SRC.sysmessage Door is locked.
+src.mana=0
+endif
+endif
+return 1
+
+ON=@timer
+nudgeup 50
+timer -1
+RETURN 1
+
+ON=@DAMAGE
+RETURN 1
+
+ON=@SPELL
+RETURN 1
+
+//////////////////////////////////////////////////
+
+[itemdef i_hathor_killmemory]
+id=i_memory
+TYPE=t_eq_memory_obj
+layer=30
+on=@create
+ATTR=094
+COLOR=0100
+WEIGHT=0
+
+on=@unequip
+link.trigger=@kill
+return 0
+
+/////////////////////// cesta Tiel - chodba ////////////////////////////////////
+
+[itemdef i_hathor_tiel_dlazdice_hlaska]
+id=0519
+
+on=@create
+attr=090
+on=@step
+IF (<link.MOREy>==<link.MOREx>)
+RETURN 1
+ENDIF
+if (!<src.hits>)
+return 1
+endif
+if (<src.isevent.player>)
+return 1
+endif
+if <link.morex>==(<eval <moreX>+1>)
+link.timer=2
+return 1
+endif
+if (<moreX>==<link.moreX>)
+    if !(<link.more2>==4)
+    return 1
+    endif
+if <moreZ>==0
+src.sysmessage Tiel pokracuje ve sve ceste ke skaliskam.
+elseif <moreZ>==1
+src.sysmessage Tiel jede cestou,na jedne strane skaly,na druhe poust.
+elseif <moreZ>==2
+src.sysmessage Tiel jede dal a vidi z jedne strany skaly,z druhe reku.
+elseif <moreZ>==3
+src.sysmessage Tiel se vraci k vzdalenym loukam.
+elseif <moreZ>==4
+src.sysmessage Po proudu reky Tiel pokracuje ve sve ceste.
+elseif <moreZ>==5
+src.sysmessage Tiel pokracuje ve sve ceste rozpalenou pousti.
+ENDIF
+link.MOREX +=1
+LINK.TIMER=2
+IF (<LINK.MOREX>==<LINK.MOREY>)
+LINK.TIMER=50
+link.link.LINK.Z=<link.link.LINK.MORE>
+SOUND=00ed
+SRC.MESSAGE Brana je otevrena.
+link.link.TIMER=50
+ENDIF
+return 1
+endif
+if !<link.morex>
+return 1
+endif
+link.timer=0
+src.Sysmessage Tiel sesla z cesty.
+return 1
+
+
+[itemdef i_hathor_tiel_socha]
+ID=0139b
+name=Tiel
+
+on=@create
+attr=attr_move_never
+color=0805
+
+on=@timer
+morex=0
+timer=-1
+return 1
+
+[itemdef i_hathor_tiel_dlazdice]
+id=0519
+
+on=@create
+attr=090
+
+on=@step
+if <more>==<src.UID>
+timer=2
+return 1
+endif
+if (!<src.hits>)
+return 1
+endif
+if (!<src.isevent.player>)
+return 1
+endif
+if !<uid.<more2>.more>
+timer=2
+more=<src.uid>
+return 1
+endif
+if <uid.<more2>.more>==<src.UID>
+return 1
+endif
+LINK.LINK.Z=<LINK.LINK.MORE>
+SOUND=00ed
+timer=2
+more=<src.uid>
+SRC.MESSAGE Brana je otevrena.
+LINK.TIMER=50
+return 1
+on=@timer
+SOUND=00ed
+more=0
+timer=-1
+return 1
+
+
+[itemdef i_hathor_pylony_pro_podstavce]
+///// pylony(podstavce) pro krystaly a sochu
+ID=01ecc
+TYPE=t_weapon_sword
+
+on=@create
+attr=attr_move_never
+
+ON=@DCLICK
+  if !<uid.<more2>.uid>
+    src.sysmessage Co chces na podstavec umistit?
+    return 0
+  endif
+  return 1
+
+ON=@TARGON_ITEM
+  if <uid.<more2>.uid>
+    return 1
+  endif
+  if !(((<src.targ.baseid>==i_krystal_reky) && (<morez>==0)) || ((<src.targ.baseid>==i_krystal_louky) && (<morez>==1)) || ((<src.targ.baseid>==i_krystal_skalnatych_vrchu) && (<morez>==2)) || ((<src.targ.baseid>==i_krystal_pouste) && (<morez>==3)))
+    src.sysmessage Tato vec na podstavec nepatri!
+    return 1
+  endif
+  if !(<src.targ.cont.uid>==<src.findlayer.21.uid>)
+    src.sysmessage Predmet musis mit v batohu.
+    return 1
+  endif
+  src.targ.drop
+  src.targ.p=<p>
+  src.targ.nudgeup 5
+  src.targ.attr attr_move_never
+  timer=300
+  more2=<src.targ.uid>
+  link.more2=<link.more2>+1
+  if <link.more2>==4
+    link.nudgeup 30
+  endif
+  src.message Umistil jsi krystal na podstavec.
+  return 1
+
+ON=@TIMER
+  local.xlink=<more2>
+  uid.<local.xlink>.remove
+  if <link.more2>==4
+    link.nudgedown 30
+  endif
+  link.more2=<link.more2>+-1
+  more2=0
+  TIMER=-1
+  RETURN 1
+
+ON=@DAMAGE
+RETURN 1
+
+ON=@SPELLEFFECT
+RETURN 1
+
+/////////////////////////////////// Krystaly /////////////////////////////////////
+
+[itemdef i_krystal_reky]
+id=01ed0
+name=Krystal reky
+value=70
+type=t_normal
+on=@create
+color=0805
+
+[itemdef i_krystal_louky]
+id=01ed0
+name=Krystal louky
+value=70
+type=t_normal
+on=@create
+color=0806
+
+[ITEMDEF i_krystal_skalnatych_vrchu]
+id=01ed0
+name=Krystal skalnatych vrchu
+value=70
+type=t_normal
+on=@create
+color=07fD
+
+[ITEMDEF i_krystal_pouste]
+id=01ed0
+name=Krystal pouste
+value=70
+type=t_normal
+on=@create
+color=0804
+
+////////////////////////////////// Lahev na zvuk /////////////////////////////////////
+[itemdef i_hathor_zvuk]
+id=03490
+
+on=@create
+attr=attr_move_never
+on=@dclick
+SOUND <more>
+return 1
+
+[ITEMDEF i_dlazdice_hathor_zvuk]
+id=049e
+name=Dlazdice
+
+on=@create
+timer=300
+
+on=@timer
+remove
+return 1
+
+
+[itemdef i_kotel_zvuk]
+ID=09ed
+NAME=Kotel na zvuky
+type=t_normal
+
+on=@create
+attr=010
+
+on=@dclick
+target Zamer lahev na zvuk..
+return 1
+
+on=@targon_item
+if (<src.targ.baseid>=i_kotel_zvuk)
+   src.message Odsud nevyklouzne zadny zvuk..
+   return 1
+elseif ((<morex>==0)&&(<src.targ.more>==0244))
+         morex=<morex>+1
+         color=079a
+         sound 0244
+         update
+         src.targ.remove
+         return 1
+         
+   elseif ((<morex>==1)&&(<src.targ.more>==0F6))
+         morex=<morex>+1
+         color=079b
+         sound 0f6
+         update
+         src.targ.remove
+         return 1
+   
+   elseif ((<morex>==2)&&(<src.targ.more>==012))
+         morex=<morex>+1
+         color=07e5
+         sound 012
+         update
+         src.targ.remove
+         return 1
+            
+   elseif ((<morex>==3)&&(<src.targ.more>==024A))
+         morex=<morex>+1
+         color=07ea
+         sound 024a
+         update
+         src.targ.remove 
+         sound 029
+         sound 0258
+         timer=300
+         src.newitem=i_dlazdice_hathor_zvuk
+         src.new.p=5601,422  
+         return 1
+else
+src.message Toto neni spravny zvuk nebo lahev na zvuk!
+return 1
+endif
+     
+   
+on=@timer
+color=00
+morex=0
+timer=-1
+sound 0100
+return 1
+
+[itemdef i_lahev_na_zvuk]
+ID=0f0e
+name=Prazdna lahev na zvuk
+//type=t_weapon_sword
+type=t_normal
+value=435
+
+on=@create
+color=0847
+
+ON=@Dclick
+if <more>
+SOUND <more>
+return 1
+else
+target Cim chces lahev naplnit?
+return 1
+endif
+
+
+ON=@targon_char
+src.message Hraci sice vydavaji zajimave zvuky, ale nepomohou Ti..
+return 1
+
+ON=@targon_ground
+src.message Na zemi zvuk nenajdes..
+return 1
+
+on=@targon_item
+if (<src.targ.baseid>==i_hathor_zvuk)
+more=<src.targ.more>
+name=Lahev na zvuk
+src.sysmessage Naplnil jsi lahev.
+sound 018
+color=0849
+return 1
+else
+src.message Z <src.targ.name> zvuk nenaberes..
+return 1
+endif 
+
+//ON=@targon_item
+//if (<src.targ.baseid>==i_hathor_zvuk)
+//more=<src.targ.more>
+//name=Lahev se zvukem
+//src.sysmessage Naplnil jsi lahev.
+//return 1
+//endif
+//if ((<src.targ.baseid>==07891) || <more>==0)
+//src.sysmessage Timto nelze lahev naplnit.
+//return 1
+//endif
+//if (((<more>==0244)&&(<src.targ.more>==0))||((<more>==06F)&&(<src.targ.more>==1))||((<more>==012)&&(<src.targ.more>==2))||((<more>==024A)&&(<src.targ.more>==3)))
+//src.targ.more=<src.targ.more>+1
+//SOUND 0214
+//remove
+//if (<src.targ.more>==4)
+//src.targ.link.z=<src.targ.link.more>
+//src.targ.timer=60
+//src.targ.name=Kotel plny zvuku
+//endif
+//return 1
+//endif
+//SOUND 05c
+//SRC.targ.MORE=0
+//remove
+//return 1
+
+///////////////////////////////////// Ovladani tlaku ///////////////////////////////////
+[typedef t_hathor_prutok]
+on @click
+if <src.isgm>
+src.sysmessage MORE1 - 1 cislo, MORE2 - 2 cislo
+src.sysmessage MOREZ - timer nulowani po dobrym nastawieni
+src.sysmessage TAG.DOOR - UID brany
+endif
+on @dclick
+sdialog d_hathor_prutok
+return 1
+on @timer
+morex=0
+morey=0
+return 1
+
+[dialog d_hathor_prutok]
+100,100
+page 0
+gumppic 100 10 100
+dhtmlgump 170 30 70 20 0 0 PRUTOK
+dhtmlgump 178 73 70 20 0 0 litru
+dtext 127 50 1000 <morex>
+dtext 142 50 1000 <morey>
+button 125 28 250 251 1 0 1
+button 125 72 252 253 1 0 2
+button 140 28 250 251 1 0 3
+button 140 72 252 253 1 0 4
+[dialog d_hathor_prutok button]
+on=1
+if <morex><9
+sfx 0122
+morex += 1
+endif
+if ((<morex>==<more1>) && (<morey>==<more2>))
+timer=<morez>
+uid.<tag.door>.trigger=@check
+else
+timer=-1
+endif
+sdialog d_hathor_prutok
+on=3
+if <morey><9
+sfx 0122
+morey += 1
+endif
+if ((<morex>==<more1>) && (<morey>==<more2>))
+timer=<morez>
+uid.<tag.door>.trigger=@check
+else
+timer=-1
+endif
+sdialog d_hathor_prutok
+on=2
+if <morex>>0
+morex -= 1
+sfx 0122
+endif
+if ((<morex>==<more1>) && (<morey>==<more2>))
+timer=<morez>
+uid.<tag.door>.trigger=@check
+else
+timer=-1
+endif
+sdialog d_hathor_prutok
+on=4
+if <morey>>0
+sfx 0122
+morey -= 1
+endif
+if ((<morex>==<more1>) && (<morey>==<more2>))
+timer=<morez>
+uid.<tag.door>.trigger=@check
+else
+timer=-1
+endif
+sdialog d_hathor_prutok
+
+[typedef t_hathor_prutok_door]
+on @click
+if <src.isgm>
+src.sysmessage MOREP - posun
+src.sysmessage MORE2 - timer
+src.sysmessage Link na ceduli, cedula na ceduli, posledni cedula LINK=0
+endif
+on @check
+if <more1>==1
+return 1
+endif
+if ((<link.timer>>0) && ((<link.link.timer>>0)||(!<link.link.uid>))) && ((<link.link.link.timer>>0)||(!<link.link.link.uid>)) && ((<link.link.link.link.timer>>0)||(!<link.link.link.link.uid>)) && ((<link.link.link.link.link.timer>>0)||(!<link.link.link.link.link.uid>)) && ((<link.link.link.link.link.link.timer>>0)||(!<link.link.link.link.link.link..uid>)) && ((<link.link.link.link.link.link.link.timer>>0)||(!<link.link.link.link.link.link.link.uid>)))
+move <morep>
+more1=1
+sfx 00ed
+timer=<more2>
+if <link> 
+link.timer=0
+endif
+if <link.link>
+link.link.timer=0
+endif
+if <link.link.link>
+link.link.link.timer=0
+endif
+if <link.link.link.link>
+link.link.link.link.timer=0
+endif
+if <link.link.link.link.link>
+link.link.link.link.link.timer=0
+endif
+if <link.link.link.link.link.link>
+link.link.link.link.link.link.timer=0
+endif
+if <link.link.link.link.link.link.link>
+link.link.link.link.link.link.link.timer=0
+endif
+return 1
+endif
+on @timer
+more1=0
+move -<morex> -<morey> -<morez>
+sfx 00ed
+return 1
+on @dclick
+return 1
+ 
+ //old
+[itemdef i_hathor_ovladac_tlaku]
+//deska s tlakem
+//nalinkovat na paku 6192
+ID=01ed4
+NAME=Ovladac tlaku
+TYPE=1073
+
+on=@create
+07cc
+
+[TYPEDEF 1071]
+//ovladac tlaku vody
+on=@DCLICK
+   LINK.Z=<LINK.MORE1>
+   SOUND=00ed
+   SRC.MESSAGE Otevrel jsi branu
+   TIMER=50
+ RETURN 1
+
+on=@TIMER
+ TIMER=-1
+  ID=6192
+  LINK.Z=<LINK.MORE2>
+  Z=<Z>
+  AMOUNT=1
+  MOREX=<eval (RAND(8))+1>
+  MOREY=<eval (RAND(8))+1>
+RETURN 1
+
+[TYPEDEF 1072]
+//typ pro dvere otevirane tabulkami s kodem
+on=@DCLICK
+ SRC.MESSAGE Tyto dvere jsou ovladane prutokem vody v nadrzich.
+ RETURN 0
+
+[typedef 1073]
+on=@DCLICK
+  IF <MOREZ>==1
+    DIALOG d_hathor_tlak_nejde
+  ELSE
+    DIALOG d_hathor_tlak_nejde
+  ENDIF
+RETURN 0
+
+[itemdef i_hathor_paka_vodnibrana]
+//paka pro vodni branu
+ID=0108c
+TYPE=0
+on=@create
+COLOR=079a
+
+CATEGORY=Custom Items
+SUBSECTION=Chram Hathor
+DESCRIPTION=paka pro vodni branu
+
+on=@DCLICK
+    SRC.MESSAGE Tlak vody neni spravny, paka je nefunkcni..
+    RETURN 1
+
+on=@TIMER
+ TIMER=-1
+ RETURN 1
+
+[itemdef i_hathor_ovladac_tlak]
+//nalinkovat na dvere
+ID=01ed7
+NAME=Ovladac prutoku
+
+on=@create
+COLOR=07cc
+
+ON=@DCLICK
+    DIALOG d_hathor_tlak_ovladac
+
+ON=@TIMER
+    TIMER=-1
+    MOREX=1
+    MOREY=1
+    MOREZ=0
+    LINK.Z=<LINK.MORE2>
+    LINK.MOREZ=0
+RETURN 1
+
+[itemdef i_hathorina_slza]
+ID=0f13
+TYPE=t_weapon_sword
+NAME=Hathorina slza
+WEIGHT=1
+
+on=@DCLICK
+IF <SRC.RESTEST 1 i_hathorina_slza>
+SRC.MESSAGE Vyber misto pro vlozeni krystalu.
+ELSE
+SRC.MESSAGE Musis mit krystal ve svem inventari.
+RETURN 1
+ENDIF
+
+on=@TARGON_ITEM
+IF <SRC.TARG.TYPE>==1073
+    IF <SRC.TARG.MOREZ>==1
+    SRC.SOUND=0051
+    SRC.MESSAGE Jeden krystal uz je v pristroji vlozen.
+    RETURN 1
+    ELSE
+    REMOVE
+    SRC.TARG.MOREZ=1
+    SOUND=0133
+    endif
+ELSE
+    SRC.SOUND=0051
+    SRC.MESSAGE Sem nelze krystal vlozit.
+    RETURN 1
+ENDIF
+
+on=@TARGON_GROUND
+    SRC.SOUND=051
+RETURN 1
+
+[DIALOG d_hathor_tlak]
+0,0
+page 0
+gumppic 100 10 100
+page 1
+text 158 30 0 0
+text 195 30 0 4
+button 125 28 250 251 1 1 1
+gumppic 125 50 255
+text 127 50 1000 1
+button 125 72 252 253 1 1 2
+button 140 28 250 251 1 1 3
+gumppic 140 50 255
+text 142 50 1000 2
+button 140 72 252 253 1 1 4
+text 158 56 55 3
+button 200 75 10741 10741 1 1 5
+
+[DIALOG d_hathor_tlak TEXT]
+Tlak
+<MOREX>
+<MOREY>
+torr
+vody
+
+[DIALOG d_hathor_tlak BUTTON]
+on=1 
+  SOUND=0122
+  IF <MOREX> == 0
+    MOREX=1
+  ELSEIF <MOREX> == 1
+    MOREX=2
+  ELSEIF <MOREX> == 2
+    MOREX=3
+  ELSEIF <MOREX> == 3
+    MOREX=4
+  ELSEIF <MOREX> == 4
+    MOREX=5
+  ELSEIF <MOREX> == 5
+    MOREX=6
+  ELSEIF <MOREX> == 6
+    MOREX=7
+  ELSEIF <MOREX> == 7
+    MOREX=8
+  ELSEIF <MOREX> == 8
+    MOREX=9
+  ENDIF
+  IF ((<MOREX>==<LINK.MOREX>)&&(<MOREY>==<LINK.MOREY>))
+    LINK.ID=0108d
+    LINK.TYPE=1071
+    SOUND=0116
+    SRC.REGION.ALLCLIENTS RESYNC
+  ENDIF
+  DIALOG d_hathor_tlak_nejde
+
+on=2
+  SOUND=0122
+  IF <MOREX> == 9
+    MOREX=8
+  ELSEIF <MOREX> == 8
+    MOREX=7
+  ELSEIF <MOREX> == 7
+    MOREX=6
+  ELSEIF <MOREX> == 6
+    MOREX=5
+  ELSEIF <MOREX> == 5
+    MOREX=4
+  ELSEIF <MOREX> == 4
+    MOREX=3
+  ELSEIF <MOREX> == 3
+    MOREX=2
+  ELSEIF <MOREX> == 2
+    MOREX=1
+  ELSEIF <MOREX> == 1
+    MOREX=0
+  ENDIF
+  IF ((<MOREX>==<LINK.MOREX>)&&(<MOREY>==<LINK.MOREY>))
+    LINK.ID=0108d
+    LINK.TYPE=1071
+    SOUND=0116
+    SRC.REGION.ALLCLIENTS RESYNC
+  ENDIF
+  DIALOG d_hathor_tlak_nejde
+
+on=3
+  SOUND=0122
+  IF <MOREY> == 0
+    MOREY=1
+  ELSEIF <MOREY> == 1
+    MOREY=2
+  ELSEIF <MOREY> == 2
+    MOREY=3
+  ELSEIF <MOREY> == 3
+    MOREY=4
+  ELSEIF <MOREY> == 4
+    MOREY=5
+  ELSEIF <MOREY> == 5
+    MOREY=6
+  ELSEIF <MOREY> == 6
+    MOREY=7
+  ELSEIF <MOREY> == 7
+    MOREY=8
+  ELSEIF <MOREY> == 8
+    MOREY=9
+  ENDIF
+  IF ((<MOREX>==<LINK.MOREX>)&&(<MOREY>==<LINK.MOREY>))
+    LINK.ID=0108d
+    LINK.TYPE=1071
+    SOUND=0116
+    SRC.REGION.ALLCLIENTS RESYNC
+  ENDIF
+  DIALOG d_hathor_tlak_nejde
+
+on=4
+  SOUND=0122
+  IF <MOREY> == 9
+    MOREY=8
+  ELSEIF <MOREY> == 8
+    MOREY=7
+  ELSEIF <MOREY> == 7
+    MOREY=6
+  ELSEIF <MOREY> == 6
+    MOREY=5
+  ELSEIF <MOREY> == 5
+    MOREY=4
+  ELSEIF <MOREY> == 4
+    MOREY=3
+  ELSEIF <MOREY> == 3
+    MOREY=2
+  ELSEIF <MOREY> == 2
+    MOREY=1
+  ELSEIF <MOREY> == 1
+    MOREY=0
+  ENDIF
+  IF ((<MOREX>==<LINK.MOREX>)&&(<MOREY>==<LINK.MOREY>))
+    LINK.ID=0108d
+    LINK.TYPE=1071
+    SOUND=0116
+    SRC.REGION.ALLCLIENTS RESYNC
+  ENDIF
+  DIALOG d_hathor_tlak_nejde
+
+ON=5
+  SRC.NEWITEM i_hathorina_slza
+  SRC.ACT.BOUNCE
+  SOUND=056
+  MOREZ=0
+  DIALOG d_hathor_tlak_nejde
+
+[DIALOG d_hathor_tlak_nejde]
+0,0
+gumppic 100 10 100
+text 158 30 0 0
+text 195 30 0 4
+button 125 28 250 251 1 0 1
+gumppic 125 50 255
+text 127 50 1000 1
+button 125 72 252 253 1 0 2
+button 140 28 250 251 1 0 3
+gumppic 140 50 255
+text 142 50 1000 2
+button 140 72 252 253 1 0 4
+text 158 56 55 3
+gumppic 200 75 10740
+page 0
+
+[DIALOG d_hathor_tlak_nejde TEXT]
+Tlak
+<MOREX>
+<MOREY>
+torr
+vody
+
+[DIALOG d_hathor_tlak_nejde BUTTON]
+on=1 
+    SRC.MESSAGE Ovladat zarizeni neni mozne, chybi krystal.
+on=2
+    SRC.MESSAGE Ovladat zarizeni neni mozne, chybi krystal.
+on=3
+    SRC.MESSAGE Ovladat zarizeni neni mozne, chybi krystal.
+on=4
+    SRC.MESSAGE Ovladat zarizeni neni mozne, chybi krystal.
+
+[DIALOG d_hathor_tlak_ovladac]
+0,0
+page 0
+gumppic 100 10 100
+page 1
+text 158 27 0 0
+text 195 37 0 4
+button 125 28 250 251 1 1 1
+gumppic 125 50 255
+text 127 50 1000 1
+button 125 72 252 253 1 1 2
+button 140 28 250 251 1 1 3
+gumppic 140 50 255
+text 142 50 1000 2
+button 140 72 252 253 1 1 4
+text 158 56 55 3
+
+[DIALOG d_hathor_tlak_ovladac TEXT]
+Prutok
+<MOREX>
+<MOREY>
+litru
+vody
+
+[DIALOG d_hathor_tlak_ovladac BUTTON]
+ON=1 
+  SOUND=0122
+  IF <MOREX> == 0
+    MOREX=1
+  ELSEIF <MOREX> == 1
+    MOREX=2
+  ELSEIF <MOREX> == 2
+    MOREX=3
+  ELSEIF <MOREX> == 3
+    MOREX=4
+  ELSEIF <MOREX> == 4
+    MOREX=5
+  ELSEIF <MOREX> == 5
+    MOREX=6
+  ELSEIF <MOREX> == 6
+    MOREX=7
+  ELSEIF <MOREX> == 7
+    MOREX=8
+  ELSEIF <MOREX> == 8
+    MOREX=9
+  ENDIF
+  IF ((<MORE1>==<MOREX>)&&(<MORE2>==<MOREY>))
+            IF <MOREZ>==0
+    LINK.MOREZ=<LINK.MOREZ>+1
+    MOREZ=1
+    IF <LINK.MOREZ>==6
+        LINK.Z=<LINK.MORE1>
+        SOUND=00ed
+        link.update
+        link.link.timer=60
+    RETURN 1
+    ENDIF
+            ENDIF
+  ELSE
+            IF <MOREZ>==1
+            LINK.MOREZ=<LINK.MOREZ>+-1
+            MOREZ=0
+            ENDIF
+  ENDIF
+  DIALOG d_hathor_tlak_ovladac
+
+ON=2
+  SOUND=0122
+  IF <MOREX> == 9
+    MOREX=8
+  ELSEIF <MOREX> == 8
+    MOREX=7
+  ELSEIF <MOREX> == 7
+    MOREX=6
+  ELSEIF <MOREX> == 6
+    MOREX=5
+  ELSEIF <MOREX> == 5
+    MOREX=4
+  ELSEIF <MOREX> == 4
+    MOREX=3
+  ELSEIF <MOREX> == 3
+    MOREX=2
+  ELSEIF <MOREX> == 2
+    MOREX=1
+  ELSEIF <MOREX> == 1
+    MOREX=0
+  ENDIF
+  IF ((<MORE1>==<MOREX>)&&(<MORE2>==<MOREY>))
+            IF <MOREZ>==0
+    LINK.MOREZ=<LINK.MOREZ>+1
+    MOREZ=1
+    IF <LINK.MOREZ>==6
+        LINK.Z=<LINK.MORE1>
+        SOUND=00ed
+        link.update
+        link.link.timer=60
+    RETURN 1
+    ENDIF
+            ENDIF
+  ELSE
+            IF <MOREZ>==1
+            link.link.timer=0
+            LINK.MOREZ=<LINK.MOREZ>+-1
+            MOREZ=0
+            ENDIF
+  ENDIF
+  DIALOG d_hathor_tlak_ovladac
+
+ON=3
+  SOUND=0122
+  IF <MOREY> == 0
+    MOREY=1
+  ELSEIF <MOREY> == 1
+    MOREY=2
+  ELSEIF <MOREY> == 2
+    MOREY=3
+  ELSEIF <MOREY> == 3
+    MOREY=4
+  ELSEIF <MOREY> == 4
+    MOREY=5
+  ELSEIF <MOREY> == 5
+    MOREY=6
+  ELSEIF <MOREY> == 6
+    MOREY=7
+  ELSEIF <MOREY> == 7
+    MOREY=8
+  ELSEIF <MOREY> == 8
+    MOREY=9
+  ENDIF
+  IF ((<MORE1>==<MOREX>)&&(<MORE2>==<MOREY>))
+            IF <MOREZ>==0
+    LINK.MOREZ=<LINK.MOREZ>+1
+    MOREZ=1
+    IF <LINK.MOREZ>==6
+        LINK.Z=<LINK.MORE1>
+        SOUND=00ed
+        link.update
+        link.link.timer=60
+    RETURN 1
+    ENDIF
+            ENDIF
+  ELSE
+            IF <MOREZ>==1
+            link.link.timer=0
+            LINK.MOREZ=<LINK.MOREZ>+-1
+            MOREZ=0
+            ENDIF
+  ENDIF
+  DIALOG d_hathor_tlak_ovladac
+
+ON=4
+  SOUND=0122
+  IF <MOREY> == 9
+    MOREY=8
+  ELSEIF <MOREY> == 8
+    MOREY=7
+  ELSEIF <MOREY> == 7
+    MOREY=6
+  ELSEIF <MOREY> == 6
+    MOREY=5
+  ELSEIF <MOREY> == 5
+    MOREY=4
+  ELSEIF <MOREY> == 4
+    MOREY=3
+  ELSEIF <MOREY> == 3
+    MOREY=2
+  ELSEIF <MOREY> == 2
+    MOREY=1
+  ELSEIF <MOREY> == 1
+    MOREY=0
+  ENDIF
+  IF ((<MORE1>==<MOREX>)&&(<MORE2>==<MOREY>))
+            IF <MOREZ>==0
+    LINK.MOREZ=<LINK.MOREZ>+1
+    MOREZ=1
+    IF <LINK.MOREZ>==6
+        LINK.Z=<LINK.MORE1>
+        SOUND=00ed
+        link.update
+        link.link.timer=60
+    RETURN 1
+    ENDIF
+            ENDIF
+  ELSE
+            IF <MOREZ>==1
+            link.link.timer=0
+            LINK.MOREZ=<LINK.MOREZ>+-1
+            MOREZ=0
+            ENDIF
+  ENDIF
+  DIALOG d_hathor_tlak_ovladac
+  
+
+////////////// sarkofag do safiry ////////////////////
+[TYPEDEF t_saphira_sarkofag]
+ON=@DCLICK
+IF <DISTANCE>>3
+   SRC.MESSAGE=Jsi prilis daleko!
+   RETURN 1
+ENDIF
+
+IF (<timer>==-1)
+TIMER=3000
+SOUND=0124
+    
+      
+   IF (RAND(3)==1)
+   ID=01249
+   TYPE=t_saphira_sarkofag
+   new.update
+   NAME=Otevreny Sarkofag  
+   SRC.NEWNPC 04037
+   SRC.EMOTE see <src.name> released a monster
+      
+        IF (RAND(5)==1)
+        SRC.NEWITEM,i_mask_tribal_amon,1,<src.uid>
+        SRC.MESSAGE Juu, zlata maska *jasa*
+        SRC.EMOTE see <src.name> found something
+   ENDIF
+        IF (<SRC.KARMA> >= 1000)
+            SRC.KARMA -=50
+            SRC.SYSMESSAGE Prisel jsi o malou cast karmy.
+            elseif (<src.karma> <1000)
+            return 1
+            ENDIF
+  
+   SRC.MESSAGE Probudil jsi mumii !
+   RETURN 1
+   
+       ELSEIF (RAND(2)==1)
+       ID=01249
+       TYPE=t_saphira_sarkofag
+       NAME=Otevreny sarkofag
+      update
+       SRC.newITEM=backpack_meager,1,<src.uid>
+       SRC.EMOTE see <src.name> found something
+           IF (<SRC.KARMA> >= 1000)
+           SRC.KARMA -=50
+           SRC.SYSMESSAGE Prisel jsi o malou cast karmy.
+           elseif (<src.karma> <1000)
+            return 1
+           ENDIF
+       RETURN 1
+   
+       ELSEIF (RAND(5)==1)
+       ID=01249
+       TYPE=t_saphira_sarkofag
+       NAME=Otevreny Sarkofag
+       update
+       SRC.NEWNPC 01022
+       SRC.EMOTE see <src.name> released a monster
+          IF (<SRC.KARMA> >= 1000)
+           SRC.KARMA -=50
+           SRC.SYSMESSAGE Prisel jsi o malou cast karmy.
+           elseif (<src.karma> <1000)
+            return 1
+           ENDIF
+   
+   SRC.MESSAGE Probudil jsi mumii !
+   RETURN 1
+   ELSE
+   SRC.DAMAGE <eval rand(20,30)>
+   SRC.MESSAGE Aaaa, past!
+   timer=-1
+           IF (<SRC.KARMA> >=1000)
+           SRC.KARMA -=50
+           SRC.SYSMESSAGE Prisel jsi o malou cast karmy.
+           elseif (<src.karma> <1000)
+            return 1
+           ENDIF
+           
+   SRC.MESSAGE Sarkofag se ti nepodarilo otevrit.
+   RETURN 1
+   ENDIF
+   
+   ELSE
+   SRC.MESSAGE Vidis prazdny sarkofag.
+   RETURN 1
+ENDIF
+
+ON=@TIMER
+ TIMER=-1
+ ID=0124b
+ sound=0f2
+ TYPE=t_saphira_sarkofag
+ NAME=Sarkofag
+ update
+ RETURN 1 
+ 
+ 
+[function f_saphira_heal]
+obj=<uid>
+local.target=
+local.minhp=100
+forchars 10
+//if ((<baseid>==c_h_saphira_guard_spear) || (<baseid>==c_h_saphira_guard_bow) || (<baseid>==c_h_saphira_guard_elite) || (<baseid>==c_h_saphira_guard_elite) || (<baseid>==c_h_saphira_amon_priest_2))  // || (<baseid>==c_h_saphira_healer))
+if STRMATCH(*c_h_saphira*,<baseid>)    
+    if ((<CanSeeLOS <obj.uid>>) || (<uid>==<obj.uid>)) 
+        local.hits=<eval (<hits>*100)/<maxhits> >
+        if (<eval <local.hits>> < <eval <local.minhp>>)
+            local.minhp=<local.hits>
+            local.target=<uid>
+        endif  
+    endif
+endif
+endfor
+
+//say <uid.<local.target>.name> [<eval <local.minhp>>] [<eval <uid.<local.target>.hits>>]
+
+if !<local.target>
+return 0
+endif
+
+if <local.minhp> > 70
+   if rand(3)==1
+   return <local.target>
+   endif
+elseif <local.minhp> > 40
+   if rand(2)==1
+   return <local.target>
+   endif
+else 
+   return <local.target>
+endif
+
+return 0
+
+[itemdef i_saphira_healer_brain]
+id=i_memory
+name=Saphira Healer
+type=t_eq_script
+on=@create
+timer=2
+
+on=@timer
+local.targ=<cont.f_saphira_heal>
+if <cont.mana> > 15
+if <local.targ> > 0      
+    cont.forcecast 29,<local.targ>
+    timerd 25
+    return 1
+endif
+endif
+timer 2
+return 1
+
+
+
+/////////////////
+[itemdef i_saphira_harm_brain]
+id=i_memory
+name=Saphira Harmer
+type=t_eq_script
+on=@create
+timer=2
+
+on=@timer
+local.targ=<cont.f_saphira_findtarget>
+if <local.targ> >0   
+    cont.forcecast 12,<local.targ>
+    timerd 29
+return 1
+endif
+timer 2
+return 1
+
+[function f_saphira_findtarget]
+ref1=<uid>
+local.target=
+local.mint=1000
+forplayers 14
+    if <CanSeeLos <ref1.uid>>
+        if ((!<isgm>) && (<hits>>0) && (!(<flags>&08)) && (!(<flags>&02000)) && (!(<flags>&01)) && (!(<flags>&0800000)))
+            if <eval <ar>+<hits>> < <local.mint>
+                local.mint=<eval <ar>+<hits>>
+                local.target=<uid>
+            endif
+        endif
+    endif
+endfor
+if <local.target>
+return <local.target> 
+endif
+
+forchars 10
+   if <CanSeeLos <ref1.uid>>
+       if (((<flags>&08000000) && (!(<flags>&04000000))) || (<brain>==13) || (<baseid>=c_mechanical_golem)) 
+                return <uid>
+       endif
+   endif
+endfor
+                
+forchars 10
+   if <CanSeeLos <obj.uid>>
+       if ((<flags>&04000000) && (<baseid>!=c_wisp_s)) 
+           return <uid>
+       endif
+   endif
+endfor
+
+return 0
+
+[itemdef i_generator_kodu]
+id=i_crystal_ball
+name=Generator
+on=@create
+attr=010
+tag.minx=1000000    //minimalni hodnota intervalu
+tag.maxx=9999999    //maximalni hodnota intervalu
+tag.timer=1000      //timer na vygenerovani kodu
+more1=01            //prepinani 01=kod losovani na dclick, jine kod menen kontinualne
+
+on=@dclick
+if ((<distance> > 2))
+    src.message @color_o_bloodrock, Odsud napis neprectes
+else   
+    if ((<more1>==1) && (<timer>==-1))
+            local.x=<eval {<eval <tag.minx>> <eval <tag.maxx>>}>
+            link.tag.kod_a=
+            link.tag.kod=K<eval <local.x>>
+            tag.kod=<eval <local.x>>    
+            src.message @color_o_bloodrock, Kod je [<eval <tag.kod>>]
+            src.message @color_o_bloodrock, Platnost kodu je <eval <tag.timer>>s
+            timer=<tag.timer>
+     else
+            src.message @color_o_bloodrock, Kod je [<eval <tag.kod>>]
+            src.message @color_o_bloodrock, Platnost kodu je <eval <timer>>s
+     endif    
+endif
+
+
+on=@timer
+local.x=<eval {<eval <tag.minx>> <eval <tag.maxx>>}>
+	link.tag.kod_a=
+    link.tag.kod=K<eval <local.x>>  
+    tag.kod=<eval <local.x>>
+if (<more1>==1)  
+timer=-1
+else    
+timer=<tag.timer>
+endif
+return 1
+
+[itemdef i_saphira_batery]
+id=i_crystal_ball
+name=Batery
+on=@create
+attr=010
+more1=10            //timer otevreni
+more2=5             //pocet hitu po timeru
+morep=0,0,-40        //o kolik se ma posunout
+tag.hit=5           //aktualni pocet hitu
+tag.spell=30        //cislo spellu, ktere aktivuje
+tag.color_on=0b17   //barva on
+tag.color_off=0794  //barva off
+tag.text=Posunul jsi branou...
+
+on=@spelleffect
+if ((<argn1>==<eval <tag.spell>>) && (<timer>==-1)) 
+    tag.hit -= 1
+    if (<tag.hit>==0)      
+    link.move <morep>
+    timer=<more1>
+    color=<tag.color_on>
+    src.message @color_o_valorite, <tag.text>
+    endif
+else
+    src.message @color_o_valorite, Toto nelze!    
+return 1
+endif
+
+on=@timer
+    tag.hit=<more2>
+    link.move -<morex>,-<morey>,-<morez>
+    timer=-1
+    color=<tag.color_off>
+return 1
+
+
+
+[itemdef i_sarkofag]
+ID = 0124b
+name = Sarkofag
+type = t_saphira_sarkofag_2
+
+on=@create
+attr = 010
+tag.x=3                                                             // random ve tvaru X:Y
+tag.y=1                                                             // random ve tvaru X:Y
+tag.id=0124b                                                        // ID normalni tvar
+tag.id1=01249                                                       // ID otevreny tvar 
+tag.name_open=Otevreny sarkofag                                     // Jmeno otevreneho
+tag.text_ok=Otevrel jsi sarkofag a neco jsi nalezl...               // Text pri nelezeni odmeny
+tag.text_nok=Otevrel jsi sarkofag, vyskocila mumime                 // Text pri vyvolani NPC
+tag.item=i_mask_tribal_amon                                                      // ID odmeny 1
+tag.item1                                                           // ID odmeny 2
+tag.item2                                                           // ID odmeny 3
+tag.timer=3600                                                      // Timer pro zavreni 
+tag.npc=04037                                                       // ID npc 1, ktere ma vyskocit
+tag.npc1                                                            // ID npc 2, ktere ma vyskocit
+tag.npc2                                                            // ID npc 3, ktere ma vyskocit
+tag.sound=0f2                                                       // Zvuk pri zavreni
+tag.open=Nic zde neni...                                            // Text pri otevreni
+
+
+[TYPEDEF t_saphira_sarkofag_2]
+on=@dclick
+if !(<timer>>0)
+if (rand(<tag.x>)==<tag.y>)
+   id=<tag.id1>
+   type=t_saphira_sarkofag_2
+   name=<tag.name_open>  
+   src.message <tag.text_ok>
+   src.newitem <tag.item>,1,<src.findlayer.21.uid>
+   if (<tag0.item1>)
+        src.newitem <tag.item>,1,<src.findlayer.21.uid>
+   endif
+   if (<tag0.item2>)
+        src.newitem <tag.item>,1,<src.findlayer.21.uid>
+   endif   
+   timer=<tag.timer>
+   update
+else
+   src.newnpc <tag.npc>
+   if (<tag0.npc1>)
+       src.newnpc <tag.npc1>
+   endif
+   if (<tag0.npc2>)
+       src.newnpc <tag.npc2>
+   endif     
+   src.message <tag.text_nok>
+   id=<tag.id1>
+   type=t_saphira_sarkofag_2
+   name=<tag.name_open>
+   timer=<tag.timer>
+   update   
+endif   
+else
+   src.message <tag.open>
+endif    
+   
+on=@timer
+id=<tag.id>
+type=t_saphira_sarkofag_2  
+timer=-1
+sound=<tag.sound>
+update 
+return 1
+

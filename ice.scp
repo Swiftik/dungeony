@@ -1,0 +1,340 @@
+[typedef t_ice_zed]
+on=@dclick
+if <tag.id>
+return 1
+endif
+if (<src.findlayer(1).type>==t_weapon_mace_smith)&&(<src.flags>&statf_war)
+src.message Podarilo se ti rozbit ledovou barieru...
+src.anim=9
+tag.id=<id>
+tag.dispid=<dispid>
+tag.name=<name>
+id=i_hay_scattered
+type=t_ice_zed
+if (<src.stam> >30)
+src.stam -=30
+else
+src.stam=0
+endif
+timer=<more2>
+sound=003e
+update
+else
+message V ceste ti stoji ledova bariera..
+SOUND=0243
+endif
+return 1
+
+on=@timer
+id=<tag.id>
+dispid=<tag.dispid>
+type=t_ice_zed
+tag.dispid=""
+tag.id=""
+update
+return 1
+
+[itemdef i_ice_efekt]
+ID=i_memory
+name=Ice efekt
+type=t_eq_script
+
+on=@create
+COLOR=0100
+
+on=@timer
+if !<cont.uid>
+remove
+return 1
+endif
+cont.region.allclients f_ice
+timer=7
+return 1
+
+[itemdef i_ice_krapnik]
+id=i_plant_water
+NAME=Led
+
+on=@create
+attr=010
+color=0BB7
+timer=4
+
+on=@timer
+if <link.findlayer.38.uid>
+link.findlayer.38.remove
+endif
+link.tag.nomovetill=
+update
+remove
+return 1
+
+
+[function f_ice]
+if !<isgm>
+if ((<body>==c_cyclops)||(<flags>&statf_dead)||(<restest i_staff_morf>))
+return 1
+elseif (((<findlayer(6).baseid>==i_mask_bear)||(<findlayer(6).baseid>==i_maska_kodiaka))&&(<findlayer(5).baseid>==i_shirt_fancy)&&((<findlayer(3).baseid>==i_kodiak_boots)||(<findlayer(3).baseid>==i_boots_calf)))
+return 1
+endif
+sysmessage Citis silny chlad
+if !<argv[0]>
+damage {10 15}//hits -={10 15}
+if (<hits> < 1)
+return 1
+endif
+endif
+spelleffect s_paralyze,1000
+update
+//if !<findlayer.38.uid>
+//return 1
+//endif
+//action=-1
+newitem i_ice_krapnik
+new.link=<uid>
+new.p=<p>
+return 0
+endif
+return 1
+
+//[chardef 4262]
+//defname=c_tarantulla
+//name=Tarantulla
+//id=008b
+//ICON=020fd
+//dam={35 45}
+//armor=70
+//RESOURCES=1 i_tarantul_vlakno
+//CAN=MT_WALK|MT_RUN
+//
+//on=@create
+//color=0BB7
+//STR={400 550}
+//DEX={350 480}
+//INT={200 250}
+//
+//PARRYING={105.0 155.0}
+//MAGICRESISTANCE={180.0 190.0}
+//TACTICS={85.0 100.0}
+//POISONING={200.0}
+//WRESTLING={150.0 175.0}
+//
+//FAME={3300 5000}
+//KARMA={-999 -2999}
+//NPC=brain_monster
+//
+//
+//ITEM=i_reag_spider_silk,{3 10}
+//ITEM=i_gold,{500 700}
+//item=i_ice_efekt
+//timer=5
+//
+//[chardef 4263]
+//defname=c_ogre_frost
+//id=058
+//name=Frost Ogre
+//CAN=MT_WALK|MT_USEHANDS
+//dam={15 25}
+//armor=29
+//ICON=020d8
+//RESOURCES=10 i_ribs_raw
+//TEVENTS=e_drain_stam
+//on=@create
+//color=07C9
+//NPC=brain_monster
+//FAME={4000 5000}
+//KARMA={-2000 -2999}
+//STR={300 400}
+//DEX={150 200}
+//INT={13 15}
+//
+//PARRYING={50.0 60.0}
+//MAGICRESISTANCE={40.0 55.0}
+//TACTICS={50.0 100.0}
+//WRESTLING={100.0 110.0}
+//SWORDSMANSHIP={100.0 110.0}
+//ITEM=i_gold,250 300
+//item={i_gold 1 0 5},500
+//
+//[chardef 4264]
+//defname=c_slime_frozen
+//id=c_slime
+//name=Frozen Slime
+//ICON=020e8
+//CAN=MT_WALK|MT_FIRE_IMMUNE
+//DAM={15 20}
+//ARMOR=14
+//tevents=e_imune
+//
+//on=@create
+//NPC=brain_monster
+//FAME={100 1000}
+//KARMA={-999 -1999}
+//color=07C9
+//STR={180 200}
+//DEX={60 80}
+//INT={2 8}
+//PARRYING={15.0 21.0}
+//MAGICRESISTANCE={85.0 90.0}
+//TACTICS={100.0 100.0}
+//WRESTLING={59.0 99.0}
+//POISONING={900.0}
+//ITEM=i_gold,{40 80}
+//
+//[chardef 4265]
+//id=096
+//NAME=Lurker 
+//ICON=020e5
+//DAM=20 30
+//ARMOR=15
+//RESOURCES=10 i_ribs_raw, 8 i_reag_serpent_scale, 1 01e17
+//
+//
+//on=@create
+//COLOR=7C9
+//STR={300 450}
+//DEX=140
+//INT=150
+//
+//PARRYING=150.0
+//MAGICRESISTANCE={60.0 75.0}
+//TACTICS={60.0 70.0}
+//WRESTLING=90.0
+//
+//FAME={1500 3700}
+//KARMA={-3000 -3999}
+//NPC=brain_dragon
+//CAN=MT_SWIM
+//DESIRES=Ship
+//ITEM=loot_WYVERN
+//
+//
+//[chardef 4266]
+//id=02f
+//NAME=Glacier
+//ICON=020fa
+//DAM={20 25}
+//ARMOR=20
+////RESOURCES=
+//
+//on=@create
+//color=07c9
+//STR={300 350}
+//DEX={66 75}
+//INT={200 300}
+//PARRYING={55.0 65.0}
+//MAGERY=130.0
+//MAGICRESISTANCE={35.0 50.0}
+//TACTICS={45.0 60.0}
+//WRESTLING={50.0 60.0}
+//FAME={2100 4900}
+//KARMA={-3000 -5999}
+//NPC=brain_monster
+//CAN=MT_WALK
+//FOODTYPE=MEAT 15 (3)
+//DESIRES=FOLIAGE
+//
+//ITEM=i_gold,{100 150}
+//
+//[chardef 4267]
+//defname=c_ice_allesandrus
+//NAME=Sir Allesandrus
+//ID=0190
+//DAM={20 30}
+//ARMOR=33
+//
+//on=@create
+//STR={500 650}
+//DEX={180 200}
+//INT=500
+//color=0809
+//TITLE=Dark Baron
+//FLAGS=<FLAGS>|00260
+//NPC=BRAIN_MONSTER
+//KARMA=-17000
+//FAME=8000
+//
+//ARCHERY=100.0
+//MAGERY=100.0
+//CAMPING={45.0 68.0}
+//FENCING={45.0 68.0}
+//HIDING={65.0 78.0}
+//MACEFIGHTING={25.0 48.0}
+//MAGICRESISTANCE={85.0 88.0}
+//PARRYING={85.0 88.0}
+//POISONING={35.0 58.0}
+//SNOOPING={35.0 58.0}
+//STEALING={45.0 68.0}
+//SWORDSMANSHIP={85.0 108.0}
+//TACTICS={95.0 100.0}
+//HEALING=100.0
+//CAN=MT_WALK|MT_USEHANDS|MT_RUN
+//
+//item=04126
+//item=04554
+//item=04555
+//item=04556
+//item=04557
+//item=04558
+//item=04559
+//ITEM=i_gold,{200 250}
+//ITEM={ 018e26 018e26 1 0 0 6 }
+//item=i_ice_efekt
+//timer=5
+//
+//[chardef 4268]
+//NAME=#NAMES_HUMANMALE
+//ID=0190
+//dam=20 30
+//armor=33
+//
+//on=@create
+//STR=400 500
+//DEX=700
+//INT=0
+//color=0809
+//karma=-17000
+//fame=5000
+//PARRYING=200.0
+//SWORDSMANSHIP=140.0
+//TACTICS={95.0 100.0}
+//title=Reznik
+//item=0153D
+//color=020
+//item=0170B
+//item=01539
+//item=0EC2
+//
+//[chardef 4269]
+//NAME=#HUMANMALE
+//ID=0190
+//dam=10 20
+//armor=33
+//events=e_imune
+//on=@create
+//STR=180 250
+//DEX=80 120
+//INT=0
+//dorand 3
+//Title=Polar horde
+//Title=Nordic barbar
+//Title=Frozen viking
+//enddo
+//color=0809
+//karma=-10000
+//fame=4000
+//color=0800
+//PARRYING=100.0
+//macefighting=100.0
+//TACTICS=95.0 100.0
+//item=0203C
+//color=0800
+//item=0203E
+//color=0800
+//item=01545
+//item=0170b 
+//item=01539 
+//item=01efd
+//item=013ca
+//item=01438
+//item=i_gold,150 200

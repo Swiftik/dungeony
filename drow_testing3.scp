@@ -1,0 +1,2049 @@
+﻿/////////////////
+/// MAGE / STAJE / BOSS
+//////////////////
+//mage - c_rockdung_firemaster c_rockdung_windmaster c_rockdung_earthmaster c_rockdung_icemaster
+// e_rockdung_elements
+[itemdef 0364f]
+[itemdef 0223a]
+[itemdef 0223b]
+[itemdef 0223c]
+[itemdef 0223d]
+[itemdef 0223e]
+[itemdef 0223f]
+[itemdef 02240]
+[itemdef 02241]
+[itemdef 02242]
+[itemdef 02243]
+[itemdef 02244]
+[itemdef 02245]
+[itemdef 02246]
+[itemdef 02247]
+[itemdef 02248]
+[itemdef 02249]
+[itemdef 0f35]
+[itemdef 02478]
+[itemdef 02479]
+[itemdef 0247a]
+[function rockdung_elementalsummon]
+if ( ((<hits> < <maxhits>) && (<R10>==1)) || (<hits> < <eval (<maxhits>/4)*3>) && (<R7>==1)) || (<hits> < <eval (<maxhits>/2)>) && (<R3>==1)) || (<hits> < <eval (<maxhits>/4)>) && (<R1>==1)) )
+//summon heal-type
+serv.newnpc c_rockdung_eWisp
+new.color=<findid.i_robe_sorcerer.color>
+else 
+	if <baseid>==c_rockdung_Firemaster
+		dorand 3
+		serv.newnpc c_rockdung_eFireGolem
+		serv.newnpc c_rockdung_eFireImp
+		serv.newnpc c_rockdung_eFireElem
+		enddo	
+	elseif <baseid>==c_rockdung_IceMaster
+		dorand 3
+		serv.newnpc c_rockdung_eIceGolem
+		serv.newnpc c_rockdung_eIceImp
+		serv.newnpc c_rockdung_eIceElem
+		enddo
+	elseif <baseid>==c_rockdung_WindMaster
+		dorand 3
+		serv.newnpc c_rockdung_eWindGolem
+		serv.newnpc c_rockdung_eWindImp
+		serv.newnpc c_rockdung_eWindElem
+		enddo
+	elseif <baseid>==c_rockdung_EarthMaster
+		dorand 3
+		serv.newnpc c_rockdung_eEarthGolem
+		serv.newnpc c_rockdung_eEarthImp
+		serv.newnpc c_rockdung_eEarthElem
+		enddo
+	endif
+endif
+new.p=<p>
+new.timerf 100,remove
+new.tag.master=<uid>
+new.events +e_rockdung_eSummon
+new.update
+new.home=<p>
+new.homedist=7
+if (STRMATCH(*Golem*,<new.baseid>))
+tag0.resist_phys +=12
+elseif (STRMATCH(*Elem*,<new.baseid>))
+tag0.resist_magic +=12
+else 
+tag0.resist_phys +=3
+tag0.resist_magic +=3
+endif
+
+[events e_rockdung_eSummon]
+on @destroy
+if (STRMATCH(*Golem*,<baseid>))
+uid.<tag0.master>.tag.resist_phys -=12
+elseif (STRMATCH(*Elem*,<baseid>))
+uid.<tag0.master>.tag.resist_magic -=12
+else
+uid.<tag0.master>.tag.resist_phys -=3
+uid.<tag0.master>.tag.resist_magic -=3
+endif
+
+on @deathcorpse
+argo.timer=60
+
+
+[itemdef i_rockdung_eCrystal]
+id=0364f
+name=Elemental Energy
+on @create
+attr=010
+color=0b16
+more1=0
+on @explode
+uid.<tag.pad1>.trigger @efekt
+uid.<tag.pad2>.trigger @efekt
+uid.<tag.pad3>.trigger @efekt
+uid.<tag.pad4>.trigger @efekt
+timerf 5, effect 2,i_fx_explode,3,16,1
+timerf 5, effect 2,i_fx_explosion_2,3,16,1
+serv.newnpc c_bird
+new.p=<p>
+new.update
+new.name=.
+new.timerf 5, effect 1,0
+new.timerf 5, effect 1,0
+new.timerf 5, effect 1,0
+new.timerf 5, effect 1,0
+new.timerf 6, remove
+timerf 7, move 0 0 -40
+timerf 7, link.move 0 0 -20
+forplayers 12
+timerf 7,effect 4,3
+endfor
+timer=300 //open
+on @timer
+move 0 0 40
+link.move 0 0 20
+return 1
+[itemdef i_rockdung_ePad] //MORE2 fire 01, water 02, ice 04, earth 08 //b1f ICE
+id=03891
+on @create
+attr=010
+on @step
+if ((<src.isplayer>) && (<src.hits> > 0))
+if <link.timer>==-1 //closed
+	link.more1 |= <more2>
+	if <argn1>==0
+	src.tag.nomovetill=<eval <serv.time>+20>
+	endif
+	timer=2
+	if (<link.more1>==0f)
+	link.trigger=@explode
+	endif
+endif
+endif
+on @efekt
+morex=15
+timer=1
+on @timer
+if <morex> > 0
+morex -=1
+timerd=<eval rand(1,3)>
+rockdung_ePad_efekt
+else
+link.more1=<link.more1>&~<more2>
+endif
+return 1
+
+[function rockdung_ePad_efekt]
+ref4=<link.uid>
+ref5=<uid>
+forplayers 0
+if <hits> > 0
+if <ref5.morex>==14
+	face <ref4.uid>
+	anim 17
+	tag.nomovetill=<eval <serv.time>+50>
+	if <ref5.color>==0b1f //ice
+	say An Flam
+	elseif <ref5.color>==0b13 //fire
+	say In Flam
+	elseif <ref5.color>==07a1 //wind
+	say In Hur
+	elseif <ref5.color>==0b19 //earth
+	say An Hur
+	endif
+endif
+	if <ref5.color>==0b1f
+	flexeffect 0,038bd,4,16,0,0b05,0,0,<p.x>,<p.y>,<eval <p.z>+10>,<ref4.p.x>,<ref4.p.y>,<eval <ref4.p.z> + rand(5,20)>
+	elseif <ref5.color>==0b13
+	flexeffect 0,038bd,4,16,0,0b12,0,0,<p.x>,<p.y>,<eval <p.z>+10>,<ref4.p.x>,<ref4.p.y>,<eval <ref4.p.z> + rand(5,20)>
+	elseif <ref5.color>==07a1
+	flexeffect 0,038bd,4,16,0,07a0,0,0,<p.x>,<p.y>,<eval <p.z>+10>,<ref4.p.x>,<ref4.p.y>,<eval <ref4.p.z> + rand(5,20)>	
+	elseif <ref5.color>==0b19
+	flexeffect 0,038bd,4,16,0,0793,0,0,<p.x>,<p.y>,<eval <p.z>+10>,<ref4.p.x>,<ref4.p.y>,<eval <ref4.p.z> + rand(5,20)>
+	endif
+endif
+endfor
+[itemdef i_rockdung_ewispmem]
+id=i_memory
+type=t_eq_script
+on @timer
+if !<uid.<cont.tag0.master>.uid>
+cont.remove
+return 1
+endif
+if <uid.<cont.tag0.master>.hits>==0
+cont.remove
+return 1
+endif
+cont.forcecast 29,<cont.tag.master>
+timer=5
+return 1
+
+
+[chardef c_rockdung_eWisp]
+id=c_wisp
+name=wisp
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+brain=brain_human
+modar=30
+str=10
+karma=0
+magery=2000
+fame=0
+int=150
+maxmana=1000
+dex=100
+maxhits=600
+itemnewbie=i_rockdung_ewispmem
+timer=3
+//timerf 3,rockdung_eHealMaster
+item=i_spellbook
+more1=0
+more2=0
+
+
+//////////////////////
+/////// FIRE
+
+[chardef c_rockdung_firemaster]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+regenvalhits=50
+tag.resist_fire=100
+tag.resist_magic=30
+karma=-10000
+fame={4000 6000}
+modar=60
+title=Elemental Master
+brain=brain_human
+str=200
+maxhits=10000
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{12000 15000}
+item=random_reagents,{25 40}
+item=random_special_reagents,{15 20}
+item=i_scroll_greater_heal,{5 8}
+item=i_rockdung_scroll_summontree,{1 2}
+item=i_ohnivy_prsten
+item=i_rockdung_poison
+item=random_mondain_rock,R5
+item=i_ability_magiccritical_high,R10
+item=i_ability_fire_high,R8
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0b13
+item=i_sandals
+item=i_rockdung_firemaster
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+on @gethit
+if <argn2>&dam_fire
+hits += <argn1>
+if <hits> > <maxhits>
+hits=<maxhits>
+endif
+endif
+[itemdef i_rockdung_firemaster]
+id=i_memory
+type=t_eq_script
+name=firemaster
+on @timer
+if <cont.memoryfindtype.02000.link.uid>
+if <cont.attacker.last.elapsed> < 180
+cont.say Kal Xen Flam
+cont.anim 17
+timerf 2,cont.rockdung_elementalsummon
+timer={10 24}
+return 1
+endif
+endif
+timer=5
+return 1
+
+[chardef c_rockdung_eFireElem]
+id=c_elem_fire
+name=Flaming Elemental
+can=MT_RUN|MT_WALK
+armor=30
+dam=1
+on @create
+events +e_rockdung_customdmg
+npc=1
+karma=-10000
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+magery=1400
+int=150
+maxmana=2000
+maxhits=700
+tag.resist_phys=-20
+tag.resist_magic=20
+tag.resist_fire=100
+on @spellcast
+dorand 8
+argn1=51
+argn1=69
+argn1=51
+argn1=69
+argn1=51
+argn1=69
+argn1=27
+argn1=510
+enddo
+
+[chardef c_rockdung_eFireImp]
+id=c_mongbat
+name=Imp
+can=MT_RUN|MT_WALK
+moverate=150
+armor=30
+dam=31
+moverate=150
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=100
+tag.dmg_bonus_pets=100
+tag.armod=33
+karma=-10000
+color=0b12
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=150
+maxmana=2000
+maxhits=500
+tag.resist_fire=100
+on @hit
+if <R5>==1
+src.effect 3,036cb,3,16,1
+src.damage {10 30},dam_fire,<uid>
+endif
+
+[chardef c_rockdung_eFireGolem]
+//bear
+id=0117
+tevents=e_rockdung_noparalyze
+can=MT_WALK|MT_USEHANDS
+name=Fire Golem
+moverate=130
+dam=74
+armor=40
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=150
+tag.dmg_bonus_pets=100
+karma=-10000
+tag.armod=50
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=60
+maxhits=900
+tag.resist_phys=20
+tag.resist_pierce=10
+tag.resist_magic=-20
+tag.resist_fire=100
+itemnewbie=i_rockdung_eFireGolemBrain
+timer=10
+
+[itemdef i_rockdung_eFireGolemBrain]
+id=i_memory
+type=t_eq_script
+on @timer
+if <cont.memoryfindtype.02000.link.uid> 
+	if (<cont.CanSeeLOS <cont.memoryfindtype.02000.link.uid>> && (<cont.memoryfindtype.02000.link.hits> > 0))
+	cont.rockdung_eFireGolemFirestorm
+	timer={20 40}
+	return 1
+	endif
+endif
+timer=10
+return 1
+
+[function rockdung_eFireGolemFirestorm]
+newitem i_rockdung_eFireGolemFirestormControl
+new.attr=attr_invis|attr_move_never
+new.p=<p>
+new.timerd=1
+new.link=<uid>
+new.morey=20
+
+[itemdef i_rockdung_eFireGolemFirestormControl]
+id=i_gold
+on @timer
+if <morey>==0
+remove
+return 1
+endif
+local.x=<eval rand(-5,5)>
+local.y=<eval rand(-5,5)>
+if ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>!=0244) || ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>==0244) & (<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0)))
+    if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0
+        local.z=0
+        for i 0 <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics>
+        if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z> > <local.z>
+        local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z>
+        endif
+        endfor
+    else 
+    local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain.z>
+    endif
+    flexeffect 0,i_fx_fireball,9,16,0,0,0,0,<eval <local.x>+<p.x> + rand(-1,1)>,<eval <local.y>+<p.y> + rand(-1,1)>,<eval <local.z>+70>,<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>+5>
+    newitem i_rockdung_eFireGolemFirestormBum
+    new.attr=attr_invis
+    new.link=<link.uid>
+    new.p=<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>>,<p.m>
+    new.timerd=5
+endif
+timerd=6
+morey -=1
+return 1
+[itemdef i_rockdung_eFireGolemFirestormBum]
+id=i_paver_stone
+on @timer
+dorand 2
+newitem i_fx_explode
+newitem i_fx_explosion_2
+enddo
+sfx snd_spell_explosion
+new.type=t_normal
+new.attr=attr_decay|attr_move_never
+new.p=<p>
+new.timerd=15
+new.move 1,1
+obj=<link.uid>
+forchars 1
+    if (<hits> > 0)
+    if <uid>!=<obj.uid>
+        if <isplayer>
+            damage <eval rand(20,30)>,010,<obj.uid>
+            elseif !<istevent.e_rockdung_customdmg>
+            damage <eval rand(50,90)>,010,<obj.uid>
+            endif
+    endif
+    endif
+endfor
+foritems 1
+	if <type>==t_spell
+		if ((<baseid>==i_wall_stone_7) || (<baseid>==i_fx_energy_field))
+		remove
+		endif
+	endif
+endfor
+remove
+return 1
+
+////////////////////////////////////////////////////
+//////// ICE ///////////////////////////////////////
+[chardef c_rockdung_icemaster]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+regenvalhits=50
+tag.resist_cold=100
+tag.resist_magic=30
+karma=-10000
+fame={4000 6000}
+modar=60
+title=Elemental Master
+brain=brain_human
+str=200
+maxhits=10000
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{12000 15000}
+item=random_reagents,{25 40}
+item=random_special_reagents,{15 20}
+item=i_scroll_greater_heal,{5 8}
+item=i_rockdung_scroll_summontree,{1 2}
+item=i_ledovy_prsten
+item=i_rockdung_poison
+item=random_mondain_rock,R5
+item=i_ability_magiccritical_high,R10
+item=i_ability_ice_high,R8
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0b1f
+item=i_sandals
+item=i_rockdung_icemaster
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+on @gethit
+if <argn2>&dam_cold
+hits += <argn1>
+if <hits> > <maxhits>
+hits=<maxhits>
+endif
+endif
+[itemdef i_rockdung_icemaster]
+id=i_memory
+type=t_eq_script
+name=icemaster
+on @timer
+if <cont.memoryfindtype.02000.link.uid>
+if <cont.attacker.last.elapsed> < 180
+cont.say Kal Xen An Flam
+cont.anim 17
+timerf 2,cont.rockdung_elementalsummon
+timer={10 24}
+return 1
+endif
+endif
+timer=5
+return 1
+
+
+[chardef c_rockdung_eIceElem]
+id=c_elem_air
+name=Living Snow
+can=MT_RUN|MT_WALK
+armor=30
+dam=1
+on @create
+events +e_rockdung_customdmg
+npc=1
+karma=-10000
+str=300
+dex=140
+color=0bb7
+wrestling=1200
+tactics=1200
+magery=1400
+int=150
+maxmana=2000
+maxhits=750
+tag.resist_phys=-20
+tag.resist_magic=20
+tag.resist_cold=100
+on @spellcast
+dorand 8
+argn1=517 //jakas kula
+argn1=516
+argn1=517 //jakas kula
+argn1=516
+argn1=516 //jakas kula
+argn1=516 //f_ice
+argn1=27
+argn1=510
+enddo
+
+[chardef c_rockdung_eIceImp]
+id=06f
+name=Ice
+can=MT_RUN|MT_WALK
+moverate=150
+armor=30
+dam=33
+moverate=150
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+tag.armod=33
+karma=-10000
+color=0bb7
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=150
+maxmana=2000
+maxhits=500
+tag.resist_cold=100
+on @hit
+if <R4>==1
+src.effect 3,i_fx_glow_spike,5,16,0804,0,3
+src.damage {10 30},dam_cold,<uid>
+endif
+
+[chardef c_rockdung_eIceGolem]
+//bear
+id=c_golem_crystal
+tevents=e_rockdung_noparalyze
+can=MT_WALK|MT_USEHANDS
+name=Ice Golem
+moverate=130
+dam=75
+armor=40
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+karma=-10000
+tag.armod=50
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=60
+maxhits=900
+tag.resist_phys=20
+tag.resist_pierce=10
+tag.resist_magic=-10
+tag.resist_cold=100
+itemnewbie=i_rockdung_eIceGolemBrain
+timer=10
+
+[itemdef i_rockdung_eIceGolemBrain]
+id=i_memory
+type=t_eq_script
+on @timer
+if <cont.memoryfindtype.02000.link.uid> 
+	if (<cont.CanSeeLOS <cont.memoryfindtype.02000.link.uid>> && (<cont.memoryfindtype.02000.link.hits> > 0))
+	cont.rockdung_eIceGolemIcestorm
+	timer={20 40}
+	return 1
+	endif
+endif
+timer=10
+return 1
+
+[function rockdung_eIceGolemIcestorm]
+newitem i_rockdung_eIceGolemicestormControl
+new.attr=attr_invis|attr_move_never
+new.p=<p>
+new.timerd=1
+new.link=<uid>
+new.morey=60
+
+[itemdef i_rockdung_eIceGolemIcestormControl]
+id=i_gold
+on @timer
+if <morey>==0
+remove
+return 1
+endif
+for 3
+local.x=<eval rand(-5,5)>
+local.y=<eval rand(-5,5)>
+if ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>!=0244) || ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>==0244) & (<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0)))
+    if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0
+        local.z=0
+        for i 0 <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics>
+        if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z> > <local.z>
+        local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z>
+        endif
+        endfor
+    else 
+    local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain.z>
+    endif
+    if <local.z> > 20
+    local.z=5
+    endif
+    flexeffect 0,i_cannon_ball,9,16,0,0bb6,0,0,<eval <local.x>+<p.x> + rand(-1,1)>,<eval <local.y>+<p.y> + rand(-1,1)>,<eval <local.z>+70>,<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>+5>
+    newitem i_rockdung_eIceGolemIcestormBum
+    new.attr=attr_invis
+    new.link=<link.uid>
+    new.p=<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>>,<p.m>
+    new.timerd=5
+endif
+endfor
+timerd=1
+morey -=1
+return 1
+[itemdef i_rockdung_eIceGolemIcestormBum]
+id=i_paver_stone
+on @timer
+dorand 4
+newitem i_hay
+newitem 01036
+newitem 01037
+newitem 0f35
+enddo
+new.color=0481
+new.type=t_normal
+new.attr=attr_decay|attr_move_never
+new.p=<p>
+new.timerd=15
+new.move 1,1
+obj=<link.uid>
+forchars 1
+    if (<hits> > 0)
+    if <uid>!=<obj.uid>
+       	if <isplayer>
+            damage <eval rand(8,12)>,dam_cold,<obj.uid>
+            elseif !<istevent.e_rockdung_customdmg>
+            damage <eval rand(20,30)>,dam_cold,<obj.uid>
+            endif
+            effect 3,i_fx_glow_spike,5,16,0804,0,3
+            //tag.nomovetill=<eval <serv.time>+20>
+    endif
+    endif
+endfor
+foritems 1
+	if <type>==t_spell
+		if ((<baseid>==i_wall_stone_7) || (<baseid>==i_fx_energy_field))
+		remove
+		endif
+	endif
+endfor
+remove
+return 1
+
+/////////////////////////////////////////////////////////
+//////// EARTH
+
+[chardef c_rockdung_earthmaster]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+tevents=e_poison_imune
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+regenvalhits=50
+tag.resist_pierce=100
+tag.resist_magic=30
+karma=-10000
+fame={4000 6000}
+modar=60
+title=Elemental Master
+brain=brain_human
+str=200
+maxhits=10000
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{12000 15000}
+item=random_reagents,{25 40}
+item=random_special_reagents,{15 20}
+item=i_scroll_greater_heal,{5 8}
+item=i_rockdung_scroll_summontree,{1 2}
+item=i_prsten_kouzelnika
+item=i_rockdung_poison
+item=random_mondain_rock,R5
+item=i_ability_magiccritical_high,R6
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0b19
+item=i_sandals
+item=i_rockdung_earthmaster
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+
+
+[itemdef i_rockdung_earthmaster]
+id=i_memory
+type=t_eq_script
+name=earthmaster
+on @timer
+if <cont.memoryfindtype.02000.link.uid>
+if <cont.attacker.last.elapsed> < 180
+cont.say Kal Xen An Hur
+cont.anim 17
+timerf 2,cont.rockdung_elementalsummon
+timer={10 24}
+return 1
+endif
+endif
+timer=5
+return 1
+
+[chardef c_rockdung_eEarthElem] //reaper redux
+id=c_reaper_redux
+name=Reaper Redux
+tevents=e_poison_imune
+can=MT_RUN|MT_WALK
+armor=30
+dam=1
+on @create
+events +e_rockdung_customdmg
+npc=1
+karma=-10000
+str=300
+dex=140
+color=0b19
+wrestling=1200
+tactics=1200
+magery=1400
+int=150
+maxmana=2000
+maxhits=750
+tag.resist_phys=-20
+tag.resist_magic=20
+on @spellcast
+dorand 8
+argn1=518
+argn1=518
+argn1=12 //harm
+argn1=12 //harm
+argn1=12
+argn1=41 //dispel
+argn1=27 //curse
+argn1=508 //silence
+enddo
+
+[chardef c_rockdung_eEarthImp]
+id=c_locust
+name=Locust
+can=MT_RUN|MT_WALK
+tevents=e_poison_imune
+moverate=150
+armor=30
+dam=33
+moverate=150
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+tag.armod=33
+karma=-10000
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=150
+maxmana=2000
+maxhits=500
+on @hit
+if <R2>==1
+src.findid.i_memory_poison.remove
+src.spelleffect s_poison,2000,<uid>
+endif
+
+[chardef c_rockdung_eEarthGolem]
+//bear
+id=c_golem_earth
+tevents=e_rockdung_noparalyze,e_poison_imune
+can=MT_WALK|MT_USEHANDS
+name=Earth Golem
+moverate=130
+dam=68
+armor=50
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+karma=-10000
+tag.armod=40
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=50
+maxhits=900
+tag.resist_phys=20
+tag.resist_pierce=10
+tag.resist_magic=-10
+itemnewbie=i_rockdung_eEarthGolemBrain
+timer=10
+on @hit
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><6
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,1,15
+
+[itemdef i_rockdung_eEarthGolemBrain]
+id=i_memory
+type=t_eq_script
+on @timer
+if <cont.memoryfindtype.02000.link.uid> 
+	if (<cont.CanSeeLOS <cont.memoryfindtype.02000.link.uid>> && (<cont.memoryfindtype.02000.link.hits> > 0))
+	cont.rockdung_eEarthGolemMeteorstorm
+	timer={30 50}
+	return 1
+	endif
+endif
+timer=10
+return 1
+
+[function rockdung_eEarthGolemMeteorstorm]
+newitem i_rockdung_eEarthGolemMeteorstormControl
+new.attr=attr_invis|attr_move_never
+new.p=<p>
+new.timerd=1
+new.link=<uid>
+new.morey=20
+
+[itemdef i_rockdung_eEarthGolemMeteorstormControl]
+id=i_gold
+on @timer
+if <morey>==0
+remove
+return 1
+endif
+local.x=<eval rand(-5,5)>
+local.y=<eval rand(-5,5)>
+if ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>!=0244) || ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>==0244) & (<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0)))
+    if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0
+        local.z=0
+        for i 0 <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics>
+        if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z> > <local.z>
+        local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z>
+        endif
+        endfor
+    else 
+    local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain.z>
+    endif
+    dorand 3
+    flexeffect 0,0136c,9,16,0,0,0,0,<eval <local.x>+<p.x> + rand(-1,1)>,<eval <local.y>+<p.y> + rand(-1,1)>,<eval <local.z>+70>,<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>+5>
+    flexeffect 0,0136b,9,16,0,0,0,0,<eval <local.x>+<p.x> + rand(-1,1)>,<eval <local.y>+<p.y> + rand(-1,1)>,<eval <local.z>+70>,<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>+5>
+    flexeffect 0,01368,9,16,0,0,0,0,<eval <local.x>+<p.x> + rand(-1,1)>,<eval <local.y>+<p.y> + rand(-1,1)>,<eval <local.z>+70>,<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>+5>
+    enddo
+    newitem i_rockdung_eEarthGolemMeteorstormBum
+    new.attr=attr_invis
+    new.link=<link.uid>
+    new.p=<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>>,<p.m>
+    new.timerd=5
+endif
+timerd={3 8}
+morey -=1
+return 1
+[itemdef i_rockdung_eEarthGolemMeteorstormBum]
+id=i_paver_stone
+on @timer
+dorand 3
+newitem 0136a
+newitem 01367
+newitem 0136d
+enddo
+new.type=t_normal
+new.attr=attr_decay|attr_move_never
+new.p=<p>
+new.timerd=15
+new.move 1,1
+obj=<link.uid>
+forchars 2
+    if (<hits> > 0)
+    if <uid>!=<obj.uid>
+        if <isplayer>
+            damage <eval rand(15,30)>,dam_general,<obj.uid>
+            elseif !<istevent.e_rockdung_customdmg>
+            damage <eval rand(50,90)>,dam_general,<obj.uid>
+            endif
+    endif
+    endif
+endfor
+foritems 1
+	if <type>==t_spell
+		if ((<baseid>==i_wall_stone_7) || (<baseid>==i_fx_energy_field))
+		remove
+		endif
+	endif
+endfor
+remove
+return 1
+
+////////////////////////////////////////////
+/////////// WIND //////////////////////////
+//golem -c_succubus
+//
+[chardef c_rockdung_windmaster]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+regenvalhits=50
+tag.resist_elec=100
+tag.resist_magic=30
+karma=-10000
+fame={4000 6000}
+modar=60
+title=Elemental Master
+brain=brain_human
+str=200
+maxhits=10000
+dex=100
+int=300
+maxmana=1000
+color=colors_skin
+//loot
+item=i_gold,{12000 15000}
+item=random_reagents,{25 40}
+item=random_special_reagents,{15 20}
+item=i_scroll_greater_heal,{5 8}
+item=i_rockdung_scroll_summontree,{1 2}
+item=i_elektricky_prsten
+item=i_rockdung_poison
+item=random_mondain_rock,R5
+item=i_ability_magiccritical_high,R6
+//
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_robe_sorcerer
+color=0810
+item=i_sandals
+item=i_rockdung_windmaster
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+
+
+[itemdef i_rockdung_windmaster]
+id=i_memory
+type=t_eq_script
+name=windmaster
+on @timer
+if <cont.memoryfindtype.02000.link.uid>
+if <cont.attacker.last.elapsed> < 180
+cont.say Kal Xen Hur
+cont.anim 17
+timerf 2,cont.rockdung_elementalsummon
+timer={10 24}
+return 1
+endif
+endif
+timer=5
+return 1
+
+[chardef c_rockdung_eWindElem] //rai-ju
+id=c_rai_ju
+name=Storm
+tevents=e_poison_imune
+can=MT_RUN|MT_WALK
+armor=30
+dam=1
+on @create
+events +e_rockdung_customdmg
+npc=1
+karma=-10000
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+magery=1400
+int=150
+maxmana=2000
+maxhits=750
+tag.resist_phys=-20
+tag.resist_magic=20
+tag.resist_elec=100
+on @spellcast
+dorand 8
+argn1=30
+argn1=30
+argn1=30 //light
+argn1=12 //harm
+argn1=12
+argn1=41 //dispel
+argn1=27 //curse
+argn1=509 //manaleech
+enddo
+
+[chardef c_rockdung_eWindImp]
+id=c_vampire_bat
+name=Bat
+can=MT_RUN|MT_WALK
+tevents=e_poison_imune
+moverate=150
+armor=30
+dam=33
+moverate=150
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+tag.armod=33
+karma=-10000
+color=0810
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=150
+maxmana=2000
+maxhits=500
+tag.resist_elec=100
+
+
+[chardef c_rockdung_eWindGolem]
+//schimering effusion
+id=c_shimmering_effusion
+tevents=e_rockdung_noparalyze,e_poison_imune
+can=MT_WALK|MT_USEHANDS
+name=Cumulonimbus
+moverate=130
+dam=70
+armor=50
+on @create
+events +e_rockdung_customdmg
+tag.dmg_bonus_summons=200
+tag.dmg_bonus_pets=100
+karma=-10000
+color=07a1
+tag.armod=40
+str=300
+dex=140
+wrestling=1200
+tactics=1200
+int=60
+maxhits=800
+tag.resist_phys=20
+tag.resist_pierce=10
+tag.resist_magic=-10
+tag.resist_elec=100
+itemnewbie=i_rockdung_eWindGolemBrain
+timer=10
+
+[itemdef i_rockdung_eWindGolemBrain]
+id=i_memory
+type=t_eq_script
+on @timer
+if <cont.memoryfindtype.02000.link.uid> 
+	if (<cont.CanSeeLOS <cont.memoryfindtype.02000.link.uid>> && (<cont.memoryfindtype.02000.link.hits> > 0))
+	cont.rockdung_eWindGolemStorm
+	timer={30 50}
+	return 1
+	endif
+endif
+timer=10
+return 1
+
+[function rockdung_eWindGolemStorm]
+newitem i_rockdung_eWindGolemStormControl
+new.attr=attr_invis|attr_move_never
+new.p=<p>
+new.timerd=1
+new.link=<uid>
+new.morey=20
+
+[itemdef i_rockdung_eWindGolemStormControl]
+id=i_gold
+on @timer
+if <morey>==0
+remove
+return 1
+endif
+local.x=<eval rand(-5,5)>
+local.y=<eval rand(-5,5)>
+if ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>!=0244) || ((<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain>==0244) & (<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0)))
+    if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics> > 0
+        local.z=0
+        for i 0 <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics>
+        if <serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z> > <local.z>
+        local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).statics.<eval <local.i>>.z>
+        endif
+        endfor
+    else 
+    local.z=<serv.map(<eval <p.x> + <local.x>>,<eval <p.y> + <local.y>>,<p.z>,<p.m>).terrain.z>
+    endif
+
+    newitem i_rockdung_eWindGolemStormBum
+    new.attr=attr_invis
+    new.link=<link.uid>
+    new.p=<eval <local.x>+<p.x>>,<eval <local.y>+<p.y>>,<eval <local.z>>,<p.m>
+    new.timerd=5
+endif
+timerd={5 10}
+morey -=1
+return 1
+[itemdef i_rockdung_eWindGolemStormBum]
+id=i_paver_stone
+on @timer
+newitem 037cc
+new.color=07a1
+new.type=t_normal
+new.attr=attr_decay|attr_move_never
+new.p=<p>
+new.timerd=15
+new.move 1,1
+obj=<link.uid>
+forchars 1
+    if (<hits> > 0)
+    if <uid>!=<obj.uid>
+        if <isplayer>
+        	effect 1,0
+        	effect 1,0
+        	effect 1,0
+            damage <eval rand(20,30)>,020,<obj.uid>
+            elseif !<istevent.e_rockdung_customdmg>
+            	effect 1,0
+            damage <eval rand(50,90)>,020,<obj.uid>
+            endif
+    endif
+    endif
+endfor
+foritems 1
+	if <type>==t_spell
+		if ((<baseid>==i_wall_stone_7) || (<baseid>==i_fx_energy_field))
+		remove
+		endif
+	endif
+endfor
+remove
+return 1
+
+[itemdef i_rockdung_nowalls]
+id=0e62
+name=rune
+on @dropon_ground
+//dorand 5
+//dispid=
+//dispid=
+//dispid=
+//dispid=
+//dispid=
+//enddo
+on @spelleffect
+if (<argn1>==24) || (<argn1>==50)
+src.spelleffect 508,1000
+endif
+
+//////////////////////////////////////////////////////////////////
+/////////////////// LOMENDIL /////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+[chardef c_rockdung_lomendil]
+id=c_man
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+name=Lomendil
+tspeech=0564
+tevents=e_rockdung_ignorewisp,e_nasledovnici_bonusnpc
+on @click
+message @07a1 [The banished Lord]
+on @create
+events +e_rockdung_customdmg
+brain=brain_human
+//modar=65
+tag.name.hue=0b14
+str=400
+maxhits=5000
+int=1000
+maxmana=10000
+dex=160
+karma=-10000
+fame=9000
+fame={4000 6000}
+title=The banished Lord
+color=colors_skin
+archery=1500
+swordsmanship=1500
+tactics=1500
+magery=1000
+tag.resist_magic=30
+tag.dmg_bonus_summons=150
+tag.dmg_bonus_pets=150
+tag.body=20
+//looot
+item=i_gold,50000
+item=ttm_lvl5
+item=i_fishing_mapka_flaska,R2
+item=i_shaminuv_toulec
+item=i_shaminuv_amulet
+item=i_shaminovy_boty
+item=i_ring_titans,R2
+item=i_bracelet_archery_lvl2
+//item=random_kamen_ctnosti
+item=i_ability_hunter_high,R2
+item=i_ability_slow_high,R2
+item=i_ability_armorcurse_high,R5
+//
+itemnewbie=i_hair_ponytail
+color=01
+itemnewbie=i_spellbook
+more1=0
+more2=0
+itemnewbie=i_cape
+color=0b15
+itemnewbie=i_surcoat
+color=0b24
+itemnewbie=i_platemail_gloves
+color=0b24
+itemnewbie=i_platemail_gorget
+color=0b23
+itemnewbie=i_elven_boots
+color=0b23
+itemnewbie=i_chainmail_tunic
+color=0b23
+itemnewbie=i_woodland_belt
+color=0b23
+itemnewbie=i_leaf_arms
+color=0b23
+itemnewbie=i_hide_pants
+color=0b24
+itemnewbie=i_circlet
+color=0798
+itemnewbie=i_rockdung_lomendilbow
+itemnewbie=i_rockdung_lomendilsword
+itemnewbie=i_shield_elven
+color=0b23
+
+    itemnewbie=i_rockdung_lomendilbrain
+    timer=1
+ 	itemnewbie=i_rockdung_lomendilwispcontrol
+	 timer=1
+on @gethit
+if !<region.tag0.poisoned>
+effect 3,i_fx_glow,3,16,1
+return 1
+endif
+on @spelleffect 
+tag.iscast<argn1>=
+if <argn1>==5
+events -e_frozen
+tag.nomovetill=
+walk <dir>
+endif
+on @hit
+if <weapon.type>==t_weapon_bow
+	dorand 4
+	src.rockdung_lomendilbleed <uid>
+	src.rockdung_lomendilblesk <uid>
+	src.rockdung_lomendilfire <uid>
+	src.rockdung_lomendilcold <uid>
+	enddo
+elseif <findlayer.1.baseid>==i_rockdung_lomendilsword
+		if <r2>==1
+		effect 3,038bd,3,16,1,0798
+		rockdung_lomendilsmash <attacker.target>
+		endif
+endif
+[function rockdung_lomendilbleed]
+	if <findid.i_bleeding.uid>
+	        if <findid.i_bleeding.morey><6
+	        findid.i_bleeding.remove
+	        events -e_bleeding
+	        endif
+	endif
+	f_bleeding <argv[0]>,1,15
+[function rockdung_lomendilblesk]
+effect 1,0
+damage {10 20},dam_elec,<argv[0]>
+[function rockdung_lomendilfire]
+effect 3,i_fx_explode_ball,3,16,1
+damage {10 20},dam_fire,<argv[0]>
+[function rockdung_lomendilCold]
+effect 3,i_fx_glow_spike,5,16,0804,0,3
+damage {10 20},dam_cold,<argv[0]>
+
+[itemdef i_rockdung_lomendilbow]
+id=i_bow_composite
+name=Elven Bow
+dam=115
+speed=65
+range=0,15
+on @create
+tag.rangeboost=4,2
+tag.armod=80
+tag.special=1
+color=07a1
+hitpoints=1000
+
+[itemdef i_rockdung_lomendilsword]
+id=i_elven_machete
+name=Lomendil's Sword
+dam=60
+on @create
+color=0b22
+tag.armod=60
+tag.special=1
+hitpoints=1000
+
+[itemdef i_rockdung_lomendilbrain]
+id=i_memory
+type=t_eq_script
+name=lomendil
+on @timer
+if <tag0.action>==8
+cont.rockdung_lomendilburstshot
+cont.tag.teleport=
+tag.action=
+timer=1
+return 1
+endif
+tag.action=<cont.rockdung_lomendilaction>
+if <tag.action>==7
+cont.go <cont.tag.teleport>
+cont.rockdung_lomendilburstshot
+cont.timerd=15
+cont.tag.nomovetill=<eval <serv.time>+15>
+timerd=9
+tag.action=8 
+return 1
+endif
+//////////// koniec portowanie + burst
+if <tag.action>==9
+cont.forcecast 5,<cont.uid>
+timerd=12
+return 1
+endif
+if <tag.action>==6 //wispy!
+cont.forcecast 519,<cont.uid>
+timerd=18
+return 1
+endif
+timer=1
+return 1
+
+
+[function rockdung_lomendilaction]
+local.attackers=<rockdung_lomendilcountattackers>
+if ((<local.attackers> > 0) && (rand(10)==1))
+	tag.teleport=<rockdung_lomendilfindteleport>
+		if <eval <tag.teleport>> > 0
+		return 7
+		endif
+endif
+if <isevent.e_frozen>
+return 9
+endif
+if <tag0.wisps> < 3
+return 6
+endif
+if <attacker>
+if <uid.<attacker.target>.uid>
+	if (<distance <attacker.target>> > 2)
+	equip <findid.i_rockdung_lomendilbow>
+	else
+	equip <findid.i_rockdung_lomendilsword>
+	equip <findid.i_shield_elven>
+	endif
+endif
+endif
+return 0
+
+[function rockdung_lomendilsmash]
+ref1=<uid>
+ref2=<argv[0]>
+forchars 2
+if !((<uid>==<ref1>) || <istevent.e_rockdung_customdmg>) 
+face <ref1>
+	if <rockdung_getdir <ref1>>==1
+	local.resist=<eval <tag0.resist_phys>+<tag0.resist_slash>>
+		if <local.resst> > 40
+		local.resist=40
+		endif
+	if <findid.i_bleeding.uid>
+	        if <findid.i_bleeding.morey><6
+	        findid.i_bleeding.remove
+	        events -e_bleeding
+	        endif
+	endif
+	trysrc <uid> src.f_bleeding <ref1>,1,15
+	damage <damcalc <eval 100 + (<modstr>/10)>,<armor>,40,<local.resist>,0>,dam_general,<ref1.uid>
+	endif
+endif
+endfor
+
+[itemdef i_rockdung_lomendilwispcontrol]
+id=i_memory
+type=t_eq_script
+name=wisp control
+on @timer
+tag.action=<cont.rockdung_lomendilwispmaster>
+
+if (<tag0.action>==5) && (!<cont.tag0.iscast502>)
+cont.rockdung_wispcommand 502 //vas an grav
+timerd=2
+return 1
+elseif (<tag0.action>==4) && (!<cont.tag0.iscast15>)
+cont.rockdung_wispcommand 15 //prot
+timerd=2
+return 1
+elseif (<tag0.action>==3) && (!<cont.tag0.iscast7>)
+cont.rockdung_wispcommand 7 //reactiv
+timerd=2
+return 1
+elseif (<tag0.action>==2) && (!<cont.tag0.iscast11>) 
+cont.rockdung_wispcommand 11 //cure 
+timerd=2
+return 1
+elseif (<tag0.action>==6) //heal
+cont.rockdung_wispcommand 29
+timerd=2
+return 1
+elseif (<tag0.action>==7) //manaleech
+cont.rockdung_wispcommand 509,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==8) //stamleech
+cont.rockdung_wispcommand 510,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==9) //silence
+cont.rockdung_wispcommand 508,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==10) //normal curse
+cont.rockdung_wispcommand 27,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==11) //armor dole
+cont.rockdung_wispcommand 520,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==12) //disarm
+cont.rockdung_wispcommand 521,<cont.attacker.target>
+timerd=2
+return 1
+elseif (<tag0.action>==13) //summon dispel
+cont.rockdung_wispcommand 41,<cont.tag.dispelni>
+timerd=2
+return 1
+elseif (<tag0.action>==14) //rage
+cont.rockdung_wispcommand 514
+timerd=2
+return 1
+endif
+timerd=2
+return 1
+
+
+[function rockdung_lomendilwispmaster]
+if (((<hits> < <maxhits>) && (<R20>==1)) || ((<hits> < <eval (<maxhits>*3)/4>) && (<R16>==1)) || ((<hits> < <eval <maxhits>/2>) && (<R12>==1)) || ((<hits> < <eval <maxhits>/4>) && (<R8>==1)) )
+return 6
+endif
+if <f_rockdung_wallcount 4> > 4
+return 5
+endif
+if !<findid.i_rune_protection>
+return 4
+endif
+if !<findid.i_rune_reactive_armor>
+return 3
+endif
+if <findid.i_memory_poison>
+return 2
+endif
+if (!<findid.i_rockdung_rage>) && <attacker> && (<R50>==1) && (!<tag0.iscast514>)
+return 14
+endif
+local.summon=<rockdung_dispelnearestsummon 4> 
+if <local.summon> > 0
+tag.dispelni=<local.summon>
+uid.<local.summon>.tag.dispel=1
+return 13
+endif
+if <attacker>
+ref1=<attacker.target>
+	if (!<ref1.findid.i_rune_rockdung_manaleech>) && (!<tag0.iscast509>) && (<ref1.mana> > 30) && (<R10>==1) && <CanSeeLOS <ref1>>
+	return 7
+	endif
+	if (!<ref1.findid.i_rune_rockdung_staminaleech>) && (!<tag0.iscast510>) && (<ref1.stam> > 10) && (<R10>==1) && <CanSeeLOS <ref1>>
+	return 8
+	endif
+	if (!<ref1.findid.i_rune_rockdung_silence>) && (!<tag0.iscast508>) && (<R20>==1) && <CanSeeLOS <ref1>>
+	return 9
+	endif
+	if (!<ref1.findid.i_rune_curse>) && (!<tag0.iscast27>) && (<R9>==1) && <CanSeeLOS <ref1>>
+	return 10
+	endif
+	if (!<ref1.findid.i_rune_rockdung_armorcurse>) && (!<tag0.iscast520>) && (<R20>==1) && <CanSeeLOS <ref1>>
+	return 11
+	endif
+	if (!<ref1.isevent.e_rockdung_disarm>) && (<ref1.weapon>) && (!<tag0.iscast521>) && (<R20>==1) && <CanSeeLOS <ref1>>
+	return 12
+	endif
+return 0
+
+[function rockdung_DispelNearestSummon]
+local.dist=<argn1>
+local.id=0
+obj=<uid>
+forchars <argn1>
+if ((<obj.CanSeeLOS <uid>>) && (<flags>&statf_conjured) && (!<tag0.dispel>) && (<baseid>!=c_wisp_s))
+ if <obj.distance <uid>> < <local.dist>
+ local.dist=<obj.distance <uid>>
+ local.id=<uid>
+ endif
+endif
+endfor
+return <local.id>
+
+
+[function rockdung_wispcommand]
+ref3=<uid>
+forchars 8
+ if ((<baseid>==c_rockdung_wisplomendil) && (<action>!=skill_magery) && (<CanSeeLOS <ref3.uid>>))
+ mana=1000
+	 if !<argv[1]>
+	 if <eval <argv[0]>>==29
+	 magery=1000
+	 else
+	 magery=2000
+	 endif
+	 forcecast <eval <argv[0]>>,<ref3.uid>
+		 if <eval <argv[0]>>!=29 //nie heal
+		 ref3.tag.iscast<eval <argv[0]>>=1
+		 ref3.timerf 5,tag.iscast<eval <argv[0]>>=
+		 endif
+	 else
+	 forcecast <eval <argv[0]>>,<argv[1]>
+	 ref3.tag.iscast<eval <argv[0]>>=1
+	 ref3.timerf 10,tag.iscast<eval <argv[0]>>=
+	 endif
+ return 1
+ endif
+endfor
+
+[chardef c_rockdung_wisplomendil]
+id=c_wisp
+can=MT_WALK|MT_RUN
+name=Guardian Spirit
+tspeech=0564
+tevents=e_rockdung_noparalyze
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=07a1
+brain=brain_human
+modar=90
+magery=1000
+str=100
+dex=150
+int=1000
+maxhits=2000
+homedist=3
+timerf 4,rockdung_lomendilwispcontrol
+itemnewbie=i_spellbook
+
+on @death
+if <uid.<tag.master>.uid>
+uid.<tag.master>.tag.wisps -=1
+endif
+
+
+
+[function rockdung_lomendilwispcontrol]
+if !<uid.<tag.master>.uid>
+remove
+return 1
+endif
+if ((!<CanSeeLOS <tag.master>>) || (<distance <tag.master>> > 8))
+go <uid.<tag.master>.p>
+endif
+home=<uid.<tag.master>.p>
+timerf 4,rockdung_lomendilwispcontrol
+return 1
+
+[function rockdung_lomendilburstshot]
+equip <findid.i_rockdung_lomendilbow>
+for <getargcount <tag.attackers>>
+ref5=<getarg <local._for>,<tag.attackers>>
+if <ref5.uid>
+	anim 18
+	local.resist=<eval <ref5.tag0.resist_pierce>+<ref5.tag0.resist_phys>>
+	if <local.resist> > 40
+	local.resist=40
+	endif
+		if <ref5.isplayer>
+		ref5.damage <damcalc 75,<ref5.ar>,30,<local.resist>,0>,dam_general,<uid>
+		else
+		ref5.damage <damcalc 300,<ref5.ar>,30,<local.resist>,0>,dam_general,<uid>
+		endif
+	ref5.tag.nomovetill=<eval <serv.time> + 15>
+	flexeffect 0,0f42,3,16,0,07a0,0,0,<p.x>,<p.y>,<eval <p.z>+10>,<ref5.p.x>,<ref5.p.y>,<eval <ref5.p.z>>
+endif
+endfor
+
+[function rockdung_LomendilFindTeleport]
+for 20
+serv.newitem i_paver_stone
+new.attr=010
+new.color=0bb7
+new.p=<p>
+new.move <eval rand(-10,10)>,<eval rand(-10,10)>
+if ((<distance <new.uid>> < 6) || (!<CanSeeLOS <new.uid>>) || (<serv.map(<new.p.x>,<new.p.y>,0).statics> > 1))//
+new.remove
+else
+local.teleport=<new.p>
+new.remove
+return <local.teleport>
+endif
+endfor
+return 0
+
+[function rockdung_lomendilcountattackers]
+ref2=<uid>
+local.attackers=0
+tag.attackers=
+forchars 3
+	if <attacker>
+		if <attacker.target>==<ref2>
+		local.attackers +=1
+		ref2.tag0.attackers .= <uid>,
+			if <local.attackers> > 2
+			return <uid>
+			endif
+		endif
+	endif
+endfor
+return 0
+
+/////////////////////////
+[itemdef i_rockdung_poison]
+id=01848
+name=silny jed
+type=t_normal
+on @create
+color=0b14
+on @dclick
+targetg Kam chces vylit jed?
+return 1
+on @targon_ground
+if (5248 < <src.targp.x>) && (<src.targp.x> < 5253) && (1926 < <src.targp.y>) && (<src.targp.y> < 1931)
+if <region.tag0.poisoned>
+src.say Zdroj uz byl otraven.
+return 1
+endif
+src.say Posvatny zdroj elfu byl otraven!
+foritems 5
+if <baseid> == i_rockdung_tree_2
+remove
+endif
+if <baseid> == i_rockdung_leaves_1
+remove
+endif
+if <baseid> == i_rockdung_leaves_2
+remove
+endif
+if <baseid> == i_rockdung_leaves_3
+remove
+endif
+if <baseid> == i_rockdung_leaves_4
+remove
+endif
+endfor
+serv.newitem i_rockdung_tree_1
+new.p=5250,1929,0 
+serv.newitem i_rockdung_columnpoison
+new.p=5250,1929,1
+new.attr=attr_move_never|attr_decay
+new.timer=3600
+new.color=0810
+region.tag.poisoned=1
+else
+src.emote vyplytval lahev silneho jedu
+endif
+remove
+return 1
+
+[itemdef i_rockdung_columnpoison]
+id=i_fire_column
+on @destroy
+foritems 5
+if <baseid> == i_rockdung_tree_1
+remove
+endif
+endfor
+region.tag.poisoned=
+serv.newitem i_rockdung_tree_2
+new.p=5250,1929,0
+serv.newitem i_rockdung_leaves_2
+new.p=5250,1930,11
+serv.newitem i_rockdung_leaves_1
+new.p=5250,1930,9
+serv.newitem i_rockdung_leaves_2
+new.p=5251,1929,11
+serv.newitem i_rockdung_leaves_3
+new.p=5251,1929,7
+serv.newitem i_rockdung_leaves_3
+new.p=5251,1928,4
+serv.newitem i_rockdung_leaves_4
+new.p=5251,1928,2
+
+[itemdef i_rockdung_tree_1]
+id=0224d
+on @create
+attr=attr_move_never
+color=0b24
+
+[itemdef i_rockdung_tree_2]
+id=0224d
+on @create
+color=07a1
+attr=attr_move_never
+
+[itemdef i_rockdung_leaves_1]
+id=0247a
+on @create
+color=0b1e
+attr=attr_move_never
+
+[itemdef i_rockdung_leaves_2]
+id=02478
+on @create
+color=0b1e
+attr=attr_move_never
+
+[itemdef i_rockdung_leaves_3]
+id=02479
+on @create
+color=0b1e
+attr=attr_move_never
+
+[itemdef i_rockdung_leaves_4]
+id=0247c
+on @create
+color=0b1e
+attr=attr_move_never
+  
+//////////////////////////////////////
+/// kon
+
+[chardef c_elven_stallion]
+id=c_horse_brown_lt
+NAME=Elven Stallion
+SOUND=snd_ANIMALS_HORSE1
+ICON=i_pet_horse_brown_lt
+CAN=MT_WALK|MT_RUN
+DAM=15,23
+ARMOR=40
+RESOURCES=15 i_ribs_raw
+FOODTYPE=55 t_crops, 55 t_fruit, 64 t_grass
+//SHELTER=r_stables
+TEVENTS=e_kopytnik,e_horses,e_mount_bonus
+
+ON=@Create
+events +e_rockdung_customdmg
+COLOR=0b24
+	NPC=brain_animal
+	STR=200
+	DEX=140
+	INT=150
+	PARRYING={75.0 85.0}
+	MAGICRESISTANCE=100.0
+	TACTICS={89.0 94.0}
+	WRESTLING=100.0
+	TAMING=100.0
+	FAME=0
+	KARMA=0
+	LEVEL=1000
+tag.mount_bonus_amount=2
+tag.mount_bonus1=2,events,e_mount_elven_stallion
+tag.mount_bonus2=1,stealth,100
+On=@Click
+if (<tag0.guild_level_podkova>)
+message @079a [Podkova]
+endif
+[events e_mount_elven_stallion]
+
+//////////////////////////////////////
+//// wiezienie
+[chardef c_rockdung_prisoner]
+id=c_man
+can=MT_EQUIP|MT_USEHANDS
+name=Galadion
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+invul=1
+brain=brain_human
+modar=65
+tag.name.hue=0810
+str=400
+int=180
+dex=150
+karma=0
+fame=0
+fame={4000 6000}
+title=Guard of Serpent's Hold
+color=colors_skin
+archery=1500
+swordsmanship=1500
+tactics=1500
+magery=1000
+itemnewbie=i_hair_ponytail
+itemnewbie=i_spellbook
+on @npcrestock
+    ITEMNEWBIE=i_pants_short
+    color=0b19
+    
+[itemdef i_rockdung_prisoner] //link drzwi link.link npc prisoner //tag dlazka -kecaci dlazka
+id=i_shackles_hanging
+type=t_normal
+on @dclick
+move 0 0 -30
+link.link.anim 17
+link.link.timerf 1,anim 32
+link.link.timerf 5,go 6430,370,0
+link.link.say @0b14,1,1 Děkuji Ti <src.name>
+link.link.timerf 2,say @0b14,1,1 Kód do trůnního sálu je: <STRSUB(1,5,<link.tag.kod>)>
+timer=<morex>
+uid.<tag.dlazka>.move 0 0 -20
+return 1
+
+on @timer
+uid.<tag.dlazka>.move 0 0 20
+move 0 0 30
+link.link.go 5250,1887,5
+local.kod = K
+local.kod .=<eval rand(10000,99999)>
+link.tag.kod_a=
+link.tag.kod=<local.kod>
+//if <link.timer>!=-1
+//link.trigger=@timer
+//link.timer=-1
+//endif
+return 1
+
+[itemdef i_rockdung_helpprisoner] //kecaci dlazka
+id=i_paver_stone
+on @create
+attr=090
+on @step
+if <timer>==-1
+link.say @0b14,1,1 Vysvobod mě a řeknu ti kód, který jsem slyšel!
+timer=10
+endif
+on @timer
+return 1
+
+//////////////////////////
+// zbrojownia
+[itemdef i_rockdung_adept_control]
+id=i_crystal_ball
+name=adepti - control
+
+//more1=timer !
+on @timer //naspawnuj
+link.move 0 0 30 //zamkni branu
+morex=4 // 4 adepti zyja
+morey=6 // 7 npc zyje
+serv.newnpc c_rockdung_warrioradept
+new.p=5276,1930,10
+new.tag.control=<uid>
+new.update
+serv.newnpc c_rockdung_warrioradept
+new.p=5276,1927,10
+new.tag.control=<uid>
+new.update
+serv.newnpc c_rockdung_warrioradept
+new.p=5279,1927,10
+new.tag.control=<uid>
+new.update
+serv.newnpc c_rockdung_warrioradept
+new.p=5279,1930,10
+new.tag.control=<uid>
+new.update
+return 1
+on @check
+if (<morex>==0) && (<morey>==0)
+link.move 0 0 -30
+timer=<more1>
+return 1
+endif
+if (<morex>==0) && (<morey>==6)
+serv.newnpc c_rockdung_priest
+new.p=5279,1922,5
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+serv.newnpc c_rockdung_berserker
+new.p=5281,1922,5
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+serv.newnpc c_rockdung_ranger
+new.p=5275,1922,5
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+serv.newnpc c_rockdung_rogue
+new.p=5273,1922,5
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+serv.newnpc c_rockdung_druid
+new.p=5277,1922,5
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+serv.newnpc c_rockdung_paladin
+new.p=5277,1920,10
+new.tag.control=<uid>
+new.events +e_rockdung_guard
+new.update
+new.effect 3,i_fire_column,3,16,1,037
+endif
+[events e_rockdung_adept]
+on @death
+uid.<tag.control>.morex -=1
+uid.<tag.control>.trigger=@check
+
+[events e_rockdung_guard]
+on @death
+uid.<tag.control>.morey -=1
+uid.<tag.control>.trigger=@check
+
+[chardef c_rockdung_warrioradept]
+id=c_man
+name=#NAMES_ELF_MALE
+can=MT_EQUIP|MT_USEHANDS
+tevents=e_rockdung_adept //link na kuli
+on @create 
+events +e_rockdung_customdmg
+tag.name.hue=0810
+str=100
+dex=100
+int=100
+karma=-100
+fame=0
+color=colors_skin
+itemnewbie={ i_hair_elven_ml 1 i_hair_elven_braid 1 i_hair_short 1 }
+itemnewbie=i_ringmail_leggings
+color=0b18
+itemnewbie=i_boots_calf
+color=0b15
+itemnewbie={ i_elven_machete 1 i_sword_broad 1 i_ornate_axe 1 }
+on @regionenter
+timerf 2,rockdung_adeptswing
+
+[function rockdung_adeptswing]
+face <tag.control>
+dorand 2
+anim 13
+anim 14
+enddo
+timerf 2,rockdung_adeptswing

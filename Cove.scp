@@ -1,0 +1,337 @@
+[CHARDEF c_gazer_cove] //lalalalla
+DEFNAME=c_gazer_cove
+ID=c_gazer
+NAME=Gazer
+SOUND=snd_MONSTER_GAZER1
+ICON=i_pet_GAZER
+ANIM=06007f
+DAM=20,30
+ARMOR=25
+TEVENTS=e_resisty
+RESOURCES=4 i_ribs_raw, 7 i_reag_black_pearl
+CAN=MT_WALK
+FOODTYPE=
+//SHELTER=r_caves,r_dungeon
+DESIRES=c_gazer
+AVERSIONS=r_civilization
+CATEGORY=Monsters
+SUBSECTION=Miscellaneous
+DESCRIPTION=Gazer
+
+ON=@Create
+tag.armod=25
+	NPC=brain_monster
+	FAME={600 5000}
+	KARMA={-3000 -3999}
+	//ALIGNMENT=EVIL
+	STR={96 125}
+	MAXHITS={205 295}
+	FLAGS=<FLAGS>|0020
+	DEX={126 155}
+	INT={140 165}
+	PARRYING={60.0 65.0}
+	MAGERY={70.0 85.0}
+	MAGICRESISTANCE={50.0 65.0}
+	TACTICS={86.0 90.0}
+	WRESTLING={86.0 90.0}
+	//SPELLCIRCLES=3-5
+	tag.resist_elec 90
+
+ON=@NPCRestock
+	ITEM=loot_GAZER
+	item=i_oko_gazera
+	
+on=@death
+newitem i_gazer_control
+new.timer=250
+new.p=<p>
+obj=<new.uid>
+
+
+[itemdef i_gazer_control]
+id=i_gold
+on @create
+attr=attr_move_never|attr_invis
+on @timer
+for 1
+newnpc c_gazer_cove
+dorand 5
+new.home 5471 1881
+new.home 5491 1897
+new.home 5471 1917
+new.home 5460 1933
+new.home 5456 1906
+enddo
+new.go <new.home>
+new.homedist=6
+endfor
+remove
+return 1
+
+[itemdef i_oko_gazera]
+ID=i_reag_eye_of_newt
+NAME=Oko gazera
+value=10
+type=0
+weight=1
+
+on=@create
+COLOR=0795
+
+CATEGORY=Custom Items
+SUBSECTION=Cove
+DESCRIPTION=Oko Gazera
+
+on=@DCLICK
+SRC.MESSAGE Oko gazera by slo mozna nekde pouzit.
+RETURN 1
+
+
+[CHARDEF c_liche_cove]//0069
+DEFNAME=c_liche_cove
+id=c_liche
+NAME=Liche
+SOUND=snd_MONSTER_LICHE1
+ICON=i_pet_LICH
+ANIM=07bc7f
+DAM=15,25
+ARMOR=23
+//RESOURCES=10 t_eerie_stuff
+CAN=MT_WALK|MT_USEHANDS
+FOODTYPE=
+//SHELTER=r_dungeon,r_caves,r_spooky
+DESIRES=t_bone,i_gold,t_wand,t_reagent
+BLOODCOLOR=colors_green
+TEVENTS=e_undead
+TEVENTS=e_poison_imune
+TEVENTS=e_resisty
+CATEGORY=Monsters
+SUBSECTION=Cove
+DESCRIPTION=Liche
+
+ON=@Create
+tag.armod=25
+	NPC=brain_undead
+	FAME={600 5000}
+	KARMA={-4000 -4999}
+	//ALIGNMENT=EVIL
+	STR={325 355}
+	MAXHITS={765 790}
+	DEX={140 160}
+	INT={205 235}
+	PARRYING={75.0 80.0}
+	MAGERY={70.0 80.0}
+	WRESTLING={85.0 95.0}
+	MAGICRESISTANCE={70.0 90.0}
+	TACTICS={80.0 90.0}
+	//SPELLCIRCLES=2-4
+	// knows undead type spells.
+	ITEMNEWBIE=i_spellbook
+	ADDSPELL=s_Clumsy
+	ADDSPELL=s_Weaken
+	ADDSPELL=s_feeblemind
+	ADDSPELL=s_Harm
+	ADDSPELL=s_poison
+	ADDSPELL=s_curse
+	ADDSPELL=s_paralyze
+	ADDSPELL=s_dispel
+	ADDSPELL=s_fire_bolt
+	ADDSPELL=s_Hallucination
+	tag.resist_necro 65
+	tag.resist_cold 100
+
+ON=@NPCRestock
+	ITEM=loot_LICH
+	ITEM=loot_LICH
+	item=i_ring_strength,R10
+	item=i_ring_dexterity,R10
+	item=i_bracelet_mages,R500
+	item=i_bracelet_archery,R500
+	item=i_bracelet_parrying,R500
+	item=i_amulet_warrior,R500
+	item=i_amulet_fighter,R500
+	item=i_amulet_fencing,R500
+	item=i_amulet_alchemy,R500
+	item=i_amulet_mana,R500
+	item=i_ankh_ring,R10
+	item=i_ring_serpent,R500
+	item=i_ring_titans,R500
+	item=i_ring_inteligence,R10
+	item=i_bracelet_taming,R500
+	item=i_ring_potection,R500
+	item=i_amulet_protection,R500
+	item=i_amulet_alchemy,R500
+	ITEM=i_memory_necromancy1
+	timer=20
+
+[CHARDEF c_m_gazer_blind]//0070
+DEFNAME=c_m_gazer_blind
+NAME=Blind Gazer
+ID=c_GAZER
+SOUND=snd_MONSTER_GAZER1
+CAN=MT_WALK
+DAM=20,30
+ARMOR=35
+RESOURCES=8 i_ribs_raw, 15 i_reag_black_pearl
+DESIRES=c_gazer
+//SHELTER==r_caves
+AVERSIONS=r_civilization
+tevents e_drain_mana
+TEVENTS=e_resisty
+
+ON=@Create
+tag.armod=25
+	STR={295 315}
+	MAXHITS={795 850}
+	DEX={335 385}
+	INT={250 270}
+	maxmana={385 405}
+	//ALIGNMENT=EVIL
+	//SPELLCIRCLES=3,5
+	FLAGS=<FLAGS>|0020
+	PARRYING={65.0 70.0}
+	MAGERY={90.0 100.0}
+	MAGICRESISTANCE={85.0 100.0}
+	TACTICS={90.0 100.0}
+	WRESTLING={90.0 100.0}
+	NPC=brain_monster
+	FAME={5600 6000}
+	KARMA={-4000 -4999}
+        tag.resist_magic 50
+	tag.resist_blunt -30
+
+ON=@NPCRestock
+	ITEM=loot_ELDER_GAZER
+	item=i_gold,{350 435}
+	ITEM=i_cove_key
+	item=i_ring_strength,R10
+	item=i_ring_dexterity,R10
+	item=i_bracelet_mages,R500
+	item=i_bracelet_archery,R500
+	item=i_bracelet_parrying,R500
+	item=i_amulet_warrior,R500
+	item=i_amulet_fighter,R500
+	item=i_amulet_fencing,R500
+	item=i_amulet_alchemy,R500
+	item=i_amulet_mana,R500
+	item=i_ankh_ring,R10
+	item=i_ring_serpent,R500
+	item=i_ring_titans,R500
+	item=i_ring_inteligence,R10
+	item=i_bracelet_taming,R500
+	item=i_ring_potection,R500
+	item=i_amulet_protection,R500
+	item=i_amulet_alchemy,R500
+	item=i_gazer_stone
+	timer=1
+	attr=04
+
+	
+	CATEGORY=Monsters
+	SUBSECTION=Cove
+	DESCRIPTION=Blind Gazer
+
+[itemdef i_gazer_stone]
+id=i_memory
+type=t_eq_script
+name=stone
+on @timer
+if (<cont.memoryfindtype.02000.link.uid>)
+cont.memoryfindtype.02000.link.say *Pohled do oka Gazera te oslepil*
+cont.memoryfindtype.02000.link.tag.nomovetill=<eval <serv.time>+30>
+cont.memoryfindtype.02000.link.effect 3,i_fx_glow_spike,5,16,0804,0,3
+cont.memoryfindtype.02000.link.newitem i_drak_mojmir_timer,1,<cont.memoryfindtype.02000.link.uid>
+	new.morex=3
+    	new.timer=1
+cont.memoryfindtype.02000.link.events +e_drak_mojmir_para
+endif
+timer=20
+return 1
+
+[itemdef i_cove_key]
+ID=01012
+NAME=Klic od brany
+value=70
+type=0
+weight=1
+
+on=@create
+COLOR=044
+
+CATEGORY=Custom Items
+SUBSECTION=Cove
+DESCRIPTION=Cove Key
+
+on=@DCLICK
+SRC.MESSAGE Mej klic u sebe, kdyz oteviras dvere.
+RETURN 1
+
+[CHARDEF c_bone_drake]//0071
+DEFNAME=c_bone_drake
+SOUND=SND_MONSTER_DRAGON1
+ID=c_sceletal_drake
+ICON=020d6
+name=Bone drake
+ANIM=03f9c7f
+CAN=MT_WALK|MT_FLY|MT_RUN
+DAM=26,32
+ARMOR=35
+RESOURCES=50 i_ribs_raw,20 i_hide,15 i_reag_dragon_blood,5 i_reag_volcanic_ash
+FOODTYPE=t_meat_raw 25 (3)
+//SHELTER=CAVES,DUNGEONS
+DESIRES=i_GOLD
+TEVENTS=e_undead,e_flus_imune,e_poison_imune,e_prokleti1,e_life_drain,e_dragons,e_nasledovnici_bonusnpc
+//AVERSIONS=WATER,CIVILIZATION
+
+CATEGORY=Monsters
+SUBSECTION=Cove
+DESCRIPTION=Bone drake
+
+on=@create
+tag.armod=25
+brain=10
+FAME={6000 8000}
+KARMA={-5000 -6999}
+//ALIGNMENT=EVIL
+//SPELLCIRCLES=4
+
+STR={320 370}
+MAXHITS={850 990}
+DEX={103 112}
+INT={45 55}
+FLAGS=<FLAGS>|0020
+
+PARRYING={75.0 80.0}
+MAGICRESISTANCE={75.0 100.0}
+TACTICS={90.0 100.0}
+WRESTLING={85.0 90.0}
+tag.resist_cold 90
+tag.resist_pierce 80
+tag.lifedrain 1
+tag.body=4
+
+on=@npcrestock
+	item=i_kost_draka
+	item=i_npcbonus_dragons_low,R100
+	item=i_gold,{2740 3355}
+	item=i_ring_strength,R10
+	item=i_ring_dexterity,R10
+	item=i_bracelet_mages,R50
+	item=i_bracelet_archery,R50
+	item=i_bracelet_parrying,R50
+	item=i_amulet_warrior,R50
+	item=i_amulet_fighter,R50
+	item=i_amulet_fencing,R50
+	item=i_amulet_alchemy,R50
+	item=i_amulet_mana,R50
+	item=i_ankh_ring,R10
+	item=i_ring_serpent,R50
+	item=i_ring_titans,R50
+	item=i_ring_inteligence,R10
+	item=i_bracelet_taming,R50
+	item=i_ring_potection,R50
+	item=i_amulet_protection,R50
+	item=i_amulet_alchemy,R50
+	ITEM=random_scroll,{2 3},R2
+	ITEM=random_scroll,{4 6}
+

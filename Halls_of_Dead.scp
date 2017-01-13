@@ -1,0 +1,1851 @@
+[chardef c_lady_minax]
+ID=c_woman
+name=Lady Minax
+SOUND=snd_HUMAN_M_DIE_01
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+dam=0,40
+armor=80
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP
+tevents=e_poison_imune,e_dragonscale,e_vampire_protect,e_paralyze_imune,e_imunita_psychical,e_stone_imunita
+
+on @create
+tag.armod=50
+tag.resist_magic=50
+tag.resist_necro=150
+tag.elem_magic=1
+magery=2000
+karma=-10000
+fame=10000
+title=arcimistryne cerne magie
+brain=brain_human
+str=300
+maxhits=3000
+dex=100
+int=300
+maxmana=1000
+tag.name.hue=07e5
+
+on=@npcrestock
+itemnewbie={ i_hair_short 1 i_hair_long 1 i_hair_ponytail 1 }
+itemnewbie=i_armor_female_Studded
+color=0455
+item=i_mt_horse_brown_dk
+	color=0455
+item=i_sandals
+color=0455
+item=i_hair_long
+color=0455
+item=i_leather_gloves
+color=020
+item=i_cape
+color=020
+item=i_ring_serpent
+item=i_amulet_mana
+item=i_gold,{5000 10000}
+item=i_lady_minax_brain
+timer=1
+item=i_spellbook
+more1=0
+more2=0
+item=i_staff_black_iron
+tempest
+
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	say Vase chaba magie mne nezastavi!
+	return 1
+	endif
+endif
+
+on @hit
+if ((rand(3)==1)
+DORAND 4
+SAY Ted pocitis silu temne magie.
+SAY Poznas mou moc... 
+SAY Plaz se prede mnou na kolenou, cerve!
+SAY Udelam z tebe nemrtveho otroka.
+ENDDO
+src.spelleffect s_flamestrike,2000
+sound=1151
+endif
+
+on @gethit
+if(<hits> < (<maxhits>/10))
+serv.NEWITEM i_mesicni_brana_malas
+new.P=<P>
+update
+remove
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+on=@kill
+hits +=100
+if <src.hits> > <src.maxhits>
+    src.hits=<src.maxhits>
+endif
+sound=1154
+say Tva duse doplnila me sily!
+
+[itemdef i_lady_minax_brain]
+ID=i_memory
+type=t_eq_script
+on=@timer
+cont.mana=200
+if <cont.f_rockdung_wallcount 3> > 3
+ if (rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 30
+    return 1
+ endif
+endif
+if (<cont.hits> < <cont.maxhits>) && (rand(<eval 2+ ((<cont.hits>*10)/<cont.maxhits>)>)==1)
+cont.forcecast 4,<cont.uid>
+timerd=13
+return 1
+endif
+if ((<cont.f_rockdung_FindNearestSummon 5>>0) && (rand(3)==1))
+	cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 5>
+	timerd = 35
+	return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,22)>
+if <local.x><3
+cont.forcecast 70,<cont.memoryfindtype.02000.link>
+timerd=16
+return 1
+endif
+if <local.x><6
+cont.forcecast 54,<cont.memoryfindtype.02000.link>
+timerd=35
+return 1
+endif
+if <local.x><9
+cont.forcecast 100,<cont.uid>
+timerd=31
+return 1
+endif
+if <local.x><12
+cont.magery 2000
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timerd=11
+return 1
+endif
+if <local.x><14
+cont.forcecast 30,<cont.memoryfindtype.02000.link>
+timerd=21
+return 1
+endif
+if <local.x><16
+cont.forcecast 51,<cont.memoryfindtype.02000.link>
+timerd=31
+return 1
+endif
+if <local.x><19
+cont.f_ballpoison
+timerd=31
+return 1
+endif
+if <local.x><21
+cont.forcecast 163,<cont.memoryfindtype.02000.link>
+timerd=23
+return 1
+endif
+if <local.x><23
+cont.firestorm
+timerd=50
+sound=1153
+return 1
+endif
+endif
+TIMER=1
+return 1
+
+[chardef c_banshee]
+ID=310
+NAME=Banshee
+SOUND=snd_monster_zombie1
+ICON=i_pet_wailingbanshee
+DAM=28,37
+RESDISPDNID=c_spectre
+RESLEVEL=3
+RESDISPDNHUE=01
+ARMOR=60
+moverate=150
+CAN=MT_WALK|MT_FLY
+DESIRES=i_gold,e_notoriety,e_horses,c_man,c_woman,t_corpse
+tevents=e_resisty,e_paralyze1,e_poison_imune,e_dragonscale,e_vampire_protect
+CATEGORY=New Monsters
+SUBSECTION=AOS
+DESCRIPTION=Wailing Banshee
+
+ON=@Create
+tag.armod=25 
+	NPC=brain_monster
+	FAME={3000 4000} 
+	KARMA={-5000 -6999} 
+	STR={256 276}
+	MAXHITS={580 600}
+	INT={86 115}
+	DEX={101 125}
+	MAGICRESISTANCE={75.0 95.0}
+	TACTICS=100.0
+	WRESTLING=100.0
+	DETECTINGHIDDEN=100.0
+	parrying={80.0 85.0}
+	FLAGS=<FLAGS>|0020
+	tag.resist_physical=50
+
+ON=@NpcRestock
+	ITEM=i_gold,{450 600}
+	ITEM=i_reag_daemon_bone,{2 6}
+	item=i_banshee_krik
+	timer=5
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[itemdef i_banshee_krik]
+ID=i_memory
+name=Banshe krik
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+ref1=<cont.uid> 
+cont.say *Krici*
+cont.sound 200
+forchars 9
+if (<ref1.uid>!=<uid>) && ((<isplayer>)||(<owner.isplayer>)) && !(<isgm>)
+damage 10 0204 <ref1.uid>
+tag.nomovetill=<eval <serv.time>+30>
+effect 3,i_fx_glow_spike,5,16,0b24,0,3
+newitem i_drak_mojmir_timer,1,<uid>
+	new.morex=3
+    	new.timer=1
+events +e_drak_mojmir_para
+endif
+endfor
+timer=30
+return 1
+endif
+timer=30
+return 1
+
+[chardef c_banshee_mocna]
+ID=310
+NAME=Mocna Banshee
+SOUND=snd_monster_zombie1
+ICON=i_pet_wailingbanshee
+DAM=38,47
+RESDISPDNID=c_spectre
+RESLEVEL=3
+RESDISPDNHUE=01
+ARMOR=80
+moverate=150
+CAN=MT_WALK|MT_FLY
+DESIRES=i_gold,e_notoriety,e_horses,c_man,c_woman,t_corpse
+tevents=e_resisty,e_paralyze2,e_poison_imune,e_dragonscale,e_vampire_protect,e_paralyze_imune,e_imunita_psychical,e_stone_imunita
+CATEGORY=New Monsters
+SUBSECTION=AOS
+DESCRIPTION=Wailing Banshee
+
+ON=@Create 
+tag.armod=25
+	NPC=brain_monster
+	FAME={3000 4000} 
+	KARMA={-5000 -6999} 
+	STR={356 376}
+	MAXHITS={880 1000}
+	INT={186 215}
+	DEX={201 225}
+	MAGICRESISTANCE={75.0 95.0}
+	TACTICS=100.0
+	WRESTLING=100.0
+	DETECTINGHIDDEN=100.0
+	necromancy=100.0
+	parrying={80.0 85.0}
+	FLAGS=<FLAGS>|0020
+	tag.resist_physical=70
+
+ON=@NpcRestock
+	ITEM=i_gold,{2450 2600}
+	ITEM=i_reag_daemon_bone,{2 6}
+	item=i_banshee_krik_mocny
+	timer=5
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[itemdef i_banshee_krik_mocny]
+ID=i_memory
+name=Banshe krik mocny
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+ref1=<cont.uid> 
+cont.say *Krici*
+cont.sound 200
+forchars 13
+ if (<ref1.uid>!=<uid>) && ((<isplayer>)||(<owner.isplayer>)) && !(<isgm>)
+ damage 30 0204 <ref1.uid>
+ spelleffect s_mass_dispel,1000
+  if ((rand(100) < 16)
+  DORAND 14
+  local.armor=layer_helm
+  local.armor=layer_gloves
+  local.armor=layer_collar 
+  local.armor=layer_legs
+  local.armor=layer_chest
+  local.armor=layer_hand2
+  local.armor=layer_arms
+  local.armor=layer_shoes
+  local.armor=layer_shirt
+  local.armor=layer_pants
+  local.armor=layer_tunic
+  local.armor=layer_cape
+  local.armor=layer_robe
+  local.armor=layer_skirt
+  ENDDO
+	if (<findlayer.<local.armor>.type>==t_clothing)||(<findlayer.<local.armor>.type>==t_armor_leather)||(<findlayer.<local.armor>.type>==t_armor)||(<findlayer.<local.armor>.type>==t_shield)
+     		if <findlayer.<local.armor>.hitpoints> < 3
+     		sysmessage @color_o_verite, *<findlayer.<local.armor>.name> byl znicen krikem*
+     		findlayer.<local.armor>.remove
+     		else
+     		findlayer.<local.armor>.hitpoints = <findlayer.<local.armor>.hitpoints> - 2
+		sysmessage @color_o_verite, *<findlayer.<local.armor>.name> byl poskozen utokem protivnika*
+        	endif 
+	endif
+  endif
+    IF (<FLAGS>&statf_onhorse)
+         local.konik=uid.<findtype(t_eq_horse).uid>
+         sysmessage Tvuj <<local.konik>.name> nesnesl krik Banshee a shodil te ze sveho hrbetu!
+		BARK=4
+		dismount
+    ENDIF
+ tag.nomovetill=<eval <serv.time>+50>
+ effect 3,i_fx_glow_spike,5,16,0b24,0,3
+ newitem i_drak_mojmir_timer,1,<uid>
+	new.morex=5
+    	new.timer=1
+ events +e_drak_mojmir_para
+ endif
+endfor
+timer=30
+return 1
+endif
+timer=30
+return 1
+
+
+[CHARDEF c_sekac]
+ID=0190
+NAME=Sekac
+CAN=MT_WALK|MT_USEHANDS|MT_RUN|MT_GHOST|MT_FLY
+ID=0190
+DAM=25,35
+ARMOR=85
+MOVERATE=190
+tevents=e_poison_imune,e_resisty,e_insubstantial,e_dragonscale,e_vampire_protect,e_undead,e_prokleti1,e_utoknazbrane,e_utoknabrneni,e_paralyze_imune,e_stone_imunita
+
+CATEGORY=Civilized
+SUBSECTION=Bandits & PK
+DESCRIPTION=Posel smrti
+
+ON=@Create
+tag.armod=20
+color=0b24
+        STR={835 875}
+	MAXHITS={1050 1070}
+	MAXMANA={2750 3770}
+	DEX={300 350}
+	INT={400 450}
+	TITLE=Posel smrti
+	FLAGS=<FLAGS>|00260
+	NPC=brain_undead
+	KARMA={-8000 -9500}
+	FAME={8000 8500}
+	MAGERY=120.0
+	FENCING={135.0 160.0}
+	swordsmanship=110.0
+	HIDING={99.0 100.0}
+	detectinghidden=100.0
+	MAGICRESISTANCE={99.0 99.0}
+	PARRYING={99.0 99.0}
+	NECROMANCY=100.0
+	TACTICS=100.0
+	HEALING=100.0
+        tag.insubstancial=1000
+	tag.noprovocation=1
+	tag.nopeacemaking=1
+        tag.resist_necro 50
+        tag.resist_phys 25
+	tag.utoknabrneni=10
+	tag.utoknazbrane=15
+
+
+ON=@NPCRestock
+	item=i_sekac_brain
+	timer=5
+	item=i_ilshenar_chromatic_invis
+	timer=15
+	item=i_detect_reveal
+	timer=15
+	item=i_gold,{1985 2455}
+	itemnewbie=i_spellbook
+	more1=0
+	more2=0
+        ITEM=i_roba_mrtveho
+	ATTR=04
+	color=0b24
+	ITEM=i_kosa
+	ATTR=04
+	color=0b24
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[itemdef i_sekac_brain]
+ID=i_memory
+type=t_eq_script
+name=sekac brain
+on=@timer
+cont.mana=1000
+if <cont.f_rockdung_wallcount 3> > 3
+ if (rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 35
+    return 1
+ endif
+endif
+if ((<cont.f_rockdung_FindNearestSummon 5>>0) && (rand(3)==1))
+	cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 5>
+	timerd = 35
+	return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,12)>
+if <local.x><6
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><9
+cont.forcecast 70,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><11
+cont.forcecast 100,<cont.uid>
+timer=8
+return 1
+endif
+if <local.x><13
+cont.forcecast 41,<cont.uid>
+timer=8
+return 1
+endif
+endif
+TIMER=2
+return 1
+
+
+[chardef c_temny_vlk]  
+name=Temny Vlk
+id=277
+ICON=i_pet_wolf 
+DAM=20,25 
+ARMOR=95 
+RESOURCES=15 i_ribs_raw,10 i_hide 
+CAN=MT_WALK|MT_RUN
+moverate=150 
+RESLEVEL=5
+RESDISPDNHUE=33
+RESDISPDNID=c_horse_gray
+FOODTYPE=55 i_ribs_raw  
+DESIRES=c_elf_male,c_elf_female 
+AVERSIONS=e_carnivores3
+bloodcolor=07a1
+TEVENTS=e_damage_poison,e_poison_imune,e_dragonscale,e_vampire_protect,e_undead
+CATEGORY=New Monsters
+SUBSECTION=Halls of Dead
+DESCRIPTION=Temný Vlk
+
+on=@create
+tag.armod=25
+color=0b24
+str=600
+dex=567
+int=368
+maxhits=640
+wrestling=100.0
+tactics=100.0
+anatomy=100.0
+detectinghidden=100.0
+karma=-3000
+fame=4500
+tag.resist_necro=25
+tag.resist_cold 100
+
+ON=@NPCRestock
+	item=i_gold,{1585 1955}
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[chardef c_temny_vlk_mocny]  
+name=Mocny Temny Vlk
+id=277
+ICON=i_pet_wolf 
+DAM=30,35 
+ARMOR=125 
+RESOURCES=15 i_ribs_raw,10 i_hide 
+CAN=MT_WALK|MT_RUN
+moverate=150 
+RESLEVEL=5
+RESDISPDNHUE=33
+RESDISPDNID=c_horse_gray
+FOODTYPE=55 i_ribs_raw  
+DESIRES=c_elf_male,c_elf_female 
+AVERSIONS=e_carnivores3
+bloodcolor=07a1
+TEVENTS=e_damage_poisongreat,e_poison_imune,e_dragonscale,e_vampire_protect,e_undead,e_paralyze1,e_imunita_psychical
+CATEGORY=New Monsters
+SUBSECTION=Halls of Dead
+DESCRIPTION=Temný Vlk
+
+on=@create
+tag.armod=25
+color=0b24
+str=600
+dex=567
+int=268
+maxhits=840
+wrestling=100.0
+tactics=100.0
+anatomy=100.0
+detectinghidden=100.0
+magery=100.0
+karma=-3000
+fame=4500
+tag.resist_necro=40
+tag.resist_cold 100
+
+ON=@NPCRestock
+	item=i_kostej_brain
+	timer=5
+	item=i_detect_reveal
+	timer=15
+	item=i_temny_vlk_utok
+	timer=10
+	item=i_gold,{4585 5955}
+	itemnewbie=i_spellbook
+	more1=0
+	more2=0
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[itemdef i_temny_vlk_utok]
+ID=i_memory
+name=Temny vlk utok
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+if (<cont.distance <cont.attacker.target>> > 3) && <cont.CanSeeLOS <cont.attacker.target>>)
+cont.go <uid.<cont.attacker.target>.p>
+timer=8
+return 1
+endif
+endif
+timer=2
+return 1
+
+
+
+[CHARDEF c_rytir_zkazy]
+id=c_man
+NAME=#NAMES_ELF_MALE , rytir zkazy
+SOUND=snd_HUMAN_M_DIE_01
+CAN=MT_WALK|MT_FLY|MT_FEMALE|mt_usehands|MT_EQUIP
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP,t_eerie_stuff
+DAM=40,45
+tevents=e_stone_imunita,e_poison_imune,e_undead,e_prokleti1,e_vampire_protect,e_dragonscale,e_paralyze_imune,e_resisty
+
+ON=@Create
+tag.armod=55
+	tag.resist_phys 25
+	tag.resist_necro 25
+	tag.resist_cold 100
+	title=Rytir Zkazy
+	COLOR={045e 1 07d1 1 059d 1 089f 1 08a8 1}
+	STR={976 995}
+	MAXHITS={1080 1145}
+	DEX={170 180}
+	INT={171 185}
+	FENCING=120.0
+	WRESTLING=100.0
+	parrying={95.0 98.0}
+	macefighting=110.0
+	swordsmanship=110.0
+	MAGICRESISTANCE={60.0 80.0}
+	TACTICS=105.0
+	DETECTINGHIDDEN=100.0
+	NPC=brain_Human
+	KARMA={-5500 -6900}
+	FAME={6600 8500}
+	tag.noprovocation=1
+
+ON=@NPCRestock
+	item=i_mt_horse_brown_dk
+	dispid=03e92
+	color=0b24
+	ITEM=i_dragon_helm
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_sleeves
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_leggings
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_chest
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_gloves
+	attr=04
+	COLOR=0b24
+	ITEM=i_elven_boots
+	attr=04
+	COLOR=0b24
+	item=i_radiant_scimitar
+	attr=04
+	color=0b24
+	ITEM=i_shield_knight
+	name=Stit Rytire Zkazy
+	COLOR=0b24
+	attr=04
+	ITEM=i_cloak_humility
+	name=Cloak
+	attr=04
+	COLOR=0b24
+	item=i_gold,{2585 2955}
+	ITEM={ backpack_meager 1 backpack_average 1 }
+	item=i_detect_reveal
+	timer=15
+
+on=@death
+//newnpc c_rytir_horse
+effect 3,i_fire_column,15,6,1,0b24
+sound 200
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[CHARDEF c_rytir_zkazy_mocny]
+id=c_man
+NAME=#NAMES_ELF_MALE the Horseman , rytir zkazy - Velitel
+SOUND=snd_HUMAN_M_DIE_01
+CAN=MT_WALK|MT_FLY|MT_FEMALE|mt_usehands|MT_EQUIP
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP,t_eerie_stuff
+DAM=40,45
+tevents=e_stone_imunita,e_imunita_psychical,e_utoknazbrane,e_utoknabrneni,e_life_drain,e_poison_imune,e_undead,e_prokleti2,e_vampire_protect,e_dragonscale,e_paralyze_imune,e_resisty
+
+ON=@Create
+tag.armod=65
+	tag.resist_phys 50
+	tag.resist_necro 60
+	tag.resist_cold 100
+	modar=20
+	COLOR={045e 1 07d1 1 059d 1 089f 1 08a8 1}
+	STR={976 995}
+	MAXHITS={1580 1945}
+	DEX={270 280}
+	INT={271 285}
+	FENCING=120.0
+	WRESTLING=100.0
+	parrying={95.0 98.0}
+	macefighting=110.0
+	swordsmanship=110.0
+	MAGICRESISTANCE={60.0 80.0}
+	TACTICS=105.0
+	DETECTINGHIDDEN=100.0
+	NPC=brain_Human
+	KARMA={-5500 -6900}
+	FAME={6600 8500}
+	tag.noprovocation=1
+	tag.lifedrain=2
+	tag.utoknabrneni=10
+	tag.utoknazbrane=15
+
+ON=@NPCRestock
+	item=i_mt_horse_brown_dk
+	dispid=03e92
+	color=0b24
+	ITEM=i_dragon_helm
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_sleeves
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_leggings
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_chest
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_gloves
+	attr=04
+	COLOR=0b24
+	ITEM=i_elven_boots
+	attr=04
+	COLOR=0b24
+	item=i_radiant_scimitar
+	attr=04
+	color=0799
+	ITEM=i_shield_knight
+	name=Stit Rytire Zkazy
+	COLOR=0799
+	attr=04
+	ITEM=i_cloak_humility
+	name=Cloak
+	attr=04
+	COLOR=0799
+	item=i_gold,{10585 12955}
+	ITEM=i_memory_necromancy1
+	timer=20
+	item=i_detect_reveal
+	timer=15
+	ITEM={ backpack_meager 1 backpack_average 1 }
+
+//on=@death
+//newnpc c_rytir_horse
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[chardef c_rytir_horse]
+id=c_valecny_kun
+name=Valecny Kun
+tevents=e_lesni,e_resisty,e_undead
+
+on=@create
+tag.armod=25
+karma=-6500
+color=0b24
+str=1100
+maxhits=2000
+level=0
+dex=150
+int=200
+wrestling=140.0
+tactics=120.0
+parrying=95.0
+tag.noprovocation=1
+tag.resist_cold 100
+tag.resist_phys 25
+tag.resist_necro 25
+
+on=@npcrestock
+item=i_gold,{1800 2000}
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+//////////////////////////////////////////////////////
+///////////////úprava npc na TK////////////
+/////////////////////////////////////////////////////
+////kostìjové////
+[chardef c_kostej_tk]
+id=002b
+name=Kostej
+SOUND=SND_MONSTER_SKLETN1
+ICON=020e7
+ANIM=078c7f
+dam=20,30
+armor=80
+CAN=MT_WALK|MT_RUN
+RESOURCES=7 i_reag_bone
+TEVENTS=e_undead,e_paralyze_imune,e_dragonscale,e_damage_poison,e_vampire_protect,e_poison_imune,e_pritel_tk
+
+CATEGORY=Monsters
+SUBSECTION=Undead
+DESCRIPTION=Kostej
+
+on=@create
+tag.armod=20
+color=0b24
+NPC=brain_undead
+FAME={6000 8000}
+KARMA={-7999 -8999}
+STR=500
+MAXHITS={735 765}
+DEX={340 350}
+MAXSTAM={750 790}
+INT={130 150}
+MAXMANA={505 545}
+FLAGS=<FLAGS>|0020
+PARRYING=100.0
+MAGICRESISTANCE=100.0
+TACTICS=100.0
+WRESTLING=100.0
+HIDING=100.0
+EVALUATINGINTEL=100.0
+DETECTINGHIDDEN=100.0
+SWORDSMANSHIP=100.0
+tag.noprovocation=1
+tag.nopeacemaking=1
+tag.resist_poison=80
+
+on=@npcrestock
+//item=i_xbolt_bantitan,{1 2},R20
+//item=i_dragon_slayer_sword,R500
+//item=i_sword_mandarin,R200
+//item=i_sword_mistress,R200
+ITEM=i_gold,{1280 1750}
+item=i_npcbonus_undead_high,R500
+
+on @hit
+if <src.findid.i_memory_prokleti1>
+src.findid.i_memory_prokleti1.timer=60
+else
+newitem i_memory_prokleti1
+new.link=<src.uid>
+src.equip <new.uid>
+src.sysmessage Byl jsi stizen kletbou!
+src.EVENTS +e_prokleti11
+endif
+src.spelleffect s_curse,1000,<uid>
+src.timerf 1,spelleffect s_paralyze,1000,<uid>
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+if !(<src.flags>&statf_poisoned)
+     if (rand(10) < 4)
+     src.spelleffect 20,450,<uid>
+     else
+     src.spelleffect 20,950,<uid>
+     endif
+endif
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[chardef c_kostej_mocny_tk]
+id=002b
+name=Mocny Kostej
+SOUND=SND_MONSTER_SKLETN1
+ICON=020e7
+ANIM=078c7f
+dam=0,30
+armor=100
+CAN=MT_WALK|MT_RUN
+RESOURCES=7 i_reag_bone
+TEVENTS=e_undead,e_paralyze_imune,e_dragonscale,e_poison_imune,e_pritel_tk
+
+CATEGORY=Monsters
+SUBSECTION=Undead
+DESCRIPTION=Kostej Mocny
+
+on=@create
+tag.armod=15
+color=0b24
+NPC=brain_undead
+FAME={6800 10000}
+KARMA={-8999 -9999}
+STR=1200
+MAXHITS={1800 1840}
+DEX={1040 1080}
+MAXSTAM=1820
+INT={500 540}
+MAXMANA=1235
+FLAGS=<FLAGS>|0020
+PARRYING=120.0
+MAGICRESISTANCE=120.0
+magery=120.0
+TACTICS=120.0
+WRESTLING=120.0
+HIDING=120.0
+EVALUATINGINTEL=120.0
+DETECTINGHIDDEN=120.0
+SWORDSMANSHIP=120.0
+necromancy=100.0
+tag.noprovocation=1
+tag.nopeacemaking=1
+tag.resist_necro=50
+
+on=@npcrestock
+//item=i_xbolt_bantitan,{1 2},R10
+//item=i_sword_mandarin,R100
+//item=i_sword_mistress,R100
+ITEM=i_gold,{4280 5550}
+item=i_npcbonus_undead_high,R500
+item=i_kostej_brain
+timer=15
+itemnewbie=i_spellbook
+more1=0
+more2=0
+
+on @hit
+src.spelleffect s_dispel,1000
+if ((rand(4)==1)
+	if !(<src.isEVENT.e_vampire_protect>) && !(<isevent.e_brneni_ctnosti>)
+	src.str -=2
+	endif
+	if <src.str> < 10
+      	src.str=10
+	endif
+	if <hits> < <maxhits>
+	hits=<eval <hits>+(<argn1>/2)>
+	effect 3,i_fx_curse,6,15,1,0b24
+		if <hits> > <maxhits>
+		hits=<maxhits>
+		endif
+	endif
+endif
+if !(<src.flags>&statf_poisoned)
+     if (rand(10) < 4)
+     src.spelleffect 20,1500,<uid>
+     else
+     src.spelleffect 20,2000,<uid>
+     endif
+endif
+if <src.findid.i_memory_paralyze2>
+	src.findid.i_memory_paralyze2.timer=30
+else
+	newitem i_memory_paralyze2
+	new.link=<src.uid>
+	src.equip <new.uid>
+	src.modar -=5
+	src.sysmessage Byl jsi paralyzovan!
+endif
+src.timerf 1,spelleffect s_paralyze,1000,<uid>
+if <src.findid.i_memory_prokleti1>
+	src.findid.i_memory_prokleti1.remove
+elseif <src.findid.i_memory_prokleti2>
+	src.findid.i_memory_prokleti2.timer=60
+else
+	newitem i_memory_prokleti2
+	new.link=<src.uid>
+	src.equip <new.uid>
+	src.sysmessage Byl jsi stizen kletbou!
+	src.EVENTS +e_prokleti22
+endif
+src.spelleffect s_curse,2000,<uid>
+
+
+on @spelleffect
+if (<argn1>==102)
+	if (rand(4)==1)
+	say *Kostej odolal ucinkum kouzla*
+	return 1
+	endif
+endif
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[chardef c_banshee_tk]
+ID=310
+NAME=Banshee
+SOUND=snd_monster_zombie1
+ICON=i_pet_wailingbanshee
+DAM=28,37
+RESDISPDNID=c_spectre
+RESLEVEL=3
+RESDISPDNHUE=01
+ARMOR=60
+moverate=150
+CAN=MT_WALK|MT_FLY
+DESIRES=i_gold,e_notoriety,e_horses,c_man,c_woman,t_corpse
+tevents=e_resisty,e_paralyze1,e_poison_imune,e_dragonscale,e_vampire_protect,e_pritel_tk
+CATEGORY=New Monsters
+SUBSECTION=AOS
+DESCRIPTION=Wailing Banshee
+
+ON=@Create
+tag.armod=25 
+	NPC=brain_monster
+	FAME={3000 4000} 
+	KARMA={-5000 -6999} 
+	STR={256 276}
+	MAXHITS={580 600}
+	INT={86 115}
+	DEX={101 125}
+	MAGICRESISTANCE={75.0 95.0}
+	TACTICS=100.0
+	WRESTLING=100.0
+	DETECTINGHIDDEN=100.0
+	parrying={80.0 85.0}
+	FLAGS=<FLAGS>|0020
+	tag.resist_physical=50
+
+ON=@NpcRestock
+	ITEM=i_gold,{450 600}
+	ITEM=i_reag_daemon_bone,{2 6}
+	item=i_banshee_krik_tk
+	timer=5
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[itemdef i_banshee_krik_tk]
+ID=i_memory
+name=Banshe krik
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+ref1=<cont.uid> 
+cont.say *Krici*
+cont.sound 200
+forchars 9
+if (<ref1.uid>!=<uid>) && ((<isplayer>)||(<owner.isplayer>)) && !(<isgm>) && !(<tag.skupina==3>)
+damage 10 0204 <ref1.uid>
+tag.nomovetill=<eval <serv.time>+30>
+effect 3,i_fx_glow_spike,5,16,0b24,0,3
+newitem i_drak_mojmir_timer,1,<uid>
+	new.morex=3
+    	new.timer=1
+events +e_drak_mojmir_para
+endif
+endfor
+timer=30
+return 1
+endif
+timer=30
+return 1
+
+[chardef c_banshee_mocna_tk]
+ID=310
+NAME=Mocna Banshee
+SOUND=snd_monster_zombie1
+ICON=i_pet_wailingbanshee
+DAM=38,47
+RESDISPDNID=c_spectre
+RESLEVEL=3
+RESDISPDNHUE=01
+ARMOR=80
+moverate=150
+CAN=MT_WALK|MT_FLY
+DESIRES=i_gold,e_notoriety,e_horses,c_man,c_woman,t_corpse
+tevents=e_resisty,e_paralyze2,e_poison_imune,e_dragonscale,e_vampire_protect,e_paralyze_imune,e_imunita_psychical,e_stone_imunita,e_pritel_tk
+CATEGORY=New Monsters
+SUBSECTION=AOS
+DESCRIPTION=Wailing Banshee
+
+ON=@Create 
+tag.armod=25
+	NPC=brain_monster
+	FAME={3000 4000} 
+	KARMA={-5000 -6999} 
+	STR={356 376}
+	MAXHITS={880 1000}
+	INT={186 215}
+	DEX={201 225}
+	MAGICRESISTANCE={75.0 95.0}
+	TACTICS=100.0
+	WRESTLING=100.0
+	DETECTINGHIDDEN=100.0
+	necromancy=100.0
+	parrying={80.0 85.0}
+	FLAGS=<FLAGS>|0020
+	tag.resist_physical=70
+
+ON=@NpcRestock
+	ITEM=i_gold,{2450 2600}
+	ITEM=i_reag_daemon_bone,{2 6}
+	item=i_banshee_krik_mocny_tk
+	timer=5
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[itemdef i_banshee_krik_mocny_tk]
+ID=i_memory
+name=Banshe krik mocny
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+ref1=<cont.uid> 
+cont.say *Krici*
+cont.sound 200
+forchars 13
+ if (<ref1.uid>!=<uid>) && ((<isplayer>)||(<owner.isplayer>)) && !(<isgm>) && !(<tag.skupina==3>)
+ damage 30 0204 <ref1.uid>
+ spelleffect s_mass_dispel,1000
+  if ((rand(100) < 16)
+  DORAND 14
+  local.armor=layer_helm
+  local.armor=layer_gloves
+  local.armor=layer_collar 
+  local.armor=layer_legs
+  local.armor=layer_chest
+  local.armor=layer_hand2
+  local.armor=layer_arms
+  local.armor=layer_shoes
+  local.armor=layer_shirt
+  local.armor=layer_pants
+  local.armor=layer_tunic
+  local.armor=layer_cape
+  local.armor=layer_robe
+  local.armor=layer_skirt
+  ENDDO
+	if (<findlayer.<local.armor>.type>==t_clothing)||(<findlayer.<local.armor>.type>==t_armor_leather)||(<findlayer.<local.armor>.type>==t_armor)||(<findlayer.<local.armor>.type>==t_shield)
+     		if <findlayer.<local.armor>.hitpoints> < 3
+     		sysmessage @color_o_verite, *<findlayer.<local.armor>.name> byl znicen krikem*
+     		findlayer.<local.armor>.remove
+     		else
+     		findlayer.<local.armor>.hitpoints = <findlayer.<local.armor>.hitpoints> - 2
+		sysmessage @color_o_verite, *<findlayer.<local.armor>.name> byl poskozen utokem protivnika*
+        	endif 
+	endif
+  endif
+    IF (<FLAGS>&statf_onhorse)
+         local.konik=uid.<findtype(t_eq_horse).uid>
+         sysmessage Tvuj <<local.konik>.name> nesnesl krik Banshee a shodil te ze sveho hrbetu!
+		BARK=4
+		dismount
+    ENDIF
+ tag.nomovetill=<eval <serv.time>+50>
+ effect 3,i_fx_glow_spike,5,16,0b24,0,3
+ newitem i_drak_mojmir_timer,1,<uid>
+	new.morex=5
+    	new.timer=1
+ events +e_drak_mojmir_para
+ endif
+endfor
+timer=30
+return 1
+endif
+timer=30
+return 1
+
+
+[CHARDEF c_sekac_tk]
+ID=0190
+NAME=Sekac
+CAN=MT_WALK|MT_USEHANDS|MT_RUN|MT_GHOST|MT_FLY
+ID=0190
+DAM=25,35
+ARMOR=85
+MOVERATE=190
+tevents=e_poison_imune,e_resisty,e_insubstantial,e_dragonscale,e_vampire_protect,e_undead,e_prokleti1,e_utoknazbrane,e_utoknabrneni,e_paralyze_imune,e_stone_imunita,e_pritel_tk
+
+CATEGORY=Civilized
+SUBSECTION=Bandits & PK
+DESCRIPTION=Posel smrti
+
+ON=@Create
+tag.armod=20
+color=0b24
+        STR={835 875}
+	MAXHITS={1050 1070}
+	MAXMANA={2750 3770}
+	DEX={300 350}
+	INT={400 450}
+	TITLE=Posel smrti
+	FLAGS=<FLAGS>|00260
+	NPC=brain_undead
+	KARMA={-8000 -9500}
+	FAME={8000 8500}
+	MAGERY=120.0
+	FENCING={135.0 160.0}
+	swordsmanship=110.0
+	HIDING={99.0 100.0}
+	detectinghidden=100.0
+	MAGICRESISTANCE={99.0 99.0}
+	PARRYING={99.0 99.0}
+	NECROMANCY=100.0
+	TACTICS=100.0
+	HEALING=100.0
+        tag.insubstancial=1000
+	tag.noprovocation=1
+	tag.nopeacemaking=1
+        tag.resist_necro 50
+        tag.resist_phys 25
+	tag.utoknabrneni=10
+	tag.utoknazbrane=15
+
+
+ON=@NPCRestock
+	item=i_sekac_brain
+	timer=5
+	item=i_ilshenar_chromatic_invis
+	timer=15
+	item=i_detect_reveal
+	timer=15
+	item=i_gold,{1985 2455}
+	itemnewbie=i_spellbook
+	more1=0
+	more2=0
+        ITEM=i_roba_mrtveho
+	ATTR=04
+	color=0b24
+	ITEM=i_kosa
+	ATTR=04
+	color=0b24
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[itemdef i_sekac_brain]
+ID=i_memory
+type=t_eq_script
+name=sekac brain
+on=@timer
+cont.mana=1000
+if <cont.f_rockdung_wallcount 3> > 3
+ if (rand(3)==1)
+    cont.forcecast 502,<cont.uid>
+    timerd = 35
+    return 1
+ endif
+endif
+if ((<cont.f_rockdung_FindNearestSummon 5>>0) && (rand(3)==1))
+	cont.forcecast 41,<cont.f_rockdung_FindNearestSummon 5>
+	timerd = 35
+	return 1
+endif
+if <cont.memoryfindtype.02000.link.uid>
+local.x=<eval rand(1,12)>
+if <local.x><6
+cont.forcecast 69,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><9
+cont.forcecast 70,<cont.memoryfindtype.02000.link>
+timer=8
+return 1
+endif
+if <local.x><11
+cont.forcecast 100,<cont.uid>
+timer=8
+return 1
+endif
+if <local.x><13
+cont.forcecast 41,<cont.uid>
+timer=8
+return 1
+endif
+endif
+TIMER=2
+return 1
+
+
+[chardef c_temny_vlk_tk]  
+name=Temny Vlk
+id=277
+ICON=i_pet_wolf 
+DAM=20,25 
+ARMOR=95 
+RESOURCES=15 i_ribs_raw,10 i_hide 
+CAN=MT_WALK|MT_RUN
+moverate=150 
+RESLEVEL=5
+RESDISPDNHUE=33
+RESDISPDNID=c_horse_gray
+FOODTYPE=55 i_ribs_raw  
+DESIRES=c_elf_male,c_elf_female 
+AVERSIONS=e_carnivores3
+bloodcolor=07a1
+TEVENTS=e_damage_poison,e_poison_imune,e_dragonscale,e_vampire_protect,e_undead,e_pritel_tk
+CATEGORY=New Monsters
+SUBSECTION=Halls of Dead
+DESCRIPTION=Temný Vlk
+
+on=@create
+tag.armod=25
+color=0b24
+str=600
+dex=567
+int=368
+maxhits=640
+wrestling=100.0
+tactics=100.0
+anatomy=100.0
+detectinghidden=100.0
+karma=-3000
+fame=4500
+tag.resist_necro=25
+tag.resist_cold 100
+
+ON=@NPCRestock
+	item=i_gold,{1585 1955}
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[chardef c_temny_vlk_mocny_tk]  
+name=Mocny Temny Vlk
+id=277
+ICON=i_pet_wolf 
+DAM=30,35 
+ARMOR=125 
+RESOURCES=15 i_ribs_raw,10 i_hide 
+CAN=MT_WALK|MT_RUN
+moverate=150 
+RESLEVEL=5
+RESDISPDNHUE=33
+RESDISPDNID=c_horse_gray
+FOODTYPE=55 i_ribs_raw  
+DESIRES=c_elf_male,c_elf_female 
+AVERSIONS=e_carnivores3
+bloodcolor=07a1
+TEVENTS=e_damage_poisongreat,e_poison_imune,e_dragonscale,e_vampire_protect,e_undead,e_paralyze1,e_imunita_psychical,e_pritel_tk
+CATEGORY=New Monsters
+SUBSECTION=Halls of Dead
+DESCRIPTION=Temný Vlk
+
+on=@create
+tag.armod=25
+color=0b24
+str=600
+dex=567
+int=268
+maxhits=840
+wrestling=100.0
+tactics=100.0
+anatomy=100.0
+detectinghidden=100.0
+magery=100.0
+karma=-3000
+fame=4500
+tag.resist_necro=40
+tag.resist_cold 100
+
+ON=@NPCRestock
+	item=i_kostej_brain
+	timer=5
+	item=i_detect_reveal
+	timer=15
+	item=i_temny_vlk_utok
+	timer=10
+	item=i_gold,{4585 5955}
+	itemnewbie=i_spellbook
+	more1=0
+	more2=0
+
+on @hit
+if ((rand(4)==1)
+src.spelleffect s_dispel,1000
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[itemdef i_temny_vlk_utok]
+ID=i_memory
+name=Temny vlk utok
+type=t_eq_script
+on=@timer
+if <cont.memoryfindtype.02000.link.uid>
+if (<cont.distance <cont.attacker.target>> > 3) && <cont.CanSeeLOS <cont.attacker.target>>)
+cont.go <uid.<cont.attacker.target>.p>
+timer=8
+return 1
+endif
+endif
+timer=2
+return 1
+
+
+
+[CHARDEF c_rytir_zkazy_tk]
+id=c_man
+NAME=#NAMES_ELF_MALE , rytir zkazy
+SOUND=snd_HUMAN_M_DIE_01
+CAN=MT_WALK|MT_FLY|MT_FEMALE|mt_usehands|MT_EQUIP
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP,t_eerie_stuff
+DAM=40,45
+tevents=e_stone_imunita,e_poison_imune,e_undead,e_prokleti1,e_vampire_protect,e_dragonscale,e_paralyze_imune,e_resisty,e_pritel_tk
+
+ON=@Create
+tag.armod=55
+	tag.resist_phys 25
+	tag.resist_necro 25
+	tag.resist_cold 100
+	title=Rytir Zkazy
+	COLOR={045e 1 07d1 1 059d 1 089f 1 08a8 1}
+	STR={976 995}
+	MAXHITS={1080 1145}
+	DEX={170 180}
+	INT={171 185}
+	FENCING=120.0
+	WRESTLING=100.0
+	parrying={95.0 98.0}
+	macefighting=110.0
+	swordsmanship=110.0
+	MAGICRESISTANCE={60.0 80.0}
+	TACTICS=105.0
+	DETECTINGHIDDEN=100.0
+	NPC=brain_Human
+	KARMA={-5500 -6900}
+	FAME={6600 8500}
+	tag.noprovocation=1
+
+ON=@NPCRestock
+	item=i_mt_horse_brown_dk
+	dispid=03e92
+	color=0b24
+	ITEM=i_dragon_helm
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_sleeves
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_leggings
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_chest
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_gloves
+	attr=04
+	COLOR=0b24
+	ITEM=i_elven_boots
+	attr=04
+	COLOR=0b24
+	item=i_radiant_scimitar
+	attr=04
+	color=0b24
+	ITEM=i_shield_knight
+	name=Stit Rytire Zkazy
+	COLOR=0b24
+	attr=04
+	ITEM=i_cloak_humility
+	name=Cloak
+	attr=04
+	COLOR=0b24
+	item=i_gold,{2585 2955}
+	ITEM={ backpack_meager 1 backpack_average 1 }
+	item=i_detect_reveal
+	timer=15
+
+on=@death
+//newnpc c_rytir_horse
+effect 3,i_fire_column,15,6,1,0b24
+sound 200
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+[CHARDEF c_rytir_zkazy_mocny_tk]
+id=c_man
+NAME=#NAMES_ELF_MALE the Horseman , rytir zkazy - Velitel
+SOUND=snd_HUMAN_M_DIE_01
+CAN=MT_WALK|MT_FLY|MT_FEMALE|mt_usehands|MT_EQUIP
+DESIRES=i_gold,e_notoriety
+AVERSIONS=t_TRAP,t_eerie_stuff
+DAM=40,45
+tevents=e_stone_imunita,e_pritel_tk,e_imunita_psychical,e_utoknazbrane,e_utoknabrneni,e_life_drain,e_poison_imune,e_undead,e_prokleti2,e_vampire_protect,e_dragonscale,e_paralyze_imune,e_resisty
+
+ON=@Create
+tag.armod=65
+	tag.resist_phys 50
+	tag.resist_necro 60
+	tag.resist_cold 100
+	modar=20
+	COLOR={045e 1 07d1 1 059d 1 089f 1 08a8 1}
+	STR={976 995}
+	MAXHITS={1580 1945}
+	DEX={270 280}
+	INT={271 285}
+	FENCING=120.0
+	WRESTLING=100.0
+	parrying={95.0 98.0}
+	macefighting=110.0
+	swordsmanship=110.0
+	MAGICRESISTANCE={60.0 80.0}
+	TACTICS=105.0
+	DETECTINGHIDDEN=100.0
+	NPC=brain_Human
+	KARMA={-5500 -6900}
+	FAME={6600 8500}
+	tag.noprovocation=1
+	tag.lifedrain=2
+	tag.utoknabrneni=10
+	tag.utoknazbrane=15
+
+ON=@NPCRestock
+	item=i_mt_horse_brown_dk
+	dispid=03e92
+	color=0b24
+	ITEM=i_dragon_helm
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_sleeves
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_leggings
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_chest
+	attr=04
+	COLOR=0b24
+	ITEM=i_dragon_gloves
+	attr=04
+	COLOR=0b24
+	ITEM=i_elven_boots
+	attr=04
+	COLOR=0b24
+	item=i_radiant_scimitar
+	attr=04
+	color=0799
+	ITEM=i_shield_knight
+	name=Stit Rytire Zkazy
+	COLOR=0799
+	attr=04
+	ITEM=i_cloak_humility
+	name=Cloak
+	attr=04
+	COLOR=0799
+	item=i_gold,{10585 12955}
+	ITEM=i_memory_necromancy1
+	timer=20
+	item=i_detect_reveal
+	timer=15
+	ITEM={ backpack_meager 1 backpack_average 1 }
+
+//on=@death
+//newnpc c_rytir_horse_tk
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+[chardef c_rytir_horse_tk]
+id=c_valecny_kun
+name=Valecny Kun
+tevents=e_lesni,e_resisty,e_undead,e_pritel_tk
+
+on=@create
+tag.armod=25
+karma=-6500
+color=0b24
+str=1100
+maxhits=2000
+level=0
+dex=150
+int=200
+wrestling=140.0
+tactics=120.0
+parrying=95.0
+tag.noprovocation=1
+tag.resist_cold 100
+tag.resist_phys 25
+tag.resist_necro 25
+
+on=@npcrestock
+item=i_gold,{1800 2000}
+
+on=@itemstep
+if (<act.baseid>==i_fx_field_paralyze)
+	if <act.type>==t_spell
+	act.remove
+	return 1
+	endif
+endif
+
+ON=@DEATHCORPSE
+ARGO.TAG.no_necro_ress = 1
+
+
+//////////////////////////////////////////////////////
+///////////////vìci na otevøení a meziakce////////////
+/////////////////////////////////////////////////////
+[CHARDEF c_tsuran_diplomat]
+id=c_man
+name=Kasumo
+can=mt_walk|mt_run
+TSPEECH=spk_tsuran_diplomat
+
+ON=@Create
+	tag.name.hue=0600
+	title=mistni znalec
+	NPC=brain_vendor
+	COLOR=08a5
+	STR={61 75}
+	DEX={71 85}
+	INT={86 100}
+	FLAGS=<FLAGS>|01
+	INSCRIPTION={50.0 70.0}
+	karma=10000
+	fame=8500
+	ITEMNEWBIE=random_male_hair
+	COLOR=colors_hair
+	ITEMNEWBIE=random_facial_hair
+	COLOR=match_hair
+
+on=@npcrestock
+	ITEM=i_sandals
+	attr=04
+	color=0b13
+	item=10189
+	attr=04
+	color=0b13
+
+[speech spk_tsuran_diplomat]
+on=*ahoj*
+say Zdravim, lide kelevarsti.
+say Jsem Kasumo, znalec mistnich pomeru, abych tak rekl.
+on=*zdravim*
+say Zdravim, lide kelevarsti.
+say Jsem Kasumo, znalec mistnich pomeru, abych tak rekl.
+on=*pomoc*
+say Zdravim, lide kelevarsti.
+say Jsem Kasumo, znalec mistnich pomeru, abych tak rekl.
+on=*rebelove*
+on=*takanashi*
+say Jiste Vas posila Takanashi, hleda spojence.
+say Z duvodu oblehani mesta jiz nemam tak dobre kontakty.
+say Vim vsak, ze cast se ukryla ve skalach pobliz barda Iola.
+on=shogun
+if ((<src.restest i_potion_ManaTotal>) && (<src.restest i_reag_brimstone>) && (<src.restest i_reag_obsidian>))
+src.consume i_potion_ManaTotal
+src.consume i_reag_brimstone
+src.consume i_reag_obsidian
+src.newitem i_vzbourenci_kamen
+new.bounce
+say Zde mas teleportacni kamen.
+else
+say Potrebuji brimstone, obsidian a silnou lahvicku na doplneni magicke energie.
+say Bez toho nevyrobim potrebny kamen.
+return 1
+endif
+
+[itemdef i_vzbourenci_kamen]
+id=0e73
+name=Mesicni Kamen
+value=870
+on @create
+color=color_o_bloodrock
+on @dclick
+if (<src.flags>&statf_war)
+src.sysmessage "Kamen nelze pouzit ve war modu."
+return 1
+endif
+if <src.uid>==<topobj.uid>
+dialog d_vzbourenci_kamen
+endif
+return 1
+[dialog d_vzbourenci_kamen]
+200,200
+nomove
+PAGE 0
+resizepic 50 20 5120 287 140
+dhtmlgump 98 47 200 20 0 0 <DEF.BFONT_BLACK> Chces opravdu otevrit
+dhtmlgump 100 45 200 20 0 0 <DEF.BFONT_LGRAY> Chces opravdu otevrit 
+dhtmlgump 123 67 200 20 0 0 <DEF.BFONT_BLACK> Mesicni Branu?
+dhtmlgump 125 65 200 20 0 0 <DEF.BFONT_LGRAY> Mesicni Branu?
+dhtmlgump 120 115 50 20 0 0 <DEF.BFONT_LGREEN> Ano
+button 106 117 08b0 08b0 1 0 1
+dhtmlgump 259 115 50 20 0 0 <DEF.BFONT_LRED> Ne
+button 245 117 08b0 08b0 1 0 2
+for 56
+gumppic <eval (<LOCAL._FOR>*5)+45> 20 023fc
+endfor
+for 28
+gumppic 50 <eval (<LOCAL._FOR>*5)+15> 023fc
+endfor
+for 28
+gumppic 330 <eval (<LOCAL._FOR>*5)+15> 023fc
+endfor
+for 56
+gumppic <eval (<LOCAL._FOR>*5)+45> 155 023fc
+endfor
+gumppic 0 0 028a0
+
+[dialog d_vzbourenci_kamen button]
+on=0
+on=1
+if (<src.p.m>!=3)
+    src.message Zde kamen nefunguje!
+    return 1
+endif
+if (<src.restest 1 i_vzbourenci_kamen>) 
+src.consume 1 i_vzbourenci_kamen
+src.timerf 5,f_moongate_create_vzbourenci_kamen
+src.say Zaktivoval jsi mesicni kamen
+endif
+
+[function f_moongate_create_vzbourenci_kamen]
+if !(<src.flags>&statf_war)
+serv.newitem i_mesicni_brana_vzbourenci_kamen
+new.p=<src.p>
+src.say Prave byla otevrena Mesicni Brana do tabora rebelu, nyni muzes vstoupit
+src.sfx 020f
+else
+src.say Mesicni kamen se nepodarilo aktivovat, byl jsi vyrusen..
+endif
+
+[itemdef i_mesicni_brana_vzbourenci_kamen]
+id=i_moongate_blue
+name=Mesicni Brana
+
+on=@create
+color=color_o_bloodrock
+attr=attr_move_never
+timer=25
+morep=482,220,19,4
+
+on @click
+message Mesicni Brana
+return 1
+
+on @spelleffect
+return 1
+
+on=@timer
+remove
+update
+return 1
+
+[speech spk_tsuran_vzbourenec]
+on=*ahoj*
+say Zdravim, lide kelevarsti.
+say Jak vidite, nemnoho rebelu zustalo.
+on=*zdravim*
+say Zdravim, lide kelevarsti.
+say Jak vidite, nemnoho rebelu zustalo.
+on=*pomoc*
+say Zdravim, lide kelevarsti.
+say Jak vidite, nemnoho rebelu zustalo.
+on=*rebelove*
+on=*rebel*
+on=*pomoc*
+on=*takanshi*
+if (<src.tag.skupina>!=3) 
+Say Jiste Vas posila Takanashi, hleda spojence.
+Say Zbyla nas tu hrstka, zbytek utekl do hor touto branou.
+Say Heslo je OSAMENI
+else
+Say Ne, ty nejsi nas spojenec, tahni pryc.
+endif
+
+[speech spk_tsuran_kapitan]
+on=*ahoj*
+say Zdravim, lide kelevarsti.
+say Prisli jste nam pomoci znicit rebely?
+on=*zdravim*
+say Zdravim, lide kelevarsti.
+say Prisli jste nam pomoci znicit rebely?
+on=*pomoc*
+say Zdravim, lide kelevarsti.
+say Prisli jste nam pomoci znicit rebely?
+on=*rebelove*
+on=*rebel*
+on=*takanshi*
+if (<src.tag.skupina>==3) 
+Say Zkuste se probit dale na vedlejsi ostrov.
+Say Tam se dozvime.
+Say Heslo je CISAR
+else
+Say Ne, ty nejsi nas spojenec, tahni pryc.
+endif
+

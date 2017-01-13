@@ -1,0 +1,318 @@
+// Noob dung Sanctuary
+//NPC's
+//das DAM aj ARMOR vysledny dmg je ale STR/10 + DAM + dmg zbrane potom tag.armod
+//to je zavyslost armoru ak to nema je to 60
+//cim mensi tag.armod tak tym viac ignoruje armor na koho utoci 
+
+[Chardef c_sanctuary_mongbat]
+Name=Batcave
+Sound=snd_MONSTER_MNGBAT1
+Id=c_mongbat
+DAM=20,25
+ARMOR=25
+CAN=MT_WALK
+
+on=@create
+tag.armod=30
+NPC=brain_monster
+color=00783
+STR={115 120}
+MAXHITS={250 280}
+DEX={100 130}
+INT={50 60}
+FAME={300 1000}
+KARMA={-1000 -1500}
+TACTICS={80.0 84.0}
+WRESTLING={99.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{50 150}
+ITEM=i_skillbod,{1 2},R3
+ITEM=ability_low,R30
+ITEM=stats_low,R25
+
+[Chardef c_sanctuary_netopyr]
+Name=Eptesicus
+Sound=snd_monster_mngbat1
+Id=c_vampire_bat
+DAM=25,30
+ARMOR=25
+CAN=MT_WALK|MT_RUN
+
+on=@create
+tag.armod=40
+NPC=brain_monster
+color=00846
+STR={115 130}
+MAXHITS={250 300}
+DEX={120 140}
+INT={50 60}
+FAME={300 1000}
+KARMA={-1000 -1500}
+TACTICS={80.0 84.0}
+WRESTLING={99.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{75 135}
+ITEM=i_skillbod,{1 3},R2
+ITEM=ability_low,R30
+ITEM=stats_low,R25
+
+[Chardef c_sanctuary_krysa]
+Name=Infected rat
+Sound=snd_MONSTER_GRAT1
+Id=c_rat_giant
+DAM=10,15
+ARMOR=25
+CAN=MT_WALK|MT_RUN
+TEVENTS=e_damage_poison
+
+on=@create
+tag.armod=30
+NPC=brain_monster
+color=003d
+STR={115 116}
+MAXHITS={200 220}
+DEX={115 130}
+INT={50 60}
+FAME={100 500}
+KARMA={0 -500}
+TACTICS={80.0 84.0}
+WRESTLING={99.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{50 100}
+ITEM=i_skillbod,{1 2},R5
+ITEM=ability_low,R50
+ITEM=stats_low,R50
+
+[Chardef c_sanctuary_liska]
+Name=Deadly fox
+Sound=snd_z_end_spirtspk
+Id=c_bake_kitsune
+DAM=20,40
+ARMOR=35
+CAN=MT_WALK|MT_RUN
+
+on=@create
+tag.armod=25
+NPC=brain_monster
+color=0002c
+STR={100 140}
+MAXHITS={500 600}
+DEX={120 130}
+INT={50 60}
+FAME={1000 2000}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={99.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{200 300}
+ITEM=i_skillbod,{2 4},R4
+ITEM=ability_low,R25
+ITEM=stats_low,R25
+
+[Chardef c_sanctuary_vlk]
+Name=Wolf
+Sound=snd_tsuki_wolf
+Id=c_tsuki_wolf
+DAM=25,40
+ARMOR=50
+CAN=MT_WALK|MT_RUN
+
+on=@create
+tag.armod=25
+NPC=brain_monster
+color=008ad
+STR={100 110}
+MAXHITS={550 750}
+DEX={100 125}
+INT={50 60}
+FAME={2000 2300}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={99.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{300 400}
+ITEM=i_skillbod,{2 4},R3
+ITEM=ability_low,R20
+ITEM=stats_low,R20
+
+[Chardef c_sanctuary_ratman]
+Name=Ratman
+Sound=snd_MONSTER_RATMAN1
+Id=c_ratman_w_sword
+DAM=15,30
+ARMOR=30
+CAN=MT_WALK|MT_RUN|MT_USEHANDS
+
+on=@create
+tag.armod=25
+NPC=brain_monster
+color=00840
+STR={120 130}
+MAXHITS={350 400}
+DEX={110 130}
+INT={50 60}
+FAME={2000 2300}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={99.0 100.0}
+SWORDSMANSHIP={70.0 85.0}
+PARRYING={65.0 70.0}
+
+on=@NPCrestock
+ITEM=i_gold,{200 400}
+ITEM=i_skillbod,{2 4},R3
+ITEM=ability_low,R25
+ITEM=stats_low,R25
+
+[Chardef c_sanctuary_ratman_armored]
+Name=War Ratman
+Sound=snd_MONSTER_RATMAN1
+Id=c_armored_ratman
+DAM=20,40
+ARMOR=50
+CAN=MT_WALK
+
+on=@create
+tag.armod=25
+NPC=brain_monster
+color=00656
+STR={100 115}
+MAXHITS={350 500}
+DEX={120 150}
+INT={50 60}
+FAME={2000 3000}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={99.0 100.0}
+PARRYING={90.0 100.0}
+
+on=@NPCrestock
+ITEM=i_gold,{300 550}
+ITEM=i_skillbod,{2 4},R3
+ITEM=ability_low,R15
+ITEM=stats_low,R15
+
+[Chardef c_sanctuary_lady_m]
+Name=Dead Queen
+Sound=snd_monster_daemon1
+Id=c_lady_m
+DAM=20,35
+ARMOR=60
+CAN=MT_WALK
+
+on=@create
+tag.dmg_bonus_elec=10
+tag.armod=40
+NPC=brain_monster
+color=00961
+STR={80 100}
+MAXHITS={600 800}
+DEX={70 80}
+INT={200 400}
+MAXMANA=3500
+FAME={2000 3000}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={99.0 100.0}
+PARRYING={65.0 70.0}
+MAGERY={80.0 90.0}
+ITEMNEWBIE=i_spellbook 
+ADDSPELL=s_explosion
+ADDSPELL=s_lightning
+ADDSPELL=s_dispel
+
+on=@NPCrestock
+ITEM=i_gold,{300 500}
+ITEM=i_skillbod,{2 4}
+ITEM=ability_low,R15
+ITEM=stats_low,R15
+
+[Chardef c_sanctuary_wisp]
+Name=Dark Wisp
+Sound=snd_monster_wisp1
+Id=c_wisp
+DAM=20,40
+ARMOR=80
+CAN=MT_WALK
+TEVENTS=e_summon
+TAG.SUMMON=c_sanctuary_lady_m,c_sanctuary_ratman_armored
+tag.maxsummon=2
+
+on=@create
+tag.resist_magic=15
+tag.dmg_bonus_elec=15
+tag.armod=20
+NPC=brain_monster
+color=0b86
+STR={100 150}
+MAXHITS={1750 2000}
+DEX={70 80}
+INT={500 600}
+MAXMANA=5000
+FAME={2000 5000}
+KARMA={-2000 -3000}
+TACTICS={90.0 100.0}
+WRESTLING={80.0 95.0}
+PARRYING={65.0 70.0}
+MAGERY={90.0 130.0}
+ITEMNEWBIE=i_spellbook 
+ADDSPELL=s_explosion
+ADDSPELL=s_lightning
+ADDSPELL=s_flamestrike
+item=i_dispel_brainzdi
+timer=2
+
+on=@NPCrestock
+ITEM=i_gold,{4000 6000}
+ITEM=i_skillbod,{5 10}
+ITEM=ability_low
+ITEM=ability_mid,R3
+ITEM=stats_low
+item=ttm_LVL1_1
+item=ttm_LVL1_1,R4
+
+// TEMPLATE ODMEN
+
+[template sanctuary_low]
+container=i_backpack
+item=i_scroll_greater_heal,{5 10}
+morey=1000
+item=i_skillbod,{10 20}
+item=i_gold,{1000 2000}
+item=ttm_LVL1_1
+item=i_statbod,{5 10}
+item=i_deed_reagent30
+item=i_bandage,{100 150}
+item=i_potion_healgreat,{5 8}
+
+[template sanctuary_mid]
+container=i_backpack
+item=i_scroll_greater_heal,{10 15}
+morey=1000
+item=i_skillbod,{20 30}
+item=i_gold,{2000 4000}
+item=ttm_LVL2_1
+item=i_statbod,{5 10}
+item=i_deed_reagent50
+item=i_bandage,{150 180}
+item=i_potion_healgreat,{5 8}
+
+[template sanctuary_high]
+container=i_backpack
+item=i_gold,{4000 6000}
+item=i_skillbod,{20 30}
+item=i_potion_healgreat,{5 8}
+item=ttm_LVL2_1
+item=i_statbod,{5 10}
+item=i_deed_reagent100
+item=i_bandage,{150 180}
+
+
+
+
+

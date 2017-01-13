@@ -1,0 +1,1586 @@
+﻿//////////////////////////////////////////////
+//////////////// ARENA ///////////////////////
+//////////////////////////////////////////////
+
+[itemdef i_rockdung_retreat]
+//link - CONTROL
+id=i_sign_blank
+type=t_shrine
+name=utek
+CAN=CAN_I_DCIGNOREDIST|CAN_I_DCIGNORELOS
+on @dclick
+if !<src.isevent.e_rockdung_arena>
+return 1
+endif
+if <link.morez> < 3
+return 1
+endif
+local.x=<link.rockdung_arenaretreat>
+if <local.x> > 1
+link.link.say @0b14,1,1 Stále bojujete!
+return 1
+endif
+link.trigger=@missionfailed
+return 1
+
+[chardef c_rockdung_ArenaMaster]
+//tag.Gate - ID portculis do areny
+//tag.Control - kula na srodku areny
+//tag.Teleport - id teleportu i_rockdung_arenagate
+id=c_man
+name=Morion
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+tspeech=spk_rockdung_arenamaster
+on @create
+events +e_rockdung_customdmg
+tag.name.hue=0b14
+invul=1
+magery=3000
+karma=0
+fame={4000 6000}
+title=Arena Master
+brain=brain_human
+str=50
+dex=0
+int=300
+color=colors_skin
+itemnewbie=i_hair_ponytail
+color=01
+itemnewbie=i_rockdung_arenatrapsbrain
+timer=5
+on @npcrestock
+    ITEMNEWBIE=i_cape
+        COLOR=0b15
+    ITEMNEWBIE=i_elven_boots
+        COLOR=0b21
+    ITEMNEWBIE=i_hide_pants
+        COLOR=0b21
+    ITEMNEWBIE=i_studded_gloves
+        COLOR=0b21
+    ITEMNEWBIE=i_leaf_arms
+	COLOR=0b21
+    ITEMNEWBIE=i_hide_tunic
+        COLOR=0794
+    ITEMNEWBIE=i_sword_warcleaver
+        COLOR=0794
+		tag.special=1
+    ITEMNEWBIE=i_circlet
+        COLOR=0ad5
+    ITEMNEWBIE=i_shield_elven
+        COLOR=0b15
+        
+
+[itemdef i_rockdung_arenatrapsbrain] //to ma u siebie arenamaster
+id=i_memory
+name=pasti
+type=t_eq_script
+on @timer
+ref3=<cont.tag.control> // morez 3 4 5
+if <ref3.morez>==3 //stage 1
+f_rockdung_arenacreatetrap c_rockdung_arenastage1trap
+timer=rand(30,45)
+return 1
+elseif <ref3.morez>==4 //stage 2
+f_rockdung_arenacreatetrap c_rockdung_arenastage2trap
+timer=rand(30,45)
+return 1
+elseif <ref3.morez>==5 //stage 3
+f_rockdung_arenacreatetrap c_rockdung_arenastage3trap
+timer=rand(40,50)
+return 1
+endif
+timer=5
+return 1
+
+////////////////
+//// KONIEC 
+[function rockdung_arenaretreat]
+forplayers 15
+if ((<hits> > 0) && <isonline> && <isevent.e_rockdung_arena>)
+return 2
+endif
+endfor
+return 1
+
+////////////////
+////STAGE 1
+
+[chardef c_rockdung_arenastage1mob1]
+id=c_vampire_bat
+can=MT_WALK|MT_RUN|MT_USEHANDS
+name=forest bat
+dam=36
+armor=15
+moverate=140
+on @create
+events +e_rockdung_customdmg
+tag.armod=30
+color=0b20
+str=150
+dex=140
+wrestling=1000
+tactics=1000
+int=130
+karma=-10000
+maxhits=150
+tag.resist_pierce=-30
+tag.resist_magic=50
+
+[chardef c_rockdung_arenastage1mob2]
+id=c_bear_brown
+can=MT_WALK|MT_USEHANDS
+name=brown bear
+moverate=30
+dam=41
+armor=60
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+tag.armod=20
+color=0b19
+str=150
+dex=110
+wrestling=1000
+tactics=1000
+int=130
+karma=-10000
+maxhits=500
+tag.resist_phys=-50
+tag.resist_pierce=40
+tag.resist_magic=-10
+
+[chardef c_rockdung_arenastage1mob3]
+id=c_wolf
+can=MT_WALK|MT_RUN|MT_USEHANDS
+name=wild wolf
+moverate=100
+dam=25
+armor=30
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+color=0810
+str=150
+dex=140
+wrestling=1000
+tactics=1000
+int=10
+karma=-10000
+maxhits=250
+
+[chardef c_rockdung_arenastage1trap]
+id=c_bird
+moverate=130
+armor=30
+name=evil bird
+on @create
+events +e_rockdung_customdmg
+events +e_rockdung_arenatrapmob
+karma=-10000
+color=0b17
+str=100
+dex=100
+int=10
+maxhits=10
+tactics=1000
+wrestling=1000
+timerf 30,remove
+on @hit
+src.damage 30,dam_general,<uid>
+src.effect 3,i_fx_explode,3,8,1
+remove
+return 1
+
+///////////////
+////STAGE 2
+
+[chardef c_rockdung_arenastage2mob1]
+//bear
+id=c_bear_grizzly
+can=MT_WALK|MT_USEHANDS
+name=grizzly bear
+moverate=25
+dam=46
+armor=60
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+tag.armod=20
+color=0b19
+str=150
+dex=140
+wrestling=1200
+tactics=1200
+int=130
+karma=-10000
+maxhits=600
+tag.resist_phys=-50
+tag.resist_pierce=50
+tag.resist_magic=-10
+on @Hit
+src.findid.i_rune_reactive_armor.remove
+if <src.findid.i_bleeding.uid>
+    if <src.findid.i_bleeding.morey><5
+    src.findid.i_bleeding.remove
+    src.events -e_bleeding
+    endif
+endif
+src.f_bleeding <uid>,2,10
+
+[chardef c_rockdung_arenastage2mob2]
+//shade
+id=06f
+can=MT_WALK|MT_USEHANDS|MT_RUN
+name=shadow
+moverate=140
+dam=28
+armor=40
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+color=0b23
+str=150
+dex=140
+wrestling=1200
+tactics=1200
+int=130
+karma=-10000
+maxhits=200
+tag.resist_elec=-50
+tag.resist_slash=-40
+
+
+[chardef c_rockdung_arenastage2mob3]
+//pixie
+id=c_pixie
+can=MT_WALK|MT_USEHANDS|MT_RUN
+name=evil spirit
+moverate=40
+dam=1
+armor=20
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+color=0b17
+str=100
+dex=100
+magery=1000
+wrestling=1200
+tactics=1200
+int=180
+maxmana=10000
+karma=-10000
+maxhits=200
+tag.resist_pierce=-30
+on @spelleffect
+if <argn1>!=36
+if <eval rand(1,2)>==1
+spelleffect 36,1000,<uid>
+endif
+endif
+on @spellcast
+dorand 7
+argn1=38
+argn1=30
+argn1=30
+argn1=51
+argn1=12
+argn1=12
+argn1=27
+enddo
+
+[chardef c_rockdung_arenastage2mob4]
+//reptile
+id=c_wyvern_mutant
+can=MT_WALK|MT_USEHANDS|MT_RUN
+name=reptile lord
+moverate=50
+dam=75
+armor=40
+on @create
+events +e_rockdung_customdmg
+tag.armod=97
+regenvalhits=30
+karma=-10000
+color=0
+str=200
+dex=100
+wrestling=1200
+tactics=1200
+int=180
+maxmana=1
+karma=-10000
+maxhits=1000
+tag.resist_magic=20
+on @hit
+hits += <eval <src.armor>/10>
+if <r4>==1
+src.spelleffect 509,1200
+endif
+if <r4>==1
+src.spelleffect 510,1200
+endif
+
+on @gethit
+if <r20>==1
+rockdungArenaStage2bossEff
+endif
+
+[function rockdungArenaStage2bossEff]
+newitem i_rockdungArenaStage2bossEff
+new.attr=attr_invis
+new.p=<p>
+new.link=<uid>
+new.morex=3
+new.timer=0
+[itemdef i_rockdungArenaStage2bossEff]
+id=i_gold
+on @timer
+if <morex>==0
+remove
+return 1
+endif
+rockdungArenaStage2bossflex 0,3,<link.uid>
+rockdungArenaStage2bossflex 0,-3,<link.uid>
+rockdungArenaStage2bossflex -3,0,<link.uid>
+rockdungArenaStage2bossflex 3,0,<link.uid>
+rockdungArenaStage2bossflex 2,2,<link.uid>
+rockdungArenaStage2bossflex -2,2,<link.uid>
+rockdungArenaStage2bossflex 2,-2,<link.uid>
+rockdungArenaStage2bossflex -2,-2,<link.uid>
+local.agr=<link.uid>
+forchars 4
+if !((<uid>==<local.agr>) || <isevent.e_rockdung_arenamob> || <isevent.e_rockdung_arenatrapmob>)
+if ((<hits> > 0) && (<CanSeeLOS <local.agr>>))
+damage <damcalc 40,<armor>,24,0,0>,dam_general,<uid.<local.agr>.uid>
+effect 3,i_fx_curse,3,16,1
+endif
+endif
+endfor
+morex -=1
+timerd=1
+return 1
+[function rockdungArenaStage2bossflex]
+// type,id,speed,frames,explode,hue,fixdir,render,srcx,srcy,srcz,destx,desty,destz,
+dorand 2
+flexeffect 0,0376c,7,20,0,0b19,0,0,<uid.<argv[2]>.p.x>,<uid.<argv[2]>p.y>,<eval <uid.<argv[2]>.p.z>+10>,<eval <uid.<argv[2]>.p.x> + <argv[0]>>,<eval <uid.<argv[2]>.p.y> + <argv[1]>>,<eval rand(<eval <uid.<argv[2]>.p.z>+5>,<eval <uid.<argv[2]>.p.z>+25>)>
+flexeffect 0,0376e,7,20,0,0b19,0,0,<uid.<argv[2]>.p.x>,<uid.<argv[2]>p.y>,<eval <uid.<argv[2]>.p.z>+10>,<eval <uid.<argv[2]>.p.x> + <argv[0]>>,<eval <uid.<argv[2]>.p.y> + <argv[1]>>,<eval rand(<eval <uid.<argv[2]>.p.z>+5>,<eval <uid.<argv[2]>.p.z>+25>)>
+enddo
+
+[chardef c_rockdung_arenastage2trap]
+id=c_snake
+can=MT_WALK|MT_USEHANDS|MT_RUN
+name=viper
+moverate=170
+dam=1
+armor=20
+on @create
+events +e_rockdung_customdmg
+events +e_rockdung_arenatrapmob
+karma=-10000
+str=150
+color=0b15
+dex=100
+wrestling=1200
+tactics=1200
+int=180
+maxmana=1
+karma=-10000
+maxhits=10
+timerf 30,remove
+on @hit
+src.damage {15 20},dam_general,<uid>
+src.spelleffect s_poison,2000,<uid>
+effect 3,i_fx_explode,3,16,1
+remove
+return 1
+
+
+//
+
+/////////////
+////STAGE 3
+
+[chardef c_rockdung_arenastage3mob1]
+//locust 1
+id=c_locust
+can=MT_WALK|MT_USEHANDS|MT_RUN|MT_EQUIP
+name=locust marksman
+moverate=170
+dam=40
+armor=20
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+str=150
+dex=130
+tactics=1500
+archery=1500
+int=80
+maxmana=1
+karma=-10000
+maxhits=200
+tag.resist_pierce=40
+on @npcrestock
+itemnewbie=i_rockdung_locustbow
+on @hit
+if <r9>==1
+src.tag.nomovetill=<eval <serv.time>+30>
+src.say *stunned*
+endif
+
+[itemdef i_rockdung_locustbow]
+id=i_bow
+dam=1
+tdata4=02804
+on @create
+hitpoints=1000
+
+[chardef c_rockdung_arenastage3mob2]
+//locust 2
+id=c_locust
+can=MT_WALK|MT_USEHANDS|MT_RUN|MT_EQUIP
+name=locust warrior
+moverate=170
+dam=40
+armor=20
+on @create
+events +e_rockdung_customdmg
+karma=-10000
+str=150
+dex=130
+wrestling=1200
+tactics=1200
+int=80
+maxmana=1
+karma=-10000
+maxhits=200
+on @hit
+if <r15>==1
+src.tag.nomovetill=<eval <serv.time>+30>
+src.say *stunned*
+endif
+
+[itemdef i_ROCKDUNG_morionkey]
+id=i_key_iron
+type=t_normal
+name=klic
+on @create
+color=0481
+
+[chardef c_rockdung_arenastage3master]
+id=c_man
+can=MT_RUN|MT_WALK|MT_EQUIP|MT_USEHANDS
+name=Morion
+tspeech=0564
+on @create
+events +e_rockdung_customdmg
+brain=brain_human
+modar=55
+tag.name.hue=0b14
+str=400
+maxhits=2200
+int=180
+dex=150
+karma=-10000
+fame=9000
+fame={4000 6000}
+title=Arena Master
+color=colors_skin
+archery=1500
+swordsmanship=1500
+tactics=1500
+magery=1000
+itemnewbie=i_hair_ponytail
+color=01
+itemnewbie=i_spellbook
+on @npcrestock
+    ITEMNEWBIE=i_cape
+        COLOR=0b15
+    ITEMNEWBIE=i_elven_boots
+        COLOR=0b21
+    ITEMNEWBIE=i_hide_pants
+        COLOR=0b21
+    ITEMNEWBIE=i_studded_gloves
+        COLOR=0b21
+    ITEMNEWBIE=i_leaf_arms
+	COLOR=0b21
+	itemnewbie=i_spellbook
+    ITEMNEWBIE=i_hide_tunic
+        COLOR=0794
+    itemnewbie=i_rockdung_morionxbow
+    	color=0b15
+    ITEMNEWBIE=i_circlet
+        COLOR=0ad5
+    ITEMNEWBIE=i_shield_elven
+        COLOR=0b15
+    itemnewbie=i_rockdung_morionsword
+    	COLOR=0b23
+itemnewbie=i_rockdung_arenastage3bossheal
+timer=5
+itemnewbie=i_rockdung_arenastage3bossbrain
+timer=1
+
+on @hit
+if <findlayer.2.baseid>==i_rockdung_morionxbow
+if <r2>==1
+src.say *stunned*
+src.tag.nomovetill=<eval <serv.time>+40>
+endif
+endif
+
+on @death
+for <attacker>
+if (<uid.<attacker.<eval <local._for>-1>>.isplayer> && <uid.<attacker.<eval <local._for>-1>>.isevent.e_rockdung_arena>)
+serv.newitem i_rockdung_morionkey,1,<uid.<attacker.<eval <local._for>-1>>.uid>
+uid.<attacker.<eval <local._for>-1>>.say Wow! Jaky zvlastni klic
+uid.<tag.masteritem>.trigger=@success3
+return 0
+endif
+endfor
+
+
+
+[itemdef i_rockdung_morionxbow]
+id=i_crossbow_repeating
+name=Morion's Crossbow
+range=0,10
+dam=90
+speed=60
+on @create
+hitpoints=1000
+tag.special=1
+
+[itemdef i_rockdung_morionsword]
+id=i_elven_machete
+name=Morion's Sword
+dam=20
+on @create
+hitpoints=1000
+tag.special=1
+
+[itemdef i_rockdung_arenastage3bossbrain]
+id=i_memory
+type=t_eq_script
+name=brain
+on @timer
+cont.tag.kouzlo=0
+local.target=<cont.rockdung_morionaction>
+if <local.target>>0
+	obj=<local.target>
+    if <cont.tag.kouzlo>==1 //silence
+    cont.forcecast 508,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==2 //manaleech
+    cont.forcecast 509,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==3 //staminaleech
+    cont.forcecast 510,<obj.uid>
+    timerd=20
+    return 1
+    elseif <cont.tag.kouzlo>==502 //vag
+    cont.forcecast 510,<obj.uid>
+    timerd=30 //vag
+    return 1
+    elseif <cont.tag.kouzlo>==5 //rage
+    cont.forcecast 514,<obj.uid>
+    timerd=20
+    return 1
+    endif
+endif
+timer=1
+return 1
+
+[function rockdung_morionaction]
+if <memoryfindtype.02000.link.uid>
+	obj=<memoryfindtype.02000.link.uid>
+	if ((<obj.CanSeeLOS <uid>>) && (!<findid.i_rockdung_rage>) && (rand(30)==1))
+	tag.kouzlo=5 //rage
+	return <uid>
+	endif
+	if ((<obj.CanSeeLOS <uid>>) && (!<findid.i_rockdung_rage>) && (!<obj.findid.i_rune_rockdung_silence>) && (rand(40)==1))
+	tag.kouzlo=1 //silence
+	return <obj.uid>
+	endif
+	if ((<obj.CanSeeLOS <uid>>) && (!<findid.i_rockdung_rage>) && (!<obj.findid.i_rune_rockdung_manaleech>) && (rand(40)==1))
+	tag.kouzlo=2 //manaleech
+	return <obj.uid>
+	endif
+	if ((<obj.CanSeeLOS <uid>>) && (!<findid.i_rockdung_rage>) && (!<obj.findid.i_rune_rockdung_staminaleech>) && (rand(40)==1))
+	tag.kouzlo=3 //staminaleech
+	return <obj.uid>
+	endif
+	if <f_rockdung_wallcount 4> > 4
+	tag.kouzlo=4 //vag
+	return <uid>
+	endif
+	if <distance <obj.uid>> > 2
+	equip <findid.i_rockdung_morionxbow>
+	else
+	equip <findid.i_rockdung_morionsword>
+	equip <findid.i_shield_elven>
+	endif
+	if <findlayer.1.baseid>==i_rockdung_morionsword
+		if <r4>==1
+		effect 3,038bd,3,16,1,0798
+		rockdung_morionsmash <obj>
+		endif
+	endif
+endif
+return 0
+
+[function rockdung_morionsmash]
+ref1=<uid>
+ref2=<argv[0]>
+forchars 2
+if !((<uid>==<ref1>) || <isevent.e_rockdung_arenamob> || <isevent.e_rockdung_arenatrapmob>) 
+face <ref1>
+
+	if <rockdung_getdir <ref1>>==1
+	damage <damcalc <eval 270 + <modstr>/10>,<armor>,<eval 300 - <modstr>/10>,0,0>,dam_general,<ref1.uid>
+	endif
+endif
+endfor
+
+[itemdef i_rockdung_arenastage3bossheal]
+id=i_memory
+type=t_eq_script
+name=pixie heal
+on @timer
+cont.rockdung_morionheal
+timer=<eval rand(4,6)>
+return 1
+
+[function rockdung_morionheal]
+local.pixies=0
+forchars 20
+if <baseid>==c_rockdung_arenastage3trap
+local.pixies +=1
+effect 3,i_fx_heal_effect,3,16,1
+endif
+endfor
+hits += <eval <local.pixies>*20>
+if <hits> > <maxhits>
+hits=<maxhits>
+endif
+
+[chardef c_rockdung_arenastage3trap]
+//heal pixies
+id=c_pixie
+can=MT_WALK|MT_RUN
+name=holy spirit
+dam=1
+armor=20
+on @create
+events +e_rockdung_customdmg
+events +e_rockdung_arenatrapmob
+color=07a1
+karma=-10000
+str=10
+dex=130
+wrestling=0
+tactics=0
+int=190
+maxmana=1
+karma=-10000
+maxhits=100
+tag.resist_magic 50
+timerf 20,remove
+//////////////////////////////
+
+
+[function f_rockdung_arenacreatetrap]
+serv.newitem i_rockdung_arenamobspawn
+new.tag.mob=<args>
+new.p=<eval rand(5303,5320)>,<eval rand(1843,1856)>,10
+new.timer=2
+
+[itemdef i_rockdung_arenamobspawn]
+id=038a7
+name=Mysterious Light
+type=t_archery_butte
+//tag.mob == id moba co spawnuje
+on @create
+color=0798
+attr=010
+morex=rand(5,10) //tiki
+on @timer
+if <morex>==0
+remove
+return 1
+endif
+if <color>==0b23
+color=0798
+timerd=<eval rand(13,17)>
+else
+color=0b23
+morex -=1
+serv.newnpc <tag.mob>
+new.p = <p>
+new.update
+timerd=<eval rand(15,20)>
+endif
+update
+return 1
+on @dclick
+//if !(<src.flags>&statf_war)
+//return 1
+//endif
+if (<src.flags>&statf_dead)
+return 1
+endif
+if !<src.weapon>
+return 1
+endif
+if <distance> > <src.weapon.range>
+return 1
+endif
+src.spelleffect s_reveal,1000
+if ((<src.weapon.type>!=t_weapon_bow) && (<src.weapon.type>!=t_weapon_xbow))
+src.anim 12
+else
+	if <src.weapon.type>==t_weapon_bow
+	src.anim 18
+	effect 0,0f42,3,16,0
+	else
+	src.anim 19
+	effect 0,01bfe,3,16,0
+	endif
+
+endif
+if <color>==0b23 //rozbij
+effect 2,03779,3,16,1
+remove
+return 1
+else
+for 3
+serv.newnpc <tag.mob>
+new.p = <p>
+new.update
+endfor
+endif
+return 1
+
+[itemdef i_rockdung_ArenaGate]
+//link=ArenaMaster npc
+//
+id=i_paver_sandstone
+on @step
+if !<src.isplayer>
+return 0
+endif
+if <src.findlayer.25.uid>
+src.dir_block
+src.message Vstup bez povozu!
+return 1
+endif
+if <src.flags>&statf_dead
+src.move 0 -1
+return 1
+endif
+tag0.entered +=1
+src.hits=<src.maxhits>
+src.mana=<src.maxmana>
+src.go 5311,1856,5 
+//src.tag.rockdung_arenalogout=<link.tag.control>,<uid.<link.tag.control>.tag.log>
+src.events +e_rockdung_arena
+src.events +e_noguildskills
+	//if <src.findlayer.25.uid>
+	//ref77=<src.findlayer.25.more2>
+	//src.dismount
+	//ref77.shrink
+	//src.rockdung_bouncehorse <ref77>
+	//update
+	//ref77.p=6430,370,-40,0
+	//ref77.removefromview
+	//endif
+src.f_rockdung_ArenaBackup
+//// Verze s max 5 lidmi!
+if <tag.entered> > 4
+uid.<link.tag.gate>.p=5312,1841,5 //zamykam portculis
+uid.<link.tag.gate>.update
+link.say @0b14,1,1 Víc se vás do areny nevejde!
+link.say @0b14,1,1 Řekněte, až budete připraveni (timer 180)
+uid.<link.tag.Control>.trigger @ArenaPrepare
+uid.<link.tag.control>.timer=180
+uid.<link.tag.control>.morez=2
+tag.entered=
+endif
+///////////////////////////
+
+[function rockdung_bouncehorse]
+ref3=<uid>
+foritems 1
+if <type>==t_figurine
+	if <more2>==<args>
+	attr |= 04
+	cont=<ref3.findlayer.29.uid>
+	removefromview
+	endif
+endif
+endfor
+
+[speech spk_rockdung_ArenaMaster]
+//on=Vzdavame se
+//on=Konec
+//on=Odchod
+//on=Prerusit
+//if <uid.<tag.control>.morez> < 3
+//return 1
+//endif
+//local.x=<uid.<tag.control>.rockdung_arenaretreat>
+//if <local.x> > 1
+//say @0b14,1,1 Stále bojujete!
+//return 1
+//endif
+//uid.<tag.control>.trigger=@missionfailed
+on=Ahoj
+if !<src.isevent.e_rockdung_arena>
+return 1
+endif
+if <uid.<tag.control>.morez>==0
+say @0b14,1,1 Vítejte v Aréně. Už jste všichni nebo ještě někdo? (timer 120)
+uid.<tag.control>.morez=1 // czekam na az wszyscy wejda
+uid.<tag.control>.timer=120
+return 1
+endif
+on=ano
+on=vsichni
+if !<src.isevent.e_rockdung_arena>
+return 1
+endif
+if <uid.<tag.control>.morez>==1
+uid.<tag.gate>.p=5312,1841,5 //drugie portculis na wejsciu -zamykam wejscie
+uid.<tag.gate>.update
+say @0b14,1,1 Řekněte, až budete připraveni (timer 180)
+uid.<tag.Control>.trigger @ArenaPrepare
+uid.<tag.control>.morez=2
+uid.<tag.control>.timer=180
+endif
+on=start
+on=pripraveni
+if !<src.isevent.e_rockdung_arena>
+return 1
+endif
+if <uid.<tag.control>.morez>==2
+uid.<tag.control>.trigger=@stage1
+//event mobow - e_rockdung_arenamob - mobow z pasti - e_rockdung_arenatrapmob
+//timeritem i_rockdung_arenamastertimer (czas do konca stage=failu)
+endif
+
+[events e_rockdung_arena]
+on @gethit
+if ((<src.isplayer>) && (!<src.isevent.e_rockdung_arena>))
+src.message tak toto ne..
+return 1
+endif
+on @spelleffect
+if ((<src.isplayer>) && (!<src.isevent.e_rockdung_arena>))
+if <argn1>!=6
+src.message tak toto ne..
+return 1
+endif
+endif
+on @itemdropon_char
+return 1
+on @itemdropon_ground
+act.cont=<findlayer.21.uid>
+return 1
+on @itemdropon_item
+if ((<argo.topobj>!=<uid>) || (<argo.baseid>==i_spellbook))
+return 1
+endif
+on @itempickup_pack
+if <act.topobj>!=<uid>
+if <act.topobj.type>==t_corpse
+if <act.topobj.link>!=<uid>
+say Zlodej!
+return 1
+endif
+endif
+endif
+on @skillselect
+if ((<argn1>==21) || (<argn1>==47)) //hid stealth
+if !(<findid.i_rockdung_arenabow> || <findid.i_rockdung_arenaaxe>) //archer i warrior :D
+message not allowed.
+return 1
+endif
+endif
+//on @login
+//if <uid.<GetArg 1,<tag0.rockdung_arenalogout>>.morez>==0
+//	if <uid.<GetArg 1,<tag0.rockdung_arenalogout>>.tag.log> > <GetArg 2,<tag0.rockdung_arenalogout>>
+//	go 5323,1840,5
+//	resurrect
+//	f_rockdung_arenarestore
+//	endif
+//endif
+
+[events e_rockdung_arenatrapmob]
+on @skilltargeted
+if ((<argn1>==15)||(<argn1>==22)||(<argn1>==9)) //enticement // provocation
+ if !<argo.isevent.e_rockdung_arena>
+ argo.say Cheating...
+ return 1
+ endif
+endif
+on @gethit
+if (<src.isplayer> && (!<src.isevent.e_rockdung_arena>))
+return 1
+endif
+on @spelleffect
+if (<src.isplayer> && (!<src.isevent.e_rockdung_arena>))
+return 1
+endif
+[events e_rockdung_arenamob]
+//event mobow w arenie
+on @skilltargeted
+if ((<argn1>==15)||(<argn1>==22)||(<argn1>==9)) //enticement // provocation
+ if !<argo.isevent.e_rockdung_arena>
+ argo.say Cheating...
+ return 1
+ endif
+endif
+on @gethit
+if (<src.isplayer> && (!<src.isevent.e_rockdung_arena>))
+return 1
+endif
+on @spelleffect
+if (<src.isplayer> && (!<src.isevent.e_rockdung_arena>))
+return 1
+endif
+on @death
+uid.<tag.masteritem>.morey -=1
+
+[function f_rockdung_arenaclear]
+forchars 12
+if ((<isevent.e_rockdung_arenamob>) || (<isevent.e_rockdung_arenatrapmob>) || (<baseid>==c_rockdung_mtrap_clonespider))
+	remove
+endif
+endfor
+	foritems 12
+	If !<args>
+		if ((<type>==t_corpse) && (!<link.uid>)) //
+		remove
+		endif
+	else
+		if (<type>==t_corpse) //1 - mazemy graczy tez
+		remove
+		endif
+	endif
+	if <baseid>==i_rockdung_arenamobspawn
+	remove
+	endif
+	endfor
+
+on @gethit
+if !<src.isevent.e_rockdung_arena>
+
+[function f_rockdung_ArenaRemoveEquip]
+for 24
+if <local._for>!=21
+findlayer.<local._for>.remove
+endif
+endfor
+forcont <findlayer.21>
+	//say <baseid>
+	if <baseid>!=i_rockdung_morionkey
+	remove
+	endif
+endfor
+events -e_rockdung_arena
+events -e_noguildskills
+f_rockdung_ArenaRestore
+
+
+[itemdef i_rockdung_ArenaControl]
+id=i_crystal_ball
+type=t_normal
+//MOREZ=stage. 0 - zapis, 1-equip, 2-stage 1, 3-stage 2, 4-stage 3
+//LINK = arena master npc
+//link.tag.gate = brama wejsciowa
+//link.tag.teleport = teleport i_rockdung_arenagate
+on @create
+attr=010
+tag.log=1
+on @missionfailed
+tag.log +=1
+timer=-1
+//link.p=5300,1850,31
+LINK.INVIS=0
+link.update
+link.say @0b14,1,1 Saláti jako jste vy nemají v Aréně co dělat!
+morez=0
+uid.<link.tag.gate>.p=5312,1841,-25
+uid.<link.tag.gate>.update
+uid.<link.tag.teleport>.tag.entered=
+f_rockdung_arenaclear 1 //1 = graczy tez
+forplayers 14
+if <isevent.e_rockdung_arena>
+go 5323,1840,5
+f_rockdung_arenarestore
+endif
+endfor
+foritems 14
+if <type>==t_rockdung_arena_vyber
+remove
+endif
+endfor
+return 1
+on @stage1
+foritems 14
+if <type>==t_rockdung_arena_vyber
+remove
+endif
+endfor
+//stage 1.
+morez=3
+link.say @0b14,1,1 STAGE 1
+link.say @0b14,1,1 čas: 8 minut
+morey=13 //ile mobow do ubicia
+tag.timers=10,10,50,10,10,60,10,10,10,10,90,10,10//,1,1,1,1,60,1,1,1,1 //jak sie beda pojawiac moby.
+tag.mobs=c_rockdung_arenastage1mob1,c_rockdung_arenastage1mob1,c_rockdung_arenastage1mob3,c_rockdung_arenastage1mob3,c_rockdung_arenastage1mob1,c_rockdung_arenastage1mob2,c_rockdung_arenastage1mob1,c_rockdung_arenastage1mob3,c_rockdung_arenastage1mob2,c_rockdung_arenastage1mob1,c_rockdung_mtrap_spider,c_rockdung_arenastage1mob1,c_rockdung_arenastage1mob1 //jakie moby
+tag.timerindex=0
+timer=10
+tag.expires=<eval <serv.time> + 4800> //8,min na stage1
+on @timer
+if ((<morez>==1) || (<morez>==2)) //timeout jak nienapisza dalej
+trigger=@missionfailed
+return 1
+endif
+if <eval <tag.timerindex>> < <GetArgCount <tag.timers>>
+tag.timerindex = <eval <tag.timerindex>+1>
+//say <getarg <tag.timerindex>,<tag.timers>> timer
+serv.newnpc <getarg <tag.timerindex>,<tag.mobs>>
+new.p=<eval rand(5304,5320)>,<eval rand(1843,1856}>,5
+new.update
+new.tag.masterItem=<uid>
+new.events +e_rockdung_arenamob
+timer=<eval <getarg <tag.timerindex>,<tag.timers>>>
+return 1
+endif
+if <morey>==0
+if <morez>==3
+trigger=@success1
+return 1
+elseif <morez>==4
+trigger=@success2
+return 1
+elseif <morez>==5
+trigger=@success3
+return 1
+endif
+endif
+if ((<morey> > 0) && (<serv.time> > <eval <tag.expires>>))
+trigger=@missionfailed
+return 1
+endif
+timer=1
+return 1
+on @success1
+f_rockdung_arenaclear
+trigger=@stage2
+
+on @success2
+f_rockdung_arenaclear
+trigger=@stage3
+
+on @stage2
+//stage 2.
+morez=4
+link.findid.i_rockdung_arenatrapsbrain.timer=25
+link.say=@0b14,1,1 STAGE 2
+link.say=@0b14,1,1 čas: 10 minut
+morey=14 //ile mobow do ubicia
+//1 grizzly 2 shade 3 pixie 4 reptile
+tag.timers=1,1,1,80,1,1,1,100,1,15,20,15,15,15,//,1,1,1,1,60,1,1,1,1 //timer
+//shade,bear,shade,shade,bear,pixie,bear,pixie,pixie,reptile,pixie,shade,pixie,bear
+tag.mobs=c_rockdung_arenastage2mob2,c_rockdung_arenastage2mob1,c_rockdung_arenastage2mob2,c_rockdung_arenastage2mob2,c_rockdung_arenastage2mob1,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob1,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob4,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob2,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob1//jakie moby
+tag.timerindex=0
+timer=30
+tag.expires=<eval <serv.time> + 6000> //10min na stage1
+
+on @stage3
+link.findid.i_rockdung_arenatrapsbrain.timer=110
+//stage 3. //boss Morion
+timerf 112,link.INVIS 1 //5300,1850,31 
+morez=5
+link.say @0b14,1,1 FINAL STAGE
+link.say @0b14,1,1 čas: 10 minut
+morey=28 //ile mobow do ubicia
+tag.timers=1,1,20,60,30,30,30,30,40,30,40,30,40,30,40,40,30,40,41,20,35,20,20,30,20,30,30,20//,1,1,120,1,1,1,1//,1,1,1,1,60,1,1,1,1 //timer
+tag.mobs=c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage3mob2,c_rockdung_arenastage3mob1,c_rockdung_arenastage3master,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage3mob1,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage3mob1,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage2mob3,c_rockdung_arenastage3mob1,c_rockdung_arenastage3mob2,c_rockdung_arenastage3mob1,c_rockdung_arenastage2mob3
+tag.timerindex=0
+timer=30
+tag.expires=<eval <serv.time> + 6000> //10min na stage1
+
+
+
+on @success3
+tag.log +=1
+timer=-1
+timerf 60, link.INVIS 0//go 5300,1850,31
+morez=0
+uid.<link.tag.gate>.p=5312,1841,-25
+uid.<link.tag.gate>.update
+f_rockdung_arenaclear 1 //graczy tez
+forplayers 14
+	if <isevent.e_rockdung_arena>
+	go 5324,1854,5
+	tag.nomovetill=<eval <serv.time>+20>
+	f_rockdung_arenarestore
+		//resurrect		
+		//f_rockdung_arenarestore
+		//f_rockdung_arenarestore
+		//events -e_rockdung_arena
+	endif
+endfor
+
+on @ArenaPrepare //rozdzielamy na profy + czas //034b used //0b15 unused
+//1 - losujemy healera, 2 tanka, 3 warriora, 4 maga, 5 archera, 6+ random
+uid.<link.tag0.teleport>.tag.entered=
+ref5=<uid>
+list.rockdungplayers.clear
+serv.newitem 0181d
+new.p=5304,1845,5
+new.name=@0b15 Healer
+new.attr=010
+new.color=0b20
+new.type=t_rockdung_arena_vyber
+new.tag.funkce=f_rockdung_ArenaEquipHealer
+serv.newitem 0181e
+new.p=5304,1847,5
+new.name=@0b15 Knight
+new.attr=010
+new.color=0b20
+new.type=t_rockdung_arena_vyber
+new.tag.funkce=f_rockdung_ArenaEquipTank
+serv.newitem 0181f
+new.p=5304,1849,5
+new.name=@0b15 Mage
+new.attr=010
+new.color=0b20
+new.type=t_rockdung_arena_vyber
+new.tag.funkce=f_rockdung_ArenaEquipMage
+serv.newitem 01820
+new.p=5304,1851,5
+new.name=@0b15 Warrior
+new.attr=010
+new.color=0b20
+new.type=t_rockdung_arena_vyber
+new.tag.funkce=f_rockdung_ArenaEquipWarrior
+serv.newitem 01821
+new.p=5304,1853,5
+new.name=@0b15 Archer
+new.attr=010
+new.color=0b20
+new.type=t_rockdung_arena_vyber
+new.tag.funkce=f_rockdung_ArenaEquipArcher
+//forplayers 13
+//if <isevent.e_rockdung_arena>
+//list.rockdungplayers.add <uid>
+//endif
+//endfor
+//healer
+//if <list.rockdungplayers>
+//local.x=<eval rand(1,<list.rockdungplayers.count>) - 1>
+//local.healer=<list.rockdungplayers.<eval <local.x>>>
+//uid.<local.healer>.f_rockdung_ArenaBackup
+//uid.<local.healer>.f_rockdung_ArenaEquipHealer
+//list.rockdungplayers.<eval <local.x>>.remove
+//tank
+//endif
+//if <list.rockdungplayers>
+//local.x=<eval rand(1,<list.rockdungplayers.count>) - 1>
+//local.tank=<list.rockdungplayers.<eval <local.x>>>
+//uid.<local.tank>.f_rockdung_ArenaEquipTank
+//list.rockdungplayers.<eval <local.x>>.remove
+//warrior
+//endif
+//if <list.rockdungplayers>
+//local.x=<eval rand(1,<list.rockdungplayers.count>) - 1>
+//local.warrior=<list.rockdungplayers.<eval <local.x>>>
+//uid.<local.warrior>.f_rockdung_ArenaEquipWarrior
+//list.rockdungplayers.<eval <local.x>>.remove
+//mage
+//endif
+//if <list.rockdungplayers>
+//local.x=<eval rand(1,<list.rockdungplayers.count>) - 1>
+//local.mage=<list.rockdungplayers.<eval <local.x>>>
+//uid.<local.mage>.f_rockdung_ArenaEquipMage
+//list.rockdungplayers.<eval <local.x>>.remove
+//archer
+//endif
+//if <list.rockdungplayers>
+//local.x=<eval rand(1,<list.rockdungplayers.count>) - 1>
+//local.archer=<list.rockdungplayers.<eval <local.x>>>
+//uid.<local.archer>.f_rockdung_ArenaEquipArcher
+//list.rockdungplayers.<eval <local.x>>.remove
+//endif
+//say <local.healer> <local.tank> <local.warrior> <local.mage> <local.archer>
+/// TU RANDOMOWANIE 6+ //wypnuto !
+//if (0<list.rockdungplayers.count>) > 0
+//for <list.rockdungplayers.count>
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaBackup
+//	dorand 5
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaEquiphealer
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaEquipTank
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaEquipWarrior
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaEquipMage
+//	uid.<list.rockdungplayers.<eval <local._for>-1>>.f_rockdung_ArenaEquipArcher
+//	enddo
+//endfor
+//endif
+list.rockdungplayers.clear
+///
+[function f_rockdung_ArenaBackup]
+//serv.newitem
+list.rockdungitembackup<uid>.clear
+ref5=<uid>
+for 24
+if ((<local._for>!=21) && (<local._for>!=11) && (<local._for>!=16))
+if <findlayer.<eval <local._for>>.uid>
+list.rockdungItemBackup<uid>.add <findlayer.<eval <local._for>>.uid>
+//findlayer.<eval <local._for>>.bounce
+endif
+endif
+endfor
+spelleffect s_dispel,1000
+///guild skills off
+findid.i_falanga_timer.trigger=@timer
+findid.i_guild_level_bariera_timer.trigger=@timer
+if <tag0.skill_nuker>
+f_nuker_off <tag.skill_nuker>
+endif
+if <tag0.skill_priest>
+f_priest_off <tag.skill_priest>
+endif
+if <tag0.skill_sniper>
+f_sniper_off <tag.skill_sniper>
+endif
+if <tag0.skill_tank>
+f_tank_off <tag.skill_tank>
+endif
+//
+findid.i_rune_polymorph.remove
+findid.i_gargoyle_morf.remove
+findid.i_drake_morf.remove
+findid.i_cyclop_morf.remove
+findid.i_liche_morf.remove
+findid.i_staff_morf.remove
+//
+findtype.t_eq_trade_window.remove
+findid.i_memory_zlodejske_ovoce.remove
+findid.i_memory_artistova_bageta.remove
+findid.i_memory_meditacni_susenky.remove
+findid.i_fish_silver_mem.remove
+findid.i_paradise_m.remove
+findid.i_ironskin_m.remove
+findid.i_rune_cunning.remove
+findid.i_absorb_m.remove
+findid.i_fish_golden_mem.remove
+findid.i_fish_golden_1.remove
+findid.i_berserk_m.remove
+spelleffect 6,1000,<uid>
+if <findlayer.31.uid>
+findlayer.31.cont=<findlayer.21.uid>
+endif
+forcont <findlayer.21>
+	if <cont>==<topobj.findlayer.21.uid> //kontajnery
+	tag.rockdungP=<contp>
+	ref5.list.rockdungItemBackup<ref5.uid>.add <uid>
+	endif //
+endfor
+if (0<list.rockdungitembackup<uid>.count>)>0
+for <list.rockdungItemBackup<uid>.count>
+uid.<list.rockdungItemBackup<uid>.<eval <local._for>-1>>.removefromview
+//uid.<list.rockdungItemBackup<uid>.<eval <local._for>-1>>.p=6440,370,-40,0 //sux
+uid.<list.rockdungItemBackup<uid>.<eval <local._for>-1>>.cont=<findlayer.29.uid>
+uid.<list.rockdungItemBackup<uid>.<eval <local._for>-1>>.timer=-1 
+endfor
+update 
+endif
+
+
+[function f_rockdung_ArenaRestore]
+if <hits>==0
+//spelleffect s_resurrection,1000
+resurrect
+endif
+events -e_noguildskills
+hits=<maxhits>
+for 24
+if ((<local._for>!=21) && (<local._for>!=11) && (<local._for>!=16))
+findlayer.<local._for>.remove
+endif
+endfor
+forcont <findlayer.21>
+if <baseid>!=i_rockdung_morionkey
+remove
+endif
+endfor
+if (0<list.rockdungitembackup<uid>.count>) > 0
+ref7=<uid>
+	for <list.rockdungItemBackup<ref7>.count>
+	uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.cont=<ref7.findlayer.21.uid>
+	uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.update
+	if !(<uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.tag0.rockdungP>)
+	ref7.equip <uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.uid>
+	else
+	uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.contp=<uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.tag.rockdungP>
+	uid.<list.rockdungItemBackup<ref7>.<eval <local._for>-1>>.tag.rockdungP=
+	endif
+	endfor
+	update
+endif
+list.rockdungItemBackup<uid>.clear
+events -e_rockdung_arena
+
+[itemdef i_rockdung_arenaBow] //9swing
+defname=i_rockdung_arenabow
+id=i_bow
+dam=20
+speed=60 //35
+type=t_weapon_bow
+range=0,10
+on @create
+tag.special=1
+color=color_o_verite
+hitpoints=1000
+
+[itemdef i_rockdung_arenaWarfork] //6swing
+id=i_war_fork
+dam=10,25 //9,42
+speed=50 //55
+on @create
+tag.special=1
+color=color_o_verite
+hitpoints=1000
+
+[itemdef i_rockdung_arenaAxe]
+id=i_bardiche
+dam=13,33 //13,53
+range=0,2
+speed=40 //45
+on @create
+tag.special=1
+color=color_o_verite
+hitpoints=1000
+
+
+[itemdef i_rockdung_staff_gnarled] //nove
+id=i_staff_gnarled
+dam=0,10
+range=0,2
+speed=40
+on @create
+tag.special=1
+hitpoints=1000
+
+[itemdef i_rockdung_staff_black] //nove
+id=i_staff_black
+dam=0,10
+range=0,2
+speed=40
+on @create
+tag.special=1
+hitpoints=1000
+
+[function f_rockdung_ArenaEquipHealer]
+serv.newitem i_spellbook,1,<uid> //bless, heal, greaterheal, cure, magicarrow, protection, reactive armor, reflection 
+new.more1=01001cf38
+new.more2=08
+serv.newitem i_rockdung_ArenaRobe
+equip <new.uid>
+new.color=0b19
+serv.newitem i_rockdung_staff_gnarled,1,<uid>
+serv.newitem i_bandage,300,<uid>
+serv.newitem i_potion_manatotal,70,<uid>
+serv.newitem i_scroll_greater_heal,120,<uid>
+new.morey=1000
+serv.newitem i_rockdung_scroll_resurrection,50,<uid> //scp 512
+serv.newitem i_rockdung_scroll_summontree,3,<uid>
+serv.newitem i_rockdung_scroll_massheal,10,<uid> //do scp 511
+serv.newitem i_deed_reagent50,1,<uid>
+new.dupe 5
+serv.newitem i_kodiak_boots
+equip <new.uid>
+
+[function f_rockdung_ArenaEquipMage]
+serv.newitem i_spellbook,1,<uid> //harm, heal, kvf, lightning, paralyze, explosion, wallofstone
+new.more1=024880818
+new.more2=020405b9
+serv.newitem i_rockdung_ArenaRobe
+equip <new.uid>
+new.color=0b20
+serv.newitem i_rockdung_staff_black,1,<uid>
+serv.newitem i_kodiak_boots
+equip <new.uid>
+serv.newitem i_potion_manatotal,70,<uid>	
+serv.newitem i_deed_reagent50,1,<uid>
+new.dupe 5
+serv.newitem i_rockdung_scroll_resurrection,5,<uid>
+
+[function f_rockdung_ArenaEquipTank]
+serv.newitem i_verite_chainmail_tunic
+equip <new.uid>
+serv.newitem i_verite_PLATEMAIL_gorget
+equip <new.uid>
+serv.newitem i_verite_PLATEMAIL_legs
+equip <new.uid>
+serv.newitem i_verite_PLATEMAIL_arms
+equip <new.uid>
+serv.newitem i_verite_PLATEMAIL_gauntlets
+equip <new.uid>
+serv.newitem i_verite_PLATE_helm
+equip <new.uid>
+serv.newitem i_shield_elven
+equip <new.uid>
+new.color=color_o_verite
+serv.newitem i_potion_healgreat,10,<uid>
+serv.newitem i_potion_curegreat,5,<uid>
+serv.newitem i_bandage,10,<uid>
+serv.newitem i_rockdung_ArenaTankSword
+equip <new.uid>
+serv.newitem i_rockdung_scroll_resurrection,5,<uid>
+serv.newitem i_rockdung_scroll_ultimate_defense,5,<uid>
+serv.newitem i_ring_titans
+equip <new.uid>
+
+[function f_rockdung_ArenaEquipArcher]
+serv.newitem i_verite_ringmail_tunic
+equip <new.uid>
+serv.newitem i_verite_ringmail_sleeves
+equip <new.uid>
+serv.newitem i_verite_ringmail_leggings
+equip <new.uid>
+serv.newitem i_verite_helmet
+equip <new.uid>
+serv.newitem i_verite_ringmail_gloves
+equip <new.uid>
+serv.newitem i_rockdung_arenabow
+equip <new.uid>
+serv.newitem i_arrow,500,<uid>
+serv.newitem i_kodiak_boots
+equip <new.uid>
+serv.newitem i_rockdung_arenacloak//,1,<uid>
+equip <new.uid>
+serv.newitem i_tambourine,1,<uid>
+serv.newitem i_rockdung_scroll_resurrection,5,<uid>
+serv.newitem i_potion_healgreat,5,<uid>
+
+[function f_rockdung_ArenaEquipWarrior]
+serv.newitem i_verite_chainmail_coif
+equip <new.uid>
+serv.newitem i_verite_chainmail_tunic
+equip <new.uid>
+serv.newitem i_verite_ringmail_gloves
+equip <new.uid>
+serv.newitem i_verite_ringmail_sleeves
+equip <new.uid>
+serv.newitem i_verite_chainmail_leggings
+equip <new.uid>
+serv.newitem i_rockdung_arenacloak
+equip <new.uid>
+serv.newitem i_kodiak_boots
+equip <new.uid>
+serv.newitem i_rockdung_scroll_resurrection,5,<uid>
+serv.newitem i_rockdung_arenaaxe,1,<uid>
+serv.newitem i_rockdung_arenawarfork,1,<uid>
+serv.newitem i_potion_poisondeadly,5,<uid>
+serv.newitem i_potion_healgreat,5,<uid>
+//arena items
+[typedef t_rockdung_arena_vyber]
+on @step
+if <src.hits>==0
+return 1
+endif
+if (<src.findlayer.21.count>==0)&&(<color>==0b20)
+color=034b
+src.<tag.funkce>
+update
+endif
+
+[itemdef i_rockdung_scroll_massheal]
+id=i_scroll_greater_heal
+name=Mass Greater Heal Scroll
+type=t_scroll
+on @create
+color=0b06
+attr=attr_magic
+morex=511
+morey=1000
+
+[itemdef i_rockdung_scroll_resurrection]
+id=i_scroll_resurrection
+name=Arena Ressurection Scroll
+type=t_scroll
+on @create
+color=0794
+attr=attr_magic
+morex=512
+morey=1000
+
+[itemdef i_rockdung_arenarobe]
+id=i_robe
+armor=36
+name=Elven Robe
+on @create
+hitpoints=1000
+on @equip
+src.alchemy +=500
+on @unequip
+src.alchemy -=500
+
+[itemdef i_rockdung_arenacloak]
+id=i_cape
+name=Elven Cloak
+on @create
+color=0b15
+hitpoints=1000
+on @equip
+src.moddex +=20
+src.modint -=20
+src.modar +=20
+on @unequip
+src.moddex -=20
+src.modint +=20
+src.modar -=20
+
+[itemdef i_rockdung_Arenatanksword] //aggression
+id=i_sword_long
+name=Sword of Aggression
+dam=18
+speed=45
+on @create
+tag.special=1
+hitpoints=1000
+color=0794
+tag.reuse=0
+on @targon_char
+if <tag0.reuse>><serv.time>
+src.message Reuse
+return 1
+endif
+if <src.targ.npc> > 0
+src.targ.f_rockdung_arenaAgro <src.uid>
+tag.reuse=<eval <serv.time>+30>
+endif
+return 1
+
+[function f_rockdung_arenaAgro]
+tag.agro <argn1>
+events +e_rockdung_arenaagro
+timerf 5,events -e_rockdung_arenaagro
+attack <argn1>
+
+[events e_rockdung_arenaagro]
+on @attack
+if (<src.uid>!=<tag.agro>)
+attack <tag.agro>
+return 1
+endif                                
+
+
+

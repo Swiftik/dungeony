@@ -1,0 +1,530 @@
+//[CHARDEF 4255]
+//DEFNAME=c_fire_hound
+//NAME=Fire Hound
+//ID=00e1
+//SOUND=snd_ANIMALS_WOLF1
+//ICON=i_pet_wolf
+//CAN=MT_WALK|MT_RUN
+//DAM=12,38
+//ARMOR=25
+//RESOURCES=8 i_ribs_raw
+//FOODTYPE=15 t_meat_raw
+//DESIRES=c_m_hellhound
+////ALIGNMENT=EVIL
+////SHELTER=r_caves
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Fire Hound
+//
+//ON=@Create
+//	NPC=brain_monster
+//	COLOR=0799
+//	HITS={125 180}
+//	STR={125 180}
+//	DEX={89 165}
+//	INT={76 130}
+//	PARRYING={73.0 89.0}
+//	MAGICRESISTANCE={88.0 95.0}
+//	TACTICS={70.0 80.0}
+//	WRESTLING={80.0 90.0}
+//	MAGERY={78.0 99.0}
+//	TAMING={99.0}
+//	FAME={2800 3800}
+//	KARMA={-3000 -3999}
+//
+//ON=@NPCRestock
+//	ITEM=i_spellbook
+//	MORE=000020000
+//	MORE2=000240400
+//	ITEM=i_gold,{225 325}
+//	ITEM={ RANDOM_MAGIC_SWORD 1 0 39}
+//
+//[CHARDEF 4256]
+//DEFNAME=c_fire_serpent
+//NAME=Fire Serpent
+//ID=0015
+//SOUND=
+//ICON=i_pet_SNAKE_GIANT
+//
+//CAN=MT_WALK|MT_FIRE_IMMUNE
+//DAM=15,25
+//ARMOR=40
+//RESOURCES=10 i_ribs_raw, 15 i_reag_serpent_scale
+//FOODTYPE=6 t_meat_raw
+////ALIGNMENT=EVIL
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Fire Serpent
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={285 415}
+//	DEX={80 90}
+//	INT={12 20}
+//	COLOR=0785
+//	PARRYING={45.0 60.0}
+//	MAGICRESISTANCE={25.0 40.0}
+//	TACTICS={65.0 70.0}
+//	WRESTLING={60.0 80.0}
+//	FAME={800 1400}
+//	KARMA={-5000 -5999}
+//
+//ON=@NPCRestock
+//	ITEM=i_gold,{125 525}
+//	ITEM={ ttm_lvl3 1 0 54 }
+//	ITEM={ ttm_lvl4 1 0 54 }
+//
+//[CHARDEF 4257]
+//DEFNAME=c_flaming_daemon
+//NAME=Flaming Daemon
+//ID=0085
+//SOUND=snd_MONSTER_DAEMON1
+//ICON=i_pet_daemon
+//CAN=MT_WALK|MT_USEHANDS|MT_FIRE_IMMUNE
+//DAM=25,30
+//ARMOR=23,38
+//RESOURCES=19 i_ribs_raw, 6 i_reag_daemon_bone
+//FOODTYPE=
+//DESIRES=i_GOLD
+////ALIGNMENT=EVIL
+////SHELTER=r_dungeons,r_caves
+////AVERSIONS=r_civilization
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Flaming DAemon
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={275 375}
+//	DEX={86 95}
+//	INT={300 325}
+//	COLOR=079a
+//	PARRYING={65.0 105.0}
+//	MAGERY={110.0 140.0}
+//	EVALUATINGINTEL={90.0 100.0}
+//	MAGICRESISTANCE={200.0 250.0}
+//	TACTICS={70.0 80.0}
+//	WRESTLING={200.0 300.0}
+//	FAME={3000 7000}
+//	KARMA={-5000 -5999}
+//
+//ON=@NPCRestock
+//	ITEM=i_gold,{125 625}
+//	ITEM=loot_daemon
+//
+//
+//[CHARDEF 4258]
+//DEFNAME=c_flaming_elemental
+//NAME=Flaming Elemental
+//ID=000f
+//SOUND=snd_elementl_firelem1
+//ICON=020f3
+//CAN=MT_WALK|MT_FIRE_IMMUNE|MT_RUN|MT_USEHANDS
+//DAM=8,24
+//ARMOR=40
+//RESOURCES=8 t_magic,4 i_reag_volcanic_ash
+//DESIRES=t_lava
+////ALIGNMENT=EVIL
+////SHELTER=t_lava
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Flaming Elemental
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={175 255}
+//	DEX={165 185}
+//	INT={150 164}
+//	PARRYING={55.0 65.0}
+//	MAGICRESISTANCE={60.0 75.0}
+//	TACTICS={80.0 100.0}
+//	WRESTLING={70.0 100.0}
+//	FAME={2000 3900}
+//	KARMA={-4000 -4999}
+//
+//ON=@NPCRestock
+//	ITEM=i_lantern_lit
+//	ATTR=024
+//	ITEMNEWBIE=i_spellbook
+//	MORE1=008020010
+//	MORE2=040440400
+//	ITEM=loot_elem_fire
+//
+//
+//[CHARDEF 4259]
+//DEFNAME=c_flaming_lord
+//NAME=Flaming Lord
+//ID=0004
+//SOUND=snd_monster_gargyl1
+//ICON=i_pet_GARG
+//ANIM=
+//CAN=MT_WALK|MT_FLY|MT_FIRE_IMMUNE
+//DAM=10,25
+//ARMOR=20
+//RESOURCES=8 i_ribs_raw, 16 i_reag_sulfur_ash
+//FOODTYPE=
+//DESIRES=c_m_gargoyle_stone,c_GARGOYLE
+////ALIGNMENT=EVIL
+////SHELTER=r_caves,r_dungeons
+////AVERSIONS=r_traps,r_civilization
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Flaming Lord
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={105 275}
+//	DEX={66 79}
+//	INT={91 195}
+//	COLOR=0BB2
+//	PARRYING={65.0 85.0}
+//	MAGERY={95.0 185.0}
+//	MAGICRESISTANCE={89.0 92.0}
+//	TACTICS={80.0 86.0}
+//	WRESTLING={30.0 59.0}
+//	FAME={2600 5200}
+//	KARMA={-4500 -5999}
+//
+//ON=@NPCRestock
+//	ITEM=i_spellbook
+//	MORE=000020000
+//	MORE2=000240000
+//	ATTR=024
+//	ITEM={ TTM_LVL4 1 0 34} //Tattered Treasure Map Level 4
+//	ITEM={ backpack_rich 1 backpack_loaded 2 }
+//	ITEM={ random_weapon_force 1 filthy_rich_monster_backpack 6 }
+//	//ITEM=random_upper_scroll
+//	//ITEM=random_upper_scroll
+//	ITEM=random_jewel
+//	ITEM=i_gold,{250 400}
+//
+//
+//
+//[CHARDEF 0425A]
+//DEFNAME=c_flaming_predator
+//NAME=Flaming Predator
+//ID=00d6
+//SOUND=snd_animals_panther1
+//ICON=i_pet_PANTHER
+//CAN=MT_WALK|MT_RUN|MT_FIRE_IMMUNE
+//DAM=10,40
+//ARMOR=32
+//RESOURCES=9 i_ribs_raw
+//FOODTYPE=15 t_meat_raw
+//DESIRES=
+////ALIGNMENT=EVIL
+////SHELTER=r_caves
+////AVERSIONS=r_civilization,r_water
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Flaming Predator
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	COLOR=07f7
+//	STR={198 299}
+//	DEX={96 185}
+//	INT={55 95}
+//	PARRYING={85.0 95.0}
+//	MAGICRESISTANCE={45.0 80.0}
+//	TACTICS={70.0 85.0}
+//	WRESTLING={80.0 99.0}
+//	FAME={3100 4900}
+//	KARMA={-3000 -3999}
+//
+//ON=@NPCRestock
+//	ITEM=i_spellbook
+//	MORE=000020000
+//	MORE2=000240000
+//	ATTR=024
+//	ITEM={ random_studded_magic 1 average_monster_backpack 40 }
+//	ITEM=i_gold,{150 390}
+//
+//
+//[CHARDEF 0425B]
+//DEFNAME=c_flaming_spider
+//NAME=Flaming Spider
+//ID=008b
+//SOUND=snd_monster_gispidr1
+//ICON=i_pet_SPIDER_GIANT
+//ANIM=
+//CAN=MT_WALK|MT_RUN
+//DAM=35,45
+//ARMOR=70
+//RESOURCES=5 i_reag_spider_silk
+//FOODTYPE=15 t_meat_raw
+//DESIRES=i_reag_spider_silk
+////ALIGNMENT=EVIL
+////SHELTER=t_WEB,r_caves,r_dungeon
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Flaming Spider
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={120 220}
+//	DEX={250 380}
+//	INT={200 250}
+//	COLOR=0799
+//	PARRYING={105.0 155.0}
+//	MAGICRESISTANCE={180.0 190.0}
+//	TACTICS={85.0 100.0}
+//	POISONING={300.0}
+//	WRESTLING={150.0 175.0}
+//	FAME={3300 5000}
+//	KARMA={-999 -2999}
+//
+//ON=@NPCRestock
+//	ITEM={ i_reag_spider_silk 1 0 3},{13 21}
+//
+//
+//[CHARDEF 0425C]
+//DEFNAME=c_fleogap
+//NAME=Fleogap
+//ID=0095
+//SOUND=snd_MONSTER_DAEMON1
+//ICON=020d3
+//DAM=30,55
+//ARMOR=40,60
+//RESOURCES=19 i_ribs_raw,6 i_reag_daemon_bone
+//CAN=MT_WALK|MT_RUN|MT_USEHANDS
+//FOODTYPE=
+////SHELTER=r_DUNGEONS,r_CAVES
+//DESIRES=i_GOLD
+////AVERSIONS=r_CIVILIZATION
+//
+//CATEGORY=Dungeons
+//SUBSECTION=Fire dungeon
+//DESCRIPTION=Fleogap
+//
+//ON=@Create
+//	NPC=brain_monster
+//	STR={475 705}
+//	DEX={176 295}
+//	INT={43 82}
+//	PARRYING={95.0 150.0}
+//	EvaluatingIntel={99.0 100.0}
+//	MAGICRESISTANCE={120.0 190.0}
+//	TACTICS={100.0 150.0}
+//	WRESTLING={100.0 190.0}
+//	SWOrDSMANSHIP={100.0 120.0}
+//	FENCING={100.0 120.0}
+//	FAME={5000 9000}
+//	KARMA={-5000 -5999}
+//
+//
+//ON=@NPCRestock
+//	ITEM=018ccf
+//	ITEM=018cc5 
+//	ITEM={0510f 1 0510a 2 }
+//	ITEM={05119 1 05114 2 }
+//	ITEM={0511e 4 018e27 1 }
+//	ITEM=079C8
+//	ITEM=i_GOLD,1150 2390
+//	ITEM=LOOT_EFREET
+//
+//[CHARDEF 0425D]
+//DEFNAME=c_fruitimiere
+//NAME=Fruitimiere
+//SOUND=snd_MONSTER_DAEMON1
+//ID=0085
+//ANIM=03fbc7f
+//ICON=020d3
+//CAN=MT_WALK|MT_RUN|MT_USEHANDS|MT_FIRE_IMMUNE
+//DAM=25,30
+//ARMOR=23,38
+//RESOURCES=19 i_ribs_raw,6 i_reag_daemon_bone
+//FOODTYPE=
+////SHELTER=r_DUNGEONS,r_CAVES
+//DESIRES=i_GOLD
+////AVERSIONS=r_CIVILIZATION
+//
+//CATEGORY=Dungeons 
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Fruitimiere
+//
+//ON=@Create
+//	NPC=brain_monster
+//	STR={475 575}
+//	DEX={186 195}
+//	INT={400 425}
+//	COLOR=0794
+//	PARRYING={165.0 185.0}
+//	MAGERY={210.0 340.0}
+//	EvaluatingIntel={99.0 100.0}
+//	MAGICRESISTANCE={300.0 450.0}
+//	TACTICS={90.0 120.0}
+//	WRESTLING={125.0 190.0}
+//	FAME={3000 7000}
+//	KARMA={-5000 -5999}
+//
+//ON=@NPCRestock
+//	ITEM=i_SPELLBOOK 
+//	MORE=000000000 
+//	MORE2=000340000 
+//	ATTR=024
+//	ITEM={ 018e26 1 0 88 }
+//	ITEM=i_gold,{2000 9250}
+//	ITEM={ 018cfd 1 0 99 }
+//
+//
+//[CHARDEF 0425E]
+//DEFNAME=c_GUARD_FLAME_BUCK
+//NAME=Guard Flame Buck
+//SOUND=snd_MONSTER_DAEMON1
+//ICON=020d3
+//ID=0081
+//CAN=MT_WALK|MT_FIRE_IMMUNE|MT_USEHANDS
+//DESIRES=i_gold
+////SHELTER=r_dungeon,r_caves
+//DAM=89,99
+//ARMOR=190
+////ALIGNMENT=EVIL
+////SPELLCIRCLES=6 8
+//RESOURCES=19 i_ribs_raw ,5 i_reag_daemon_bone
+//
+//CATEGORY=Dungeons
+//SUBSECTION=Fire dungeon
+//DESCRIPTION=Guard Flame Buck
+//
+//ON=@Create
+//	NPC=brain_monster
+//	FAME={4000 8000}
+//	KARMA={-5000 -5999}
+//	STR={575 865}
+//	DEX={176 195}
+//	INT={300 325}
+//	PARRYING={65.0 75.0}
+//	MAGERY={150.0 200.0}
+//	EvaluatingIntel={90.0 100.0}
+//	MAGICRESISTANCE={200.0 250.0}
+//	TACTICS={70.0 80.0}
+//	WRESTLING={90.0 100.0}
+//
+//ON=@NPCRestock
+//	ITEM=i_spellbook 
+//	MORE=000000000 
+//	MORE2=000340000 
+//	ATTR=024
+//	ITEM={ 018cfd 1 0 9 }
+//	ITEM=LOOT_DAEMON
+//	ITEM={ TTM_LVL4 1 TTM_LVL3 5 0 55}  //Tattered Treasure Map Level 3 4
+//	ITEM=i_gold,{3125 14440}
+//
+//
+//[CHARDEF 0425F]
+//DEFNAME=c_hell_fire_hound
+//NAME=Hell Hound
+//ID=00e1
+//SOUND=snd_animals_wolf1
+//ICON=020d5
+//
+//CAN=MT_WALK|MT_RUN
+//DAM=12,38
+//ARMOR=25
+//RESOURCES=6 i_ribs_raw
+//FOODTYPE=15 t_meat_raw
+//DESIRES=c_hell_fire_hound
+////ALIGNMENT=EVIL
+////SHELTER=r_caves
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Hell Hound
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={125 180}
+//	DEX={89 165}
+//	INT={13 36}
+//	COLOR=0799
+//	PARRYING={73.0 89.0}
+//	MAGICRESISTANCE={88.0 95.0}
+//	TACTICS={70.0 80.0}
+//	WRESTLING={80.0 90.0}
+//	FAME={1000 2700}
+//	KARMA={-3000 -3999}
+//
+//ON=@NPCRestock
+//	ITEM=i_reag_sulfur_ash,{4 6}
+//	ITEM={ TTM_LVL2 1 TTM_LVL1 9 0 90 }
+//
+//
+//[CHARDEF 4260]
+//DEFNAME=c_igneous
+//NAME=Volcanius
+//ID=0090
+//SOUND=snd_elementl_firelem1
+//ICON=020f3
+//
+//CAN=MT_WALK|MT_RUN|MT_FIRE_IMMUNE
+//DAM=65,79
+//ARMOR=60
+//DESIRES=t_lava
+////ALIGNMENT=EVIL
+////SHELTER=t_lava
+//CATEGORY=DUNGEONS
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Igneous
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={145 185}
+//	DEX={165 185}
+//	INT={151 195}
+//	PARRYING={55.0 65.0}
+//	MAGERY={125.0 200.0}
+//	EVALUATINGINTEL={90.0 100.0}
+//	MAGICRESISTANCE={90.0 100.0}
+//	TACTICS={99.0 100.0}
+//	WRESTLING={150.0 190.0}
+//	FAME={1500 2800}
+//	KARMA={-4000 -4999}
+//
+//ON=@NPCRestock
+//	ITEM=i_spellbook
+//	ATTR=024
+//	MORE1=0440a0810
+//	MORE2=000402631
+//	ITEM=loot_elem_fire
+//	ITEM=i_reag_sulfur_ash,{3 8}
+//	ITEM=i_gold,{125 940}
+//
+//
+//[CHARDEF 4261]
+//DEFNAME=c_fire_imp
+//NAME=Fire Imp
+//ID=0027
+//SOUND=snd_monster_mngbat1
+//ICON=020f9
+//CAN=MT_FLY|MT_WALK
+//DAM=18,35
+//ARMOR=30
+//RESOURCES=3 i_ribs_raw
+//FOODTYPE=9 t_meat_raw
+//DESIRES=c_fire_imp, // - dopsat dalsi typy impu
+////SPELLCIRCLE=2,7
+////ALIGNMENT=EVIL
+////SHELTER=r_caves,r_dungeons,r_eerielocations
+////AVERSIONS=r_civilization,r_water
+//CATEGORY=Dungeons
+//SUBSECTION=Fire Dungeon
+//DESCRIPTION=Fire Imp
+//
+//ON=@Create	// stuff that happens to the created instance of a char.
+//	NPC=brain_monster
+//	STR={76 100}
+//	DEX={61 80}
+//	INT={86 110}
+//	COLOR=07f7
+//	PARRYING={70.0 90.0}
+//	MAGICRESISTANCE={50.0 85.0}
+//	TACTICS={80.0 90.0}
+//	WRESTLING={75.0 95.0}
+//	FAME={1000 2500}
+//	KARMA={-2000 -2999}
+//
+//ON=@NPCRestock
+//	ITEM=i_gold,{125 444}
+//	ITEM={ TTM_LVL2 1 0 98 }
+//	
+//[EoF]

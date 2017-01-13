@@ -1,0 +1,1230 @@
+//
+// @Name: Dark temple dungeon items and region script
+// @Version: 3.6
+//
+
+//--- funkce
+
+[defname darktemples]
+darktemples.neposun Timto smerem s tim proste nepohnes!
+darktemples.daluzne Timto smerem uz to dal posunout nepujde!
+
+[function f_dt_effekt]
+serv.newitem=i_dt_gate_effekt
+new.attr=attr_invis
+new.type=t_normal
+new.timer=1
+if (<argv[0]>==1)
+new.p=5567,727,5
+new.morep=5746,724,5
+new.trigger=@summon
+endif
+
+[function f_dt_elem_gate]
+sound=snd_elementl_airelem1
+newitem=i_moongate_blue
+new.p=5801,723,5
+new.type=t_dt_elem_gate
+new.attr=attr_move_never
+new.timer=3
+newnpc c_elem_air
+new.p=5804,718
+new.spelleffect=44,1000
+newnpc c_elem_air
+new.p=5798,716
+new.spelleffect=44,1000
+newnpc c_elem_air
+new.p=5795,723
+new.spelleffect=44,1000
+newnpc c_elem_air
+new.p=5801,729
+new.spelleffect=44,1000
+newnpc c_elem_air
+new.p=5806,724
+new.spelleffect=44,1000
+
+
+// najde item s typem argv[1] v do-kruhu-nalinkovanych itemech (max sedmi)
+// argv[0] urcuje item, od ktereho se bude hledat
+// pokud nenasel, vraci nula
+[function f__linkedcircle_finditem]
+local.prvni=uid.<argv[0]>
+local.typ=<argv[1]>
+if (<<local.prvni>.type>==<local.typ>)
+   return <<local.prvni>.uid>
+elseif ((<<local.prvni>.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.type>==<local.typ>))
+   return <<local.prvni>.link.uid>
+elseif ((<<local.prvni>.link.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.link.type>==<local.typ>))
+   return <<local.prvni>.link.link.uid>
+elseif ((<<local.prvni>.link.link.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.link.link.type>==<local.typ>))
+   return <<local.prvni>.link.link.link.uid>
+elseif ((<<local.prvni>.link.link.link.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.link.link.link.type>==<local.typ>))
+   return <<local.prvni>.link.link.link.link.uid>
+elseif ((<<local.prvni>.link.link.link.link.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.link.link.link.link.type>==<local.typ>))
+   return <<local.prvni>.link.link.link.link.link.uid>
+elseif ((<<local.prvni>.link.link.link.link.link.link.uid>!=<<local.prvni>.uid>)&&(<<local.prvni>.link.link.link.link.link.link.type>==<local.typ>))
+   return <<local.prvni>.link.link.link.link.link.link.uid>
+else
+   return 0
+endif
+
+[function f_dt_trimasel]
+link=04fffffff
+newitem=i_dt_effekt_end
+new.more=1
+try new.cont <more>.uid
+local.x=1
+while (<local.x> <15)
+newnpc=c_dt_vortex
+dorand 11
+new.p=5245,1232,5
+new.p=5248,1246,5
+new.p=5248,1238,5
+new.p=5253,1242,5
+new.p=5249,1228,5
+new.p=5253,1232,5
+new.p=5258,1231,5
+new.p=5263,1236,5
+new.p=5265,1241,5
+new.p=5269,1245,5
+new.p=5264,1250,5
+new.p=5260,1252,5
+new.p=5255,1254,5
+new.p=5240,1247,5
+new.p=5252,1237,5
+new.p=5241,1237,5
+enddo
+new.str=2000
+new.dex=2000
+new.name Zbesila energie
+new.spelleffect=44,10
+new.update
+new.spelleffect=44,10
+newitem=i_removing_timer
+new.timer=5
+new.equip
+local.x +=1
+endwhile
+serv.newitem=i_moongate_blue
+new.color=079c
+new.p=5242,1242,12
+new.morep=5626,658,5
+new.timer=300
+new.name=Gate of Dark Temple
+
+[function f_dt_posun_dvere]
+local.dv=uid.<argv[0]>
+if (0<<local.dv>.morez>==1)
+   <local.dv>.move 0 -1 0
+   <local.dv>.morez=3
+elseif (0<<local.dv>.morez>==2)
+   <local.dv>.move 1 -1 0
+   <local.dv>.morez=4
+elseif (0<<local.dv>.morez>==3)
+   <local.dv>.move 0 1 0
+   <local.dv>.morez=1
+elseif (0<<local.dv>.morez>==4)
+   <local.dv>.move -1 1 0
+   <local.dv>.morez=2
+endif
+<local.dv>.update
+return 1
+
+//----- itemdefy a typedefy
+
+[itemdef i_dt_bsvitek]
+ID=0e34
+NAME=Dark Temple's Dispel Barier Field Scroll
+WEIGHT=0.5
+TYPE=t_scroll
+
+CATEGORY=Custom Items
+SUBSECTION=Dark Temple
+DESCRIPTION=Dark Temple Dispel Barier Field Scroll
+
+on=@create
+COLOR=07ca
+
+on=@dclick
+if (<eval strcmpi("<src.region.name>","Dark temple")>!=0)
+  src.message Svitek se pri pokusu o precteni rozpadl.
+  remove
+  return 1
+endif
+target Jakou barieru se chces pokusit odstranit?
+return 1
+
+ON=@TARGON_GROUND
+SRC.SOUND=051
+RETURN 1
+
+on=@targon_char
+if (<src.uid>==<src.targ.uid>)
+   src.sysmessage Proc zamerujes sebe???
+else
+   src.sysmessage Ja vim, ze by jsi <src.targ.sex ho/ji> rad odstranil<src.sex /a>, ale jen tak snadno to nepujde...
+endif
+return 1
+
+on=@targon_item
+if (<src.targ.distance>>3)
+  src.message Moc daleko!
+  return 1
+endif
+IF ((<src.targ.baseid> == i_barier_field_n)||(<src.targ.baseid> == i_barier_field_w))
+  src.targ.remove
+  remove
+  src.sysmessage Uspesne jsi odstranil barieru, ale svitek byl pri pouziti znicen.
+ELSE
+  src.message Na tohle ne!
+endif
+return 1
+
+[itemdef i_dt_effekt_end]
+id=i_memory
+name=DT end effekt
+type=t_eq_script
+
+on=@create
+timer={0 2}
+
+on=@timer
+if (<more2>!=6)
+cont.hits=<cont.maxhits>
+newitem=i_dt_ohen
+new.color=color_o_silver
+new.p=<cont.p>
+new.timer=1
+timer=0
+more2 +=1
+return 1
+endif
+remove
+return 1
+
+[itemdef i_dt_vezen_request]
+id=i_memory
+name=DT vezen request
+type=t_eq_script
+
+on=@create
+timer=25
+
+on=@timer
+remove
+return 1
+
+[typedef t_dt_door_end]
+on=@dclick
+if (<link.morey>==1)
+move <morep>
+timer=<more2>
+endif
+return 1
+src.message Nejde otevrit..
+return 1
+
+on=@timer
+move -<morex> -<morey> -<morez>
+return 1
+
+
+[itemdef i_dt_heart_trimasel]
+id=01ced
+name=Heart of Trimasel
+type=t_normal
+
+on=@create 
+attr=010
+
+on=@dclick
+	IF (<SRC.FINDLAYER.01.BASEID> == i_dt_kryss_sacrifice)
+		SRC.SYSMESSAGE Tou dykou co mas v ruce by to snad mohlo jit...
+	ELSE
+		SRC.SYSMESSAGE Citis, jak srdce slabe tluce, ale neco ti rika ze nepujde propichnout jen tak necim obycejnym...
+	ENDIF
+	RETURN 1
+	
+on=@timer
+return 1
+	
+[itemdef i_dt_book_trimasel]
+NAME=Trimasel's Book
+ID=0fbd
+
+CATEGORY=Z_DarkLord
+SUBSECTION=Items-Main
+DESCRIPTION=Trimasel's Book
+
+on=@create
+COLOR=08A
+
+on=@DCLICK
+    SRC.MESSAGE Precetl jsi napis a...
+    forchars 60
+        if (<baseid>==c_dt_trimasel)
+            SRC.MESSAGE ...nemuzes vyvolat jiz vyvolaneho.
+            return 1
+        endif
+    endfor
+    IF (<TIMER> > 0)
+        SRC.MESSAGE ...nic se nestalo.
+    	RETURN 1
+    ENDIF
+    foritems 7
+        if (<baseid>==i_moongate_blue)
+            SRC.MESSAGE ...koho si myslis, ze bys tim asi tak mohl vyvolat?
+            return 1
+        endif
+    endfor    
+    SERV.NEWNPC=c_dt_trimasel
+    NEW.P=5242,1242,11
+    NEW.HOME=5242,1242,11
+    NEW.HOMEDIST=5
+    NEW.UPDATE
+    NEW.SPELLEFFECT=51,1
+    NEW.SPELLEFFECT=30,1
+    NEW.SPELLEFFECT=30,1
+    new.tag.zdroj=<uid>
+    uid.<tag.krystal1>.move 0 0 20
+    uid.<tag.krystal2>.move 0 0 20
+    uid.<tag.krystal3>.move 0 0 20
+    uid.<tag.krystal4>.move 0 0 20
+    SOUND=527
+    SOUND=531
+    TIMER=3600
+    RETURN 1
+
+on=@TIMER
+timer=-1
+return 1
+
+[itemdef i_trimasel_heal]
+ID=i_memory
+NAME=trimasel heal
+type=t_eq_script
+
+on=@create
+timer=1
+COLOR=0100
+
+on=@timer
+if (<link>==04fffffff)
+foritems 15
+if (<baseid>==i_dt_book_trimasel)
+local.id=<uid>
+endif
+endfor
+link=<local.id>
+timer=5
+return 1
+endif
+if !<cont.uid>
+remove
+return 1
+endif
+if ((<link.more><4)&&(<cont.hits><<cont.maxhits>))
+cont.hits +=<eval (4-<link.more>)*50>
+cont.effect 3,i_fx_heal_effect,3,16,1
+sfx snd_spell_heal
+endif
+timer=5
+return 1
+
+[itemdef i_dt_kryss_sacrifice]
+ID=01400
+NAME=Kryss of Sacrifice
+DYE=1
+VALUE=435
+dam=0
+speed=70
+tevents=e_special
+
+on=@create
+tag.special=1
+ATTR=020
+COLOR=022
+HITPOINTS=1000
+
+on=@efekt
+if (rand(5)==1)
+cont.say Vysaju mu vsetku manu!
+endif
+uid.<argn2>.mana -=2
+
+
+on=@TARGON_ITEM
+	IF (<SRC.TARG.BASEID> == i_dt_heart_trimasel)
+	IF (<SRC.TARG.TIMER>!=-1)
+			SRC.MESSAGE Bez efektu!
+			RETURN 1
+	ENDIF
+	forchars 60
+	if (<baseid>==c_dt_trimasel)
+	local.x=<uid>
+	endif
+	endfor
+	src.targ.link=<local.x>
+		IF (<SRC.TARG.DISTANCE> < 2)
+			SRC.NEWITEM=0122A
+			SRC.new.P=<SRC.TARG.P>
+			SRC.new.TIMER=60
+			SRC.MESSAGE Probodnul jsi Trimaselovo srdce!
+			SRC.ANIM=10
+			src.mana -=2
+			SRC.TARG.MORE=<src.uid>
+			SOUND=611
+			IF (<SRC.TARG.LINK.HITS> > 250)
+				SRC.TARG.TIMER=60
+				SRC.TARG.LINK.HITS=<SRC.TARG.LINK.HITS> - 250
+			ELSE
+				SRC.TARG.TIMER=5
+				SRC.TARG.LINK.KILL
+				SOUND=481
+			ENDIF
+			SRC.TARG.LINK.UPDATE
+			RETURN 1
+		ENDIF
+		IF (<SRC.TARG.DISTANCE> > 1)
+			SRC.MESSAGE Jsi moc daleko!
+			RETURN 1
+		ENDIF
+	ENDIF
+	
+	
+[itemdef i_dt_most]
+id=i_floor_marble
+name=most
+type=t_normal
+
+on=@step
+if !<tag0.baseid>
+say Nemam tag.baseid. Pis page.
+endif
+if !(<src.isplayer>)
+return 0
+endif
+if ( <src.account.plevel> > 1 ) && ( <src.isgm> )
+src.message Prochazis barierou...
+return 0
+endif
+if (!<src.restest 1 <tag0.baseid>>)
+if (<src.dir>==0)
+src.move 0 1 0
+elseif (<src.dir>==1)
+src.move -1 1 0
+elseif (<src.dir>==2)
+src.move -1 0 0
+elseif (<src.dir>==3)
+src.move -1 -1 0
+elseif (<src.dir>==4)
+src.move 0 -1 0
+elseif (<src.dir>==5)
+src.move 1 -1 0
+elseif (<src.dir>==6)
+src.move 1 0 0
+elseif (<src.dir>==7)
+src.move 1 1 0
+endif
+endif
+
+
+[typedef t_dt_elem_dlazdicka]
+on=@dclick
+if !<tag0.baseid>
+say Nastav me! Chybi tag.baseid
+return 1
+endif
+   if (<src.account.plevel> > 2)
+      src.sysmessage TAG.BASEID - id predmetu nutneho k sepnuti dlazdice
+      src.sysmessage MOREX - pocet predmetu na jedne dlazdici, nutnych k sepnuti dlazdice
+   endif
+   return 1
+
+on=@step
+if !<tag0.baseid>
+say Nastav me! Chybi tag.baseid
+return 1
+endif
+   if (<timer>>-1)
+      return 1
+   endif
+   if !(<src.isplayer>)
+      return 1
+   endif
+   IF (<src.flags>&statf_polymorph)
+      return 1
+   endif
+   if (<ISNEARTYPE t_dt_elem_gate 10>)
+      return 1
+   endif
+   tag.more2=<src.uid>
+   morez=<src.restest <morex> <TAG.BASEID>>
+   sound=0f2
+   // slozity algoritmus pro jednoduchy semafor
+   if ( <region.tag0.semafor>==0 )
+//serv.b <name> entering
+      region.tag0.semafor +=1
+      if (<eval <region.tag0.semafor>> > 1)
+         region.tag0.semafor -=1
+//serv.b <name> leaving
+      else
+         if (<morez>==1)&&(<link.morez>==1)&&(<link.link.morez>==1)&&(<link.link.link.morez>==1)
+            uid.<tag0.more2>.consume <morex> <TAG.BASEID>
+            morez=0
+            tag.more2=0
+
+            uid.<link.tag0.more2>.consume <link.morex> <link.TAG.BASEID>
+            link.morez=0
+            link.tag.more2=0
+
+            uid.<link.link.tag0.more2>.consume <link.link.morex> <link.link.TAG.BASEID>
+            link.link.morez=0
+            link.link.tag.more2=0
+
+            uid.<link.link.link.tag0.more2>.consume <link.link.link.morex> <link.link.link.TAG.BASEID>
+            link.link.link.morez=0
+            link.link.link.tag.more2=0
+
+            f_dt_elem_gate
+         endif
+         region.tag0.semafor -=1
+//serv.b <name> leaving
+      endif
+   endif
+   timer=1
+   return 1
+
+on=@timer
+   if ( <eval <region.tag0.semafor>> > 0 )
+      timer=1
+      return 1
+   else
+      morez=0
+      tag.more2=0
+      timer=-1
+   endif
+   return 1
+
+// [function f_dt_dlazdice]
+// local.x=<morex>
+// local.id=<more>
+// forchars 0
+// if (<restest <local.x> <local.id>>)
+// local.i=5
+// else
+// local.i=0
+// endif
+// endfor
+// return <local.i>
+
+[typedef t_dt_elem_gate]
+on=@click
+message <name>
+return 1
+
+on=@step
+if <more>
+src.go 5844,855,10
+src.fix
+return 1
+endif
+
+on=@timer
+if (<tag0.circles>==100)
+remove 
+endif
+forchars 25
+if (<body>==c_elem_air)
+local.x=1
+endif 
+endfor
+if !<local.x>
+sound=020c
+effect=3,0375A,6,15,1
+color=color_o_bloodrock
+more=1
+timer=300
+tag.circles=100
+else
+timer=3
+tag0.circles +=1
+endif
+return 1
+
+[itemdef i_dt_ohen]
+id=i_fire_column
+name=Sloup temneho ohne
+
+on=@timer
+remove
+if !(strcmpi(<room.name>,level 2))
+obj=<more>
+try uid.<obj>.type=t_telepad
+try uid.<obj>.attr=<uid.<obj>.attr>-00080
+try uid.<obj>.timer=240
+message @40 Strasny rev utichl... a brana se objevila...
+update
+endif
+return 1
+
+[itemdef i_dt_explosion]
+id=i_fx_explosion_2
+name=Temna exploze
+
+on=@timer
+remove
+return 1
+
+/// opravit
+[typedef t_dt_posuvniky]
+on=@STEP
+trigger=@killed
+
+on=@click
+if (<src.account.plevel>>1)
+src.sysmessage MORE1: Timer pro vraceni
+src.sysmessage MORE2: Smery, do kterych pujde gate posouvat v hexa (bity: 1=N, 2=S, 4=W, 8=E)
+src.sysmessage MOREX: Max. posunuti jednim smerem (N-S)
+src.sysmessage MOREY: Max. posunuti druhym smerem (kolmym k prvnimu smeru, tj. W-E)
+src.sysmessage MOREZ: Pro prostredni dil 1, pro ostatni dily steny 0
+src.sysmessage TAG.EXPLOSION=1 - exploze neucinkuje
+endif
+return 1
+
+on=@dclick
+src.sysmessage Neco ti rika, ze kdyby na tebe spadla tadle stena, tak by z tebe byl pekny koberecek...
+return 1
+
+on=@spelleffect
+if (<morez>==0)
+  src.sysmessage Byt tebou, tak mirim vic na stred...
+  return 1
+endif
+if (<argn>==43)&&(<tag0.explosion>==1)
+  src.sysmessage Takhle to asi nepujde...
+  return 1
+endif
+if ( !( <serv.spell.<argn>.flags>&spellflag_harm ))
+  src.sysmessage Byt tebou, tak zkusim jine kouzlo...
+  return 1
+endif
+if (<src.dir>!=0)&&(<src.dir>!=2)&&(<src.dir>!=4)&&(<src.dir>!=6) // 0-n, 4-s, w-6, e-2
+  src.sysmessage <def.darktemples.neposun>
+  return 1
+endif
+IF (<src.dir>==0) && ( ! ( <more2>&01 ) )
+  src.sysmessage <def.darktemples.neposun>
+  return 1
+elseIf (<src.dir>==4) && ( ! ( <more2>&02 ) )
+  src.sysmessage <def.darktemples.neposun>
+  return 1
+elseif (<src.dir>==2) && ( ! ( <more2>&08 ) )
+  src.sysmessage <def.darktemples.neposun>
+  return 1
+elseif (<src.dir>==6) && ( ! ( <more2>&04 ) )
+  src.sysmessage <def.darktemples.neposun>
+  return 1
+endif
+IF (<src.dir>==0) && (<tag0.direction4><=<morex>)
+  tag0.direction4 +=1
+  tag0.direction0 -=1
+  move 0 -1 0
+  link.move 0 -1 0
+  link.link.move 0 -1 0
+elseif (<src.dir>==4) && (<tag0.direction0><=<morex>)
+  tag0.direction0 +=1
+  tag0.direction4 -=1
+  move 0 1 0
+  link.move 0 1 0
+  link.link.move 0 1 0
+elseif (<src.dir>==2) && (<tag0.direction6><=<morey>)
+  tag0.direction6 +=1
+  tag0.direction2 -=1
+  move 1 0 0
+  link.move 1 0 0
+  link.link.move 1 0 0
+elseif (<src.dir>==6) && (<tag0.direction2><=<morey>)
+  tag0.direction2 +=1
+  tag0.direction6 -=1
+  move -1 0 0
+  link.move -1 0 0
+  link.link.move -1 0 0
+else
+  src.sysmessage <def.darktemples.daluzne>
+  return 1
+endif
+TIMER=<more1>
+SOUND=0F0
+return 0
+        
+on=@timer
+if (<morez>==0)
+   return 1
+endif
+if ((<tag0.direction4> > 0)||(<tag0.direction0> >0)||(<tag0.direction6> >0)||(<tag0.direction2> >0))
+   SOUND=0F0
+   if (<tag0.direction4> > 0)
+      move 0 1 0
+      link.move 0 1 0
+      link.link.move 0 1 0
+      tag0.direction4 -=1
+      tag0.direction0 +=1
+      timer=1
+   elseif (<tag0.direction0> > 0)
+      move 0 -1 0
+      link.move 0 -1 0
+      link.link.move 0 -1 0
+      tag0.direction0 -=1
+      tag0.direction4 +=1
+      timer=1
+   elseif (<tag0.direction6> > 0)
+      move -1 0 0
+      link.move -1 0 0
+      link.link.move -1 0 0
+      tag0.direction6 -=1
+      tag0.direction2 +=1
+      timer=1
+   elseif (<tag0.direction2> > 0)
+      move 1 0 0
+      link.move 1 0 0
+      link.link.move 1 0 0
+      tag0.direction2 -=1
+      tag0.direction6 +=1
+      timer=1
+   endif
+else
+//   local.link.link.more=<link.link.more>
+//   local.link.more=<link.more>
+//   local.more=<more>
+//   link.more=<local.more>
+//   link.link.more=<local.link.more>
+//   more=<local.link.link.more>
+   timer=-1
+   link.timer=-1
+   link.link.timer=-1
+endif
+trigger=@killed
+link.trigger=@killed
+link.link.trigger=@killed
+return 1
+
+on=@killed
+forchars 0
+if (<flags>&statf_invul)
+   anim=20
+   sound=0420
+else
+   act=0
+   hits=0
+endif
+update
+endfor
+
+[itemdef i_dt_paka_2lvl]
+id=i_lever
+name=Paka
+type=t_normal
+
+on=@create
+attr=010
+morex=4
+
+ON=@TIMER
+id=i_lever
+update
+return 1
+
+ON=@DCLICK
+if (<dispid>==0108e)
+src.message Paka uz je zmacknuta!
+return 1
+endif
+if (<morex>==<more>)
+id=0108e
+timer=240
+update
+f_dt_effekt 1
+forchars 50
+if (<flags>&statf_hidden)
+flags=<flags>-000800000
+update
+endif
+endfor
+else
+src.message Paka nejde zmacknout
+endif
+return 1
+
+[itemdef i_dt_gate_effekt]
+id=i_moongate_blue
+name=Dark Temple Brana
+
+on=@summon
+newnpc=c_dt_vortex
+dorand 11
+new.p=5564,721
+new.p=5567,721
+new.p=5569,723
+new.p=5571,732
+new.p=5772,736
+new.p=5568,733
+new.p=5573,722
+new.p=5571,724 
+new.p=5562,733
+new.p=5564,731
+new.p=5565,735 
+enddo
+new.name Zbesila energie
+new.spelleffect=44,10
+new.update
+new.spelleffect=44,10
+if ((rand(2))=1)
+trigger=@summon
+endif
+more +=1
+
+
+on=@timer
+if (<more> <=10)
+trigger=@summon
+timer=1
+return 1
+else
+newitem=i_dt_ohen
+new.more=<uid>
+new.timer=10
+new.p=<p>
+new.color=078c
+color=078c
+endif
+return 1
+
+[itemdef i_dt_memory_effekt]
+id=i_memory
+name=DT effekt
+type=t_eq_script
+
+on=@create
+timer=0
+
+on=@timer
+if (<more>!=5)
+spelleffect=30,10
+sound=snd_spell_lightning
+timer={1 2}
+more +=1
+return 1
+else
+newitem=i_dt_explosion
+sound=snd_spell_explosion
+SOUND=snd_ELEMENTL_AIRELEM5
+new.p=<cont.p>
+new.timer=1
+cont.remove
+remove
+endif
+return 1
+
+
+
+[itemdef i_dt_krystal] // za posuvniky na rozbijeni 
+ID=01F1C
+NAME=Magic Crystal
+
+ON=@DCLICK
+if (<src.account.plevel> >1)
+src.sysmessage MOREX:Timer navratu krystalu
+src.sysmessage MORE2:Pocet trisknuti nez se krystal znici * 2
+src.sysmessage Linkovat na paku do dalsiho patra
+endif
+    IF (<MOREZ> == 1)
+        RETURN 1
+    ENDIF
+    IF (<DISTANCE> > 1) || (<MOREY> == 1)
+        SRC.SYSMESSAGE You can't reach that.
+        RETURN 1
+    ENDIF
+    IF (<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_mace_smith)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_mace_sharp)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_sword)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_fence)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_mace_crook)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_mace_pick)||(<SRC.FINDLAYER(layer_hand1).TYPE>==t_weapon_axe)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_mace_smith)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_mace_sharp)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_sword)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_fence)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_mace_crook)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_mace_pick)||(<SRC.FINDLAYER(layer_hand2).TYPE>==t_weapon_axe)
+        SRC.ANIM={10-11}
+        SRC.SOUND={571-572}
+        IF (<MORE> > <MORE2>)
+            SRC.MESSAGE Znicil jsi krystal!
+            SRC.SOUND=519
+                 SRC.SPELLEFFECT 18,1
+                SRC.EFFECT=3,036b0,6,15,1
+            MORE=<MORE2>
+            MOVE 0 0 -20
+            TIMER=<MOREX>
+            MOREY=1
+            IF (<LINK.SERIAL> > 0)
+                LINK.MORE=<LINK.MORE> + 1
+            ENDIF
+            if <tag0.x>
+            uid.<tag.x>.move <uid.<tag.x>.morep>
+            endif
+            RETURN 1
+        ELSE
+            SRC.MESSAGE Ponicil jsi krystal!
+            MORE=<MORE> + 2
+            TIMER=2
+            MOREZ=1
+            RETURN 1
+        ENDIF
+    ENDIF
+    RETURN 1
+
+ON=@TIMER
+    IF (<MOREZ> == 1) && (<MOREY> == 0)
+        MOREZ=0
+        TIMER=<MORE>
+        RETURN 1
+    ENDIF
+    IF (<MOREZ> == 0)  && (<MOREY> == 0)
+        IF (<MORE> > 5)
+            MORE=<MORE> - 1
+            TIMER=<MORE>
+        ELSE
+            TIMER=-1
+        ENDIF
+        RETURN 1
+    ENDIF
+    IF (<MOREY> == 1)
+        MORE=5
+        MOREY=0
+        MOVE 0 0 20
+        IF (<LINK.SERIAL> > 0) && (<LINK.MORE> > 0)
+            LINK.MORE=<LINK.MORE> - 1
+        ENDIF
+        if <tag0.x>
+        uid.<tag.x>.move -<uid.<tag.x>.morex> -<uid.<tag.x>.morey> -<uid.<tag.x>.morez>
+        endif
+    ENDIF
+    RETURN 1
+
+//----------	
+[itemdef i_dt_teleport_crystal]
+ID=01ED0
+NAME=Teleport crystal
+TYPE=0
+
+[itemdef i_dt_crystal]
+ID=01ECD
+NAME=Crystal
+TYPE=0
+ON=@Create
+   ATTR=attr_decay
+ON=@PICKUP_PACK
+	TIMER=600
+ON=@PICKUP_GROUND
+	TIMER=600
+
+CATEGORY=Z_DarkLord
+SUBSECTION=DarkTemple
+DESCRIPTION=Crystal
+
+[itemdef i_dt_dtkey]
+ID=01010
+NAME=Dark temple key
+WEIGHT=0.1
+TYPE=0
+
+CATEGORY=Z_DarkLord
+SUBSECTION=Dark Temple
+DESCRIPTION=Klic
+
+[itemdef i_dt_special_key]
+ID=01012
+NAME=Key
+TYPE=13
+
+on=@TARGON_ITEM
+	IF (<SRC.TARG.TYPE> == t_door_locked) && (<SRC.TARG.MORE> == <MORE>)
+		SRC.TARG.TIMER=0
+		SOUND={579-581}
+		SOUND=500
+		REMOVE
+		RETURN 1
+	ENDIF
+	SOUND=556
+	RETURN 1
+	
+[itemdef i_dt_teleporter]
+ID=i_memory
+NAME=Teleporter
+type=t_eq_script
+
+on=@TIMER
+	LINK.REMOVE
+	REMOVE
+	RETURN 1
+	return 1
+	
+
+[itemdef i_dt_stone_fire]
+ID=0186F
+NAME=Stone of Fire
+
+on=@create
+COLOR=0845
+
+[itemdef i_dt_stone_earth]
+ID=0186F
+NAME=Stone of Earth
+
+on=@create
+COLOR=0455
+
+[itemdef i_dt_stone_water]
+ID=0186F
+NAME=Stone of Water
+
+on=@create
+COLOR=084B
+
+[itemdef i_dt_stone_air]
+ID=0186F
+NAME=Stone of Air
+
+on=@create
+COLOR=0482
+
+//-----------
+
+[itemdef i_dt_svicky]
+id=i_skull_candle
+name=Nekromantska svicka
+type=t_normal
+on=@create
+tag.svicka_off=i_skull_candle		///dispid neaktivniho predmetu
+tag.svicka_on=i_skull_candle_lit	///dispid aktivniho predmetu
+tag.timer=60				///timer, kdy se vrati do neaktivniho stavu
+tag.text=Svicka uz hori!		///text, ktery pise, kdyz je uz aktivni
+timer=-1
+attr=010
+morey=0
+
+on=@dclick
+if (<dispid>==<tag0.svicka_off>)
+	dispid=<tag0.svicka_on>
+	timer=<tag0.timer>
+	morey=1
+	update
+else
+	src.sysmessage @color_o_bloodrock, <tag.text>
+endif
+return 1
+
+on=@timer
+	dispid=<tag0.svicka_off>
+	morey=0
+	update
+return 1
+
+[itemdef i_dt_aktivace]
+name=Kniha temne brany
+id=i_book_open
+type=t_normal
+
+on=@create
+color=0322
+timer=-1
+attr=010
+tag.pocet=5					///pocet predmetu, ktere maji byt aktivovany
+tag.timer=0					///pomocne, nemenit!
+tag.active=0					///pomocne, nemenit!
+tag.timer_gate=60				///timer, jak dlouho tam bude gate 
+tag.text=Branu jsi jiz vyvolal!			///text, ktery se vypise, kdyz hrac klika a je aktivovano (pojistka)
+tag.pozice=5844,756,97				///souradnice, kde se vyvola gate
+tag.kam=5844,756,97				///souradnice kam gate vede
+tag.gate_name=Gate of Dark Temple		///jmeno gate
+tag.gate_color=079c				///barva gate
+tag.effect=i_fire_column			///efekt, ktery se nad predmety udela
+tag.effect_sound=0208				///zvuk tohoto efektu
+tag.effect_name=Sloup temneho ohne		///nazev tohoto efektu
+tag.text_nok=K ritualu potrebujes kruh ohne...	///text, ktery rika, kdyz nejsou splneny podminky
+tag.text_ok=Vyvolavas temnou branu...		///text, ktery rika, kdyz hrac splni podminky
+morep=0,0,0					///o kolik kam se posune aktivacni predmet, kdyz misto nej chcem branu
+
+on=@dclick
+if ((<timer>>0) || (<tag0.active>==1))
+	src.sysmessage @color_o_bloodrock, <tag.text>
+else
+foritems 10
+	if (<dispid>==<tag0.svicka_on>) && (<morey>==1)
+        	local.svitim=<eval <local.svitim>+1>
+	endif
+endfor
+	if <local.svitim>!=<tag0.pocet>
+	src.sysmessage @color_o_bloodrock, <tag.text_nok>
+	else
+	timer=<tag0.timer>
+	src.sysmessage @color_o_bloodrock, <tag.text_ok>
+	endif
+endif
+return 1
+
+on=@timer
+if (!<tag0.gateuid>)
+tag.timer=<eval <tag.timer>+1>
+      if (<tag.timer>>=7)
+         uid.<tag.lastflame>.link.link.link.link.remove
+         uid.<tag.lastflame>.link.link.link.remove
+         uid.<tag.lastflame>.link.link.remove
+         uid.<tag.lastflame>.link.remove
+         uid.<tag.lastflame>.remove
+	      tag.lastflame=""
+         tag.timer=0
+         timer=<tag.timer_gate>
+	 move <morep>
+         serv.newitem=i_moongate_blue
+	      new.p=<tag.pozice>
+	      new.morep=<tag.kam>
+	      new.name=<tag.gate_name>
+	      new.color=<tag.gate_color>
+	      new.timer=-1
+         new.attr=attr_move_never
+         new.sound=snd_spell_gate_travel
+         new.type=t_dt_crystalconsumer_gate
+         tag.gateuid=<new.uid>
+         return 1
+      elseif (<tag.timer>==5)
+         local.pozice=<link.p>
+      elseif (<tag.timer>==4)
+         local.pozice=<link.link.p>
+      elseif (<tag.timer>==3)
+         local.pozice=<link.link.link.p>
+      elseif (<tag.timer>==2)
+         local.pozice=<link.link.link.link.p>
+      elseif (<tag.timer>==1)
+         local.pozice=<link.link.link.link.link.p>
+      else
+         timer=1
+         return 1
+      endif
+      serv.newitem <tag.effect>
+      new.p=<local.pozice>
+      new.timer=-1
+      new.sound=<tag.effect_sound>
+      new.attr=attr_move_never
+      new.name=<tag.effect_name>
+      if (0<tag.lastflame>!=0)
+        new.link=<tag.lastflame>
+      endif
+      tag.lastflame=<new.uid>
+      timer=1
+      tag.active=1
+      return 1
+
+else
+   timer=-1
+   uid.<tag.gateuid>.remove
+   tag.gateuid=""
+   move -<morex> -<morey> -<morez>
+   tag.active=0
+endif
+return 1
+
+[typedef t_dt_dlazdice_sachovnice]
+on=@click
+   if (<src.account.plevel> > 1)
+      src.sysmessage nastavit timer = -1,
+      src.sysmessage nalinkovat dlazdice postupne na sebe, posledni dlazdici na dvere
+      src.sysmessage nalinkovat dvere na prvni dlazdici (kruh)
+      src.sysmessage minimalni a zaroven maximalni pocet dlazdic vcetne dveri je 5
+      src.sysmessage dvere typ t_dt_dlazdice_dvere, nastavit dle pokynu pro tento typ
+      attr=<attr>|attr_move_never
+   endif
+   return 0
+   
+on=@step
+   timer=1
+   if !(<src.isplayer>)
+      return 1
+   else
+      if (<morex>==0)
+         sound=04b
+         morex=1
+      else
+         return 1
+      endif
+      
+      // pokud na vsech dlazdicich nekdo stoji, pak sepnem dvere
+      if ((<link.link.link.link.morex>==1)&&(<link.link.link.morex>==1)&&(<link.link.morex>==1)&&(<link.morex>==1)&&(<morex>==1))
+         local.dvere=uid.<f__linkedcircle_finditem <uid>,t_dt_dlazdice_dvere>
+         <local.dvere>.sound=0ec
+         <local.dvere>.morex=0
+         <local.dvere>.timer=<<local.dvere>.morey>
+         <local.dvere>.dispid=<<local.dvere>.more2>
+         f_dt_posun_dvere <<local.dvere>.uid>
+      endif
+   endif
+   return 1
+
+on=@timer
+   morex=0
+   timer=-1
+   return 1
+
+[typedef t_dt_dlazdice_dvere]
+on=@click
+   if (<src.account.plevel> > 1)
+      src.sysmessage nalinkovat k dlazdicim a dlazdici k tomu (kruh)
+      src.sysmessage MOREX nastavit 1
+      src.sysmessage MOREY nastavit na dobu, za jakou se dvere zase samy zavrou
+      src.sysmessage MOREZ nastavit na 0-4 podle smeru otvirani
+      src.sysmessage MORE1 nastavit na id grafiky zavrene dvere
+      src.sysmessage MORE2 nastavit na id grafiky otevrene dvere
+      src.sysmessage TIMER nastavit -1
+      attr=<attr>|attr_move_never
+   endif
+   if (<dispid>==<more1>)
+      message Zavrene magicke dvere
+   else
+      message Otevrene magicke dvere
+   endif
+   return 1
+on=@dclick
+   if (<dispid>==<more1>)
+      if (<src.account.plevel> > 1)
+         sound=0ec
+         morex=0
+         timer=<morey>
+         dispid=<more2>
+         f_dt_posun_dvere <uid>
+         src.sysmessage @023 Ale, ale, co to je toto jako?
+      else
+         src.message Nejde otevrit...
+      endif
+   else
+      if (<src.account.plevel> > 1)
+         sound=0f2
+         morex=1
+         timer=-1
+         dispid=<more1>
+         f_dt_posun_dvere <uid>
+      else
+         src.message Dvere uz jsou otevrene!
+      endif
+   endif
+   return 1
+
+on=@timer
+   timer=-1
+   morex=1
+   sound=0f2
+   dispid=<more1>
+   f_dt_posun_dvere <uid>
+//   update
+   return 1
+   
+[typedef t_dt_crystalconsumer_gate]
+on=@step
+   if <src.restest i_dt_crystal>
+      src.consume 1000 i_dt_crystal
+   endif
+   src.go <morep>
+   src.fix
+   return 0
+
+[eof]
